@@ -25,3 +25,19 @@ main.js und Paketänderungen ist separat zu klären.
 
 A1 beginnt auf `feature/a1-grundgeruest` mit diesen übernommenen Änderungen.
 Es wurde nichts zurückgesetzt oder committed; main bleibt unverändert.
+
+## Abhängigkeit Three.js
+
+Three.js wurde am 11.09.2026 aus den Projektabhängigkeiten entfernt. Die App
+selbst benutzt es nicht; nur die beiden Komponenten in diesem Archiv
+importieren es. Es stand damit in jeder Installation, ohne in einem Build zu
+landen. Wer diesen Entwurf wiederbelebt, installiert es zuerst neu:
+
+```bash
+npm install three@0.186.0
+```
+
+Die Entscheidung ist keine Absage an die visuelle Richtung. Sie wird mit
+Stufe 3 (Rang) neu getroffen, zusammen mit den offenen technischen Befunden
+aus dem V0-Review: Fallback ohne WebGL, Ladeabbruch und Freigabe der
+Ressourcen.
