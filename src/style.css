@@ -163,9 +163,13 @@ h1 {
   max-width: 100%;
 }
 
-.navigationslink:hover {
-  background: var(--farbe-flaeche-hell);
-  color: var(--farbe-text);
+/* Nur Zeigegeraete: am Handy bliebe der Hover-Zustand nach dem Antippen
+   haengen, bis woanders hin getippt wird. */
+@media (hover: hover) {
+  .navigationslink:hover {
+    background: var(--farbe-flaeche-hell);
+    color: var(--farbe-text);
+  }
 }
 
 .navigationslink.router-link-exact-active {
