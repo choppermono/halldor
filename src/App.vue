@@ -1,7 +1,17 @@
 <script setup>
-import { ref } from 'vue'
-import { RouterView } from 'vue-router'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { RouterLink, RouterView } from 'vue-router'
 import Navigationsleiste from './components/Navigationsleiste.vue'
+
+import {
+  anzeigeebeneStarten,
+  anzeigeebeneBeenden,
+  useAnzeigeebene,
+} from './composables/useAnzeigeebene.js'
+
+const { zustand } = useAnzeigeebene()
+onMounted(anzeigeebeneStarten)
+onUnmounted(anzeigeebeneBeenden)
 
 const navigationHoehe = ref()
 const inhalt = ref(null)
@@ -22,6 +32,12 @@ function zumInhalt() {
       <span class="system-label">Dein Dossier</span>
     </header>
     <main id="inhalt" ref="inhalt" class="seiteninhalt" tabindex="-1">
+      <div role="status" aria-live="polite" aria-atomic="true">
+        <p v-if="zustand.heruntergestuft && zustand.modus === 'automatisch'" class="routenhinweis">
+          Wegen niedriger Bildrate auf die ruhige Darstellung gewechselt. Das gilt bis zum Neuladen.
+          <RouterLink to="/profil#kino">Im Profil kannst du den Kino-Modus ändern.</RouterLink>
+        </p>
+      </div>
       <RouterView />
     </main>
     <Navigationsleiste @hoehe="navigationHoehe = $event" />

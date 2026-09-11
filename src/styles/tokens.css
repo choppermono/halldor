@@ -116,6 +116,10 @@
   --navigation-polster: 12px;
   --navigation-text-rand: 4px;
   --navigation-reserve: calc(7rem + env(safe-area-inset-bottom, 0px));
+  /* AV: feste Bedienabstände lassen bei 200% Schrift Platz für den Text. */
+  --profil-polster: 16px;
+  --profil-abstand: 12px;
+  --profil-radio: 18px;
   /* ---------- Ebenen ---------- */
   --z-leiste: 40;
   --z-sheet: 80;
