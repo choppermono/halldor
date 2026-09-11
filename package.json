@@ -1,18 +1,32 @@
 {
-  "name": "halldor",
+  "name": "ascend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
-    "vue": "^3.5.40"
+    "@zxing/browser": "^0.2.1",
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@vitejs/plugin-vue": "^6.0.8",
+    "eslint": "^10.8.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.10.0",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6",
     "vite": "^8.2.0"
-  }
+  },
+  "description": "Fitness-Webapp fuer IPT 4.1 — Barcode-Scan, Kalorienziel, Trainingsprogramm, Rang"
 }

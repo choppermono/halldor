@@ -1,0 +1,105 @@
+/* ============================================================
+   ascend — Design-Tokens
+   Ergebnis aus Phase P5 der Planung.
+   Quelle: Vault → Projekt-1_Webapp/Planung/01-Planungsergebnisse.md
+
+   Regel: In Komponenten steht NIE ein Farbwert, eine Schriftgroesse
+   oder ein Abstand direkt. Immer eine Variable von hier.
+   ============================================================ */
+
+/* Barlow Condensed traegt die grossen Zahlen, Barlow alles andere.
+   Eine Superfamilie, also eine Entscheidung statt zwei.
+   Gruende in E-39: beide liefern mit tabular-nums exakt gleich
+   breite Ziffern, Inter in der ausgelieferten Fassung nicht. */
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600&display=swap');
+
+:root {
+  /* ---------- Flaechen ---------- */
+  --farbe-grund: #0b0f14; /* App-Hintergrund */
+  --farbe-flaeche: #141a21; /* erhoehte Flaeche, Sheets, Eingabefelder */
+  --farbe-linie: rgba(255, 255, 255, 0.08); /* Trennlinie statt Kasten */
+  --farbe-linie-stark: rgba(255, 255, 255, 0.16); /* aktive Kante */
+
+  /* ---------- Text ----------
+     Kontrast gegen --farbe-grund, gemessen nicht geschaetzt. */
+  --farbe-text: #f1f5f9; /* 17.5:1 */
+  --farbe-text-leise: #94a3b8; /*  7.5:1 */
+  --farbe-text-schwach: #64748b; /*  4.0:1 — NUR ab 24px oder fett ab 19px */
+
+  /* ---------- Akzent ----------
+     Der einzige bunte Ton der App. Wer einen zweiten braucht,
+     hat ein Hierarchieproblem, kein Farbproblem. */
+  --farbe-akzent: #f97316; /* 6.9:1 auf Grund */
+  --farbe-auf-akzent: #0b0f14; /* 6.9:1 auf Akzent — NICHT weiss, siehe E-40 */
+
+  /* ---------- Semantik ---------- */
+  --farbe-fehler: #f87171; /* 7.0:1 */
+  --farbe-auf-fehler: #0b0f14;
+
+  /* ---------- Schrift ---------- */
+  --schrift-zahl: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  --schrift-ui: 'Barlow', system-ui, sans-serif;
+
+  /* ---------- Typo-Skala ----------
+     Jeweils Groesse / Zeilenhoehe. --t-basis ist bewusst 16px:
+     alles darunter loest am iPhone beim Fokussieren eines
+     Eingabefelds automatisches Zoomen aus. */
+  --t-zahl-xl: 4.5rem; /* 72px — die eine Zahl auf Heute */
+  --t-zahl-xl-zh: 0.9;
+  --t-zahl-l: 2.75rem; /* 44px — Makrowerte, Rang */
+  --t-zahl-l-zh: 1;
+  --t-zahl-m: 1.75rem; /* 28px — Zeilenwerte */
+  --t-zahl-m-zh: 1.1;
+  --t-titel: 1.375rem; /* 22px */
+  --t-titel-zh: 1.3;
+  --t-basis: 1rem; /* 16px */
+  --t-basis-zh: 1.5;
+  --t-klein: 0.875rem; /* 14px */
+  --t-klein-zh: 1.45;
+  --t-label: 0.75rem; /* 12px — Versalien, +0.04em */
+  --t-label-zh: 1.3;
+
+  /* ---------- Abstaende: 4px-Raster ---------- */
+  --a-1: 0.25rem;
+  --a-2: 0.5rem;
+  --a-3: 0.75rem;
+  --a-4: 1rem; /* Seitenrand am Handy */
+  --a-6: 1.5rem;
+  --a-8: 2rem; /* Abstand zwischen Abschnitten */
+  --a-12: 3rem;
+
+  /* ---------- Radien ---------- */
+  --r-s: 8px; /* Eingaben */
+  --r-m: 14px; /* Karten, Sheets */
+  --r-voll: 999px; /* Knoepfe, Marken auf Fortschrittsboegen */
+
+  /* ---------- Bewegung ---------- */
+  --dauer-schnell: 150ms;
+  --dauer-normal: 250ms;
+  --kurve-rein: cubic-bezier(0, 0, 0.2, 1); /* ease-out beim Erscheinen */
+  --kurve-raus: cubic-bezier(0.4, 0, 1, 1); /* ease-in beim Verschwinden */
+
+  /* ---------- Trefferflaechen ---------- */
+  --treffer-min: 44px; /* Minimum fuer alles Antippbare */
+
+  /* ---------- Ebenen ---------- */
+  --z-leiste: 40;
+  --z-sheet: 80;
+  --z-hinweis: 120;
+}
+
+/* Dark only. Ein Light-Theme ist eine Erweiterung fuer Stufe 3,
+   nicht ein fehlendes Feature in Stufe 1 — siehe E-38.
+   Der Browser soll seine eigenen Bedienelemente passend faerben. */
+:root {
+  color-scheme: dark;
+}
+
+/* Bewegung ist Zusatz, nie Traeger von Information.
+   Wer sie abschaltet, verliert nichts ausser Bewegung. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dauer-schnell: 1ms;
+    --dauer-normal: 1ms;
+  }
+}

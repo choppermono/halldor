@@ -1,13 +1,7 @@
-<template>
-  <main>
-    <h1>Florian Projec</h1>
-    <p>If you can see this, GitHub → Vercel → florian.halldor.ch works.</p>
-  </main>
-</template>
+<script setup>
+import HelloWorld from './components/HelloWorld.vue'
+</script>
 
-<style scoped>
-main {
-  font-family: Arial, sans-serif;
-  padding: 40px;
-}
-</style>
+<template>
+  <HelloWorld />
+</template>

@@ -1,0 +1,16 @@
+# Alle Textdateien liegen im Repository mit LF, unabhaengig vom Betriebssystem.
+# Ohne das committet ein Windows-Rechner CRLF und ein anderer LF — und Git
+# meldet dann hunderte geaenderte Zeilen, die sich nur im Zeilenende unterscheiden.
+* text=auto eol=lf
+
+# Binaerdateien nie anfassen.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Beim Diff hilfreich, beim Review nicht.
+package-lock.json -diff linguist-generated
