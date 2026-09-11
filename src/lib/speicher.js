@@ -26,7 +26,14 @@ export function leeresDokumentErzeugen() {
   // revision zaehlt jeden Schreibvorgang. Damit erkennt ein zweiter offener Tab,
   // dass er auf einem ueberholten Stand sitzt, statt ihn stillschweigend
   // zurueckzuschreiben.
-  return { version: dokumentVersion, revision: 0, profil: null, tage: {}, trainingseinheiten: [] }
+  return {
+    version: dokumentVersion,
+    revision: 0,
+    einstellungen: {},
+    profil: null,
+    tage: {},
+    trainingseinheiten: [],
+  }
 }
 
 function istObjekt(wert) {
@@ -43,6 +50,7 @@ function dokumentStatus(dokument) {
     !Number.isInteger(dokument.revision) ||
     dokument.revision < 0 ||
     !(dokument.profil === null || istObjekt(dokument.profil)) ||
+    !istObjekt(dokument.einstellungen) ||
     !istObjekt(dokument.tage) ||
     !Array.isArray(dokument.trainingseinheiten)
   ) {

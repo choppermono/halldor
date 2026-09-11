@@ -56,14 +56,17 @@
         pruefen(
           'Grundform exakt',
           JSON.stringify(leer) ===
-            '{"version":1,"revision":0,"profil":null,"tage":{},"trainingseinheiten":[]}'
+            '{"version":1,"revision":0,"einstellungen":{},"profil":null,"tage":{},"trainingseinheiten":[]}'
         )
         const anderes = leeresDokumentErzeugen()
+        anderes.einstellungen.kinoModus = 'aus'
         anderes.tage.probe = {}
         anderes.trainingseinheiten.push({})
         pruefen(
           'Leerdokumente teilen keine Referenzen',
-          Object.keys(leer.tage).length === 0 && leer.trainingseinheiten.length === 0
+          Object.keys(leer.einstellungen).length === 0 &&
+            Object.keys(leer.tage).length === 0 &&
+            leer.trainingseinheiten.length === 0
         )
         pruefen('Laden schreibt nichts', localStorage.length === 0)
         const ersterSchreibvorgang = dokumentSpeichern(leer)
@@ -94,30 +97,40 @@
           ['JSON Zahl', '42', 'fremder_inhalt'],
           ['JSON String', '"fremd"', 'fremder_inhalt'],
           ['Version als String', '{"version":"1"}', 'fremder_inhalt'],
+          [
+            'Fehlende Einstellungen',
+            JSON.stringify({ ...leer, einstellungen: undefined }),
+            'fremder_inhalt',
+          ],
+          ...[null, [], 'aus', 1, false].map((wert) => [
+            `Falscher Einstellungstyp ${JSON.stringify(wert)}`,
+            JSON.stringify({ ...leer, einstellungen: wert }),
+            'fremder_inhalt',
+          ]),
           ['Fehlende Bereiche', '{"version":1}', 'fremder_inhalt'],
           [
             'Fehlende Revision',
-            '{"version":1,"profil":null,"tage":{},"trainingseinheiten":[]}',
+            '{"version":1,"einstellungen":{},"profil":null,"tage":{},"trainingseinheiten":[]}',
             'fremder_inhalt',
           ],
           [
             'Negative Revision',
-            '{"version":1,"revision":-1,"profil":null,"tage":{},"trainingseinheiten":[]}',
+            '{"version":1,"revision":-1,"einstellungen":{},"profil":null,"tage":{},"trainingseinheiten":[]}',
             'fremder_inhalt',
           ],
           [
             'Falscher Profiltyp',
-            '{"version":1,"revision":0,"profil":[],"tage":{},"trainingseinheiten":[]}',
+            '{"version":1,"revision":0,"einstellungen":{},"profil":[],"tage":{},"trainingseinheiten":[]}',
             'fremder_inhalt',
           ],
           [
             'Falscher Tagetyp',
-            '{"version":1,"revision":0,"profil":null,"tage":[],"trainingseinheiten":[]}',
+            '{"version":1,"revision":0,"einstellungen":{},"profil":null,"tage":[],"trainingseinheiten":[]}',
             'fremder_inhalt',
           ],
           [
             'Falscher Trainingstyp',
-            '{"version":1,"revision":0,"profil":null,"tage":{},"trainingseinheiten":{}}',
+            '{"version":1,"revision":0,"einstellungen":{},"profil":null,"tage":{},"trainingseinheiten":{}}',
             'fremder_inhalt',
           ],
         ]) {
@@ -139,6 +152,13 @@
           pruefen(`${name}: Rohwert erhalten`, localStorage.getItem(schluessel) === rohwert)
         }
         localStorage.setItem(schluessel, alt)
+        for (const wert of [undefined, null, [], 'aus', 1, false]) {
+          status(
+            'Ungültige Einstellungen beim Schreiben',
+            dokumentSpeichern({ ...dokumentLaden().dokument, einstellungen: wert }),
+            'ungueltiges_dokument'
+          )
+        }
         const kreis = leeresDokumentErzeugen()
         kreis.profil = kreis
         status('Zyklisches Dokument', dokumentSpeichern(kreis), 'ungueltiges_dokument')
@@ -266,6 +286,7 @@
         status('Echt gesperrter Ursprung: Reset', gesperrtErgebnis.reset, 'nicht_verfuegbar')
         rahmen.remove()
         const dokument = dokumentLaden().dokument
+        dokument.einstellungen = { kinoModus: 'aus' }
         dokument.profil = { pruefmarke: 'synthetisch' }
         dokument.tage = { probe: { pruefmarke: 'unveraendert' } }
         dokument.trainingseinheiten = [{ pruefmarke: 'synthetisch' }]
