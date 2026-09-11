@@ -14,6 +14,7 @@ export const Speicherstatus = Object.freeze({
   // Schreiben und Zuruecksetzen
   gespeichert: 'gespeichert',
   ungueltigesDokument: 'ungueltiges_dokument',
+  veralteterStand: 'veralteter_stand',
   speicherVoll: 'speicher_voll',
   zurueckgesetzt: 'zurueckgesetzt',
   bestaetigungNoetig: 'bestaetigung_noetig',
@@ -22,7 +23,10 @@ export const Speicherstatus = Object.freeze({
 })
 
 export function leeresDokumentErzeugen() {
-  return { version: dokumentVersion, profil: null, tage: {}, trainingseinheiten: [] }
+  // revision zaehlt jeden Schreibvorgang. Damit erkennt ein zweiter offener Tab,
+  // dass er auf einem ueberholten Stand sitzt, statt ihn stillschweigend
+  // zurueckzuschreiben.
+  return { version: dokumentVersion, revision: 0, profil: null, tage: {}, trainingseinheiten: [] }
 }
 
 function istObjekt(wert) {
@@ -36,6 +40,8 @@ function dokumentStatus(dokument) {
   // Andere Versionen koennen eine andere Grundform haben.
   if (dokument.version !== dokumentVersion) return Speicherstatus.unbekannteVersion
   if (
+    !Number.isInteger(dokument.revision) ||
+    dokument.revision < 0 ||
     !(dokument.profil === null || istObjekt(dokument.profil)) ||
     !istObjekt(dokument.tage) ||
     !Array.isArray(dokument.trainingseinheiten)
@@ -72,6 +78,9 @@ export function dokumentLaden() {
   return { status, dokument: leeresDokumentErzeugen() }
 }
 
+// Bei Erfolg kommt das geschriebene Dokument zurueck -- mit der neuen Revision.
+// Der Aufrufer arbeitet ab dann mit diesem weiter, sonst weist ihn der naechste
+// Schreibversuch als veralteten Stand ab.
 export function dokumentSpeichern(dokument) {
   let rohwert
   try {
@@ -93,9 +102,22 @@ export function dokumentSpeichern(dokument) {
     return { status: bestand.status }
   }
 
+  // Hat inzwischen jemand anders geschrieben -- ein zweiter Tab, ein zweites
+  // Fenster -- dann steht dort eine hoehere Revision. Dieses Dokument wuerde
+  // die fremde Aenderung ueberschreiben, ohne dass es jemand merkt.
+  if (
+    bestand.status === Speicherstatus.geladen &&
+    bestand.dokument.revision !== dokument.revision
+  ) {
+    return { status: Speicherstatus.veralteterStand, revision: bestand.dokument.revision }
+  }
+
+  const zuSchreiben = { ...dokument, revision: dokument.revision + 1 }
+  rohwert = JSON.stringify(zuSchreiben)
+
   try {
     globalThis.localStorage.setItem(speicherSchluessel, rohwert)
-    return { status: Speicherstatus.gespeichert }
+    return { status: Speicherstatus.gespeichert, dokument: zuSchreiben }
   } catch (fehler) {
     return {
       status:
