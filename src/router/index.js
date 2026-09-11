@@ -14,7 +14,10 @@ const router = createRouter({
     { path: '/:pfad(.*)*', redirect: '/' },
   ],
   scrollBehavior(ziel, ursprung, gespeichertePosition) {
-    return gespeichertePosition ?? { top: 0 }
+    if (gespeichertePosition) return gespeichertePosition
+    // Ein Anker im Ziel schlaegt den Seitenanfang, sonst beginnt jede Seite oben.
+    if (ziel.hash) return { el: ziel.hash }
+    return { top: 0 }
   },
 })
 
