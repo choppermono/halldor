@@ -47,3 +47,43 @@ export function dokumentLaden() {
   }
   return { status, dokument: leeresDokumentErzeugen() }
 }
+
+export function dokumentSpeichern(dokument) {
+  let rohwert
+  try {
+    if (dokumentStatus(dokument) !== 'geladen') return { status: 'ungueltiges_dokument' }
+    rohwert = JSON.stringify(dokument)
+    // Auch die tatsaechlich serialisierte Grundform muss spaeter wieder lesbar sein.
+    if (dokumentStatus(JSON.parse(rohwert)) !== 'geladen') {
+      return { status: 'ungueltiges_dokument' }
+    }
+  } catch {
+    return { status: 'ungueltiges_dokument' }
+  }
+
+  // Den Bestand vor jedem Schreiben pruefen, auch ohne vorherigen Ladeaufruf.
+  const bestand = dokumentLaden()
+  if (bestand.status !== 'leer' && bestand.status !== 'geladen') {
+    return { status: bestand.status }
+  }
+
+  try {
+    globalThis.localStorage.setItem(speicherSchluessel, rohwert)
+    return { status: 'gespeichert' }
+  } catch (fehler) {
+    return {
+      status: fehler?.name === 'QuotaExceededError' ? 'speicher_voll' : 'nicht_verfuegbar',
+    }
+  }
+}
+
+export function dokumentZuruecksetzen(bestaetigt = false) {
+  // Ein automatischer Aufruf nach einem Ladefehler darf nichts loeschen.
+  if (bestaetigt !== true) return { status: 'bestaetigung_noetig' }
+  try {
+    globalThis.localStorage.removeItem(speicherSchluessel)
+    return { status: 'zurueckgesetzt', dokument: leeresDokumentErzeugen() }
+  } catch {
+    return { status: 'nicht_verfuegbar' }
+  }
+}
