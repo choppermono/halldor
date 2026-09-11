@@ -1,6 +1,6 @@
 /* ============================================================
-   Trackify — Design-Tokens
-   A1: Terminal-/Dossier-Richtung vom 2026-09-10; V0 separat archiviert.
+   ascend — Design-Tokens
+   V0-Entwurf: Terminal-/Dossier-Richtung vom 2026-09-10.
    Quelle: Vault → Projekt-1_Webapp/Planung/01-Planungsergebnisse.md
 
    Regel: In Komponenten steht NIE ein Farbwert, eine Schriftgroesse
@@ -98,24 +98,6 @@
   --spike-ring-aussen: min(74vw, 19rem);
   --spike-ring-innen: min(57vw, 14rem);
   --fokus-abstand: 3px;
-  /* ---------- A1: App-Hülle und Navigation ---------- */
-  --app-breite: 44rem;
-  --t-seitentitel: 3.5rem;
-  --t-seitentitel-zh: 1.1;
-  --label-laufweite: 0.12em;
-  --marken-laufweite: -0.03em;
-  --titel-laufweite: -0.02em;
-  --linien-breite: 1px;
-  --fokus-breite: 2px;
-  --markierungs-breite: 3px;
-  --symbol-groesse: 1.5rem;
-  --symbol-strich: 1.5;
-  /* Feste Abstände lassen vergrössertem Navigationstext mehr Platz. */
-  --navigation-abstand: 8px;
-  --navigation-rand: 16px;
-  --navigation-polster: 12px;
-  --navigation-text-rand: 4px;
-  --navigation-reserve: calc(7rem + env(safe-area-inset-bottom, 0px));
   /* ---------- Ebenen ---------- */
   --z-leiste: 40;
   --z-sheet: 80;

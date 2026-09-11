@@ -123,9 +123,11 @@ Alle Werte kommen aus `src/styles/tokens.css`. **In einer Komponente steht nie
 ein Farbwert, eine Schriftgrösse oder ein Abstand direkt.**
 
 - Dark only. Ein Light-Theme ist eine Erweiterung für Stufe 3
+- Designrichtung seit 2026-09-10: dunkles Terminal/Dossier, Elfenbein, dünne Linien, roter Akzent. Nier:Automata dient nur als Stilinspiration; keine fremden Assets oder Fonts übernehmen.
+- V0 ist ein unbestätigter Mock. Three.js und Rang-Relikte sind keine Voraussetzung für das Ernährungs-MVP. Ranglogik bleibt Stufe 3.
 - Eine Akzentfarbe. Wer eine zweite braucht, hat ein Hierarchieproblem
-- Text auf der Akzentfläche ist `--farbe-auf-akzent`, **nicht weiss**
-  (Weiss auf Orange erreicht 2.8:1 und fällt durch)
+- Text auf der roten Akzentfläche verwendet `--farbe-auf-akzent`.
+  V0: helles Elfenbein erreicht 5.09:1; der frühere dunkle Text nur 3.65:1.
 - `--farbe-text-schwach` nur ab 24 px oder fett ab 19 px — darunter zu wenig Kontrast
 - Jede Stelle mit einer sich ändernden Zahl bekommt
   `font-variant-numeric: tabular-nums`, sonst springt die Anzeige

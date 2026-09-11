@@ -1,0 +1,180 @@
+:root {
+  font-family: var(--schrift-ui);
+  color: var(--farbe-text);
+  background: var(--farbe-grund);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  min-width: 320px;
+  min-height: 100svh;
+  margin: 0;
+}
+button {
+  min-height: var(--treffer-min);
+  border: 1px solid var(--farbe-linie-stark);
+  background: color-mix(in srgb, var(--farbe-flaeche) 84%, transparent);
+  color: var(--farbe-text);
+  cursor: pointer;
+  font: 500 var(--t-label) / var(--t-label-zh) var(--schrift-ui);
+  letter-spacing: var(--spike-titel-laufweite);
+  text-transform: uppercase;
+  transition:
+    background var(--dauer-normal) var(--kurve-rein),
+    border-color var(--dauer-normal) var(--kurve-rein);
+}
+button:hover:not(:disabled) {
+  border-color: var(--farbe-relikt-warm);
+  background: var(--farbe-flaeche-hell);
+}
+button:focus-visible {
+  outline: 2px solid var(--farbe-akzent);
+  outline-offset: var(--fokus-abstand);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.spike {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: var(--a-6) var(--a-4);
+  isolation: isolate;
+}
+.konsole {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--spike-breite));
+  padding: var(--a-6);
+  border: 1px solid var(--farbe-linie);
+  background: color-mix(in srgb, var(--farbe-flaeche) 92%, transparent);
+  box-shadow: var(--spike-schatten);
+}
+.konsole::before,
+.konsole::after {
+  position: absolute;
+  width: var(--spike-ecke);
+  height: var(--spike-ecke);
+  content: '';
+}
+.konsole::before {
+  top: var(--a-3);
+  left: var(--a-3);
+  border-top: 1px solid var(--farbe-linie-stark);
+  border-left: 1px solid var(--farbe-linie-stark);
+}
+.konsole::after {
+  right: var(--a-3);
+  bottom: var(--a-3);
+  border-right: 1px solid var(--farbe-linie-stark);
+  border-bottom: 1px solid var(--farbe-linie-stark);
+}
+.kopf {
+  text-align: center;
+}
+.system-label,
+.hinweis,
+.rang-daten p,
+.steuerung span {
+  margin: 0;
+  color: var(--farbe-text-leise);
+  font: 500 var(--t-label) / var(--t-label-zh) var(--schrift-zahl);
+  letter-spacing: var(--spike-label-laufweite);
+  text-transform: uppercase;
+}
+.system-label span {
+  color: var(--farbe-akzent);
+}
+h1,
+h2,
+.erklaerung {
+  margin: 0;
+}
+h1 {
+  margin-top: var(--a-2);
+  font: 500 var(--spike-titel) / var(--spike-titel-zh) var(--schrift-display);
+  letter-spacing: var(--spike-titel-laufweite);
+  text-transform: uppercase;
+}
+.erklaerung {
+  max-width: var(--spike-breite);
+  margin: var(--a-3) auto 0;
+  color: var(--farbe-text-leise);
+  font-size: var(--t-klein);
+  line-height: var(--t-klein-zh);
+}
+.rang-buehne {
+  position: relative;
+  display: grid;
+  min-height: var(--spike-buehne-hoehe);
+  margin-top: var(--a-4);
+  place-items: center;
+}
+.rahmen {
+  position: absolute;
+  border: 1px solid var(--farbe-linie);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.rahmen-aussen {
+  width: var(--spike-ring-aussen);
+  aspect-ratio: 1;
+}
+.rahmen-innen {
+  width: var(--spike-ring-innen);
+  aspect-ratio: 1;
+  border-color: color-mix(in srgb, var(--farbe-linie-stark) 62%, transparent);
+}
+.rang-daten {
+  border-top: 1px solid var(--farbe-linie);
+  border-bottom: 1px solid var(--farbe-linie);
+  padding: var(--a-3) 0;
+  text-align: center;
+}
+.rang-daten h2 {
+  margin: var(--a-1) 0;
+  color: var(--farbe-relikt-hell);
+  font: 500 var(--t-zahl-l) / var(--t-zahl-l-zh) var(--schrift-display);
+  letter-spacing: var(--spike-rang-laufweite);
+  text-transform: uppercase;
+}
+.steuerung {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--a-2);
+  align-items: center;
+  margin-top: var(--a-4);
+}
+.steuerung button:last-child {
+  grid-column: 3;
+}
+.hinweis {
+  margin-top: var(--a-3);
+  color: var(--farbe-text-schwach);
+  text-align: center;
+}
+@media (max-width: 23.5rem) {
+  .konsole {
+    padding: var(--a-4);
+  }
+  .steuerung {
+    grid-template-columns: 1fr 1fr;
+  }
+  .steuerung span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: center;
+  }
+  .steuerung button:last-child {
+    grid-column: 2;
+  }
+}
+
+.steuerung span {
+  font-variant-numeric: tabular-nums;
+}
