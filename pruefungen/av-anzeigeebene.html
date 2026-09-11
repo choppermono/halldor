@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="de">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AV Browserprüfung</title>
+  <h1>AV Browserprüfung</h1>
+  <p>
+    Nur auf einem leeren Testursprung ausführen. Browserbedingungen werden gezielt simuliert; die
+    Prüfungen greifen auf die echten Projektmodule zu.
+  </p>
+  <pre id="ergebnis">Prüfung läuft</pre>
+  <script type="module">
+    import { bildrateMessen } from '/src/lib/anzeigebedingungen.js'
+    import {
+      anzeigeebeneStarten,
+      anzeigeebeneBeenden,
+      useAnzeigeebene,
+    } from '/src/composables/useAnzeigeebene.js'
+    import { dokumentLaden, dokumentSpeichern, dokumentZuruecksetzen } from '/src/lib/speicher.js'
+
+    const ausgabe = document.querySelector('#ergebnis')
+    const zeilen = []
+    function pruefen(name, bedingung) {
+      zeilen.push(`${bedingung ? 'BESTANDEN' : 'FEHLER'}: ${name}`)
+      ausgabe.textContent = zeilen.join('\n')
+      if (!bedingung) throw new Error(name)
+    }
+    const original = {
+      request: window.requestAnimationFrame,
+      cancel: window.cancelAnimationFrame,
+      media: window.matchMedia,
+      kontext: OffscreenCanvas.prototype.getContext,
+      sichtbarkeit: Object.getOwnPropertyDescriptor(document, 'visibilityState'),
+      setzen: Storage.prototype.setItem,
+    }
+    let testBegonnen = false
+    let zeit = 0
+    let kennung = 0
+    const auftraege = new Map()
+    const bewegung = new EventTarget()
+    bewegung.matches = false
+    function bild(abstand = 20) {
+      zeit += abstand
+      const wartend = [...auftraege.values()]
+      auftraege.clear()
+      wartend.forEach((funktion) => funktion(zeit))
+    }
+    function sekunden(anzahl, fps) {
+      for (let i = 0; i < anzahl * fps; i++) bild(1000 / fps)
+    }
+    function bewegungSetzen(reduziert) {
+      bewegung.matches = reduziert
+      bewegung.dispatchEvent(new Event('change'))
+    }
+    function sichtbarSetzen(sichtbar) {
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        value: sichtbar ? 'visible' : 'hidden',
+      })
+      document.dispatchEvent(new Event('visibilitychange'))
+    }
+    try {
+      if (localStorage.length || sessionStorage.length)
+        throw new Error('Ursprung enthält Daten; ohne Änderung abgebrochen.')
+      testBegonnen = true
+      window.requestAnimationFrame = (funktion) => {
+        auftraege.set(++kennung, funktion)
+        return kennung
+      }
+      window.cancelAnimationFrame = (nummer) => auftraege.delete(nummer)
+      for (const fps of [30, 44, 45, 60, 120]) {
+        let meldungen = 0
+        const beenden = bildrateMessen(() => meldungen++)
+        bild()
+        sekunden(2, fps)
+        pruefen(`${fps} fps: vor drei Sekunden keine Abschaltung`, meldungen === 0)
+        sekunden(2, fps)
+        pruefen(`${fps} fps: Grenze unter 45`, meldungen === (fps < 45 ? 1 : 0))
+        beenden()
+        pruefen(`${fps} fps: keine übrig gebliebenen Aufträge`, auftraege.size === 0)
+      }
+      let meldungen = 0
+      const beenden = bildrateMessen(() => meldungen++)
+      bild()
+      sekunden(2, 30)
+      sekunden(2, 60)
+      sekunden(2, 30)
+      pruefen('Erholung unterbricht die drei langsamen Sekunden', meldungen === 0)
+      sekunden(2, 30)
+      pruefen(
+        'Erneute dauerhafte Schwäche meldet genau einmal',
+        meldungen === 1 && auftraege.size === 0
+      )
+      beenden()
+
+      window.matchMedia = () => bewegung
+      OffscreenCanvas.prototype.getContext = () => ({ getExtension: () => ({ loseContext() {} }) })
+      sichtbarSetzen(true)
+      anzeigeebeneStarten()
+      const { zustand, anzeigeebeneAktiv, modusWaehlen } = useAnzeigeebene()
+      pruefen(
+        'Standard automatisch und aktiv',
+        zustand.modus === 'automatisch' && anzeigeebeneAktiv.value
+      )
+      pruefen('Initialisierung schreibt nichts', localStorage.length === 0)
+      pruefen(
+        'Alle Verbraucher teilen Zustand und Ableitung',
+        useAnzeigeebene().zustand === zustand &&
+          useAnzeigeebene().anzeigeebeneAktiv === anzeigeebeneAktiv
+      )
+      anzeigeebeneStarten()
+      pruefen('Mehrfacher Start erzeugt nur einen Messauftrag', auftraege.size === 1)
+      modusWaehlen('aus')
+      pruefen(
+        'Aus deaktiviert und beendet Messung',
+        !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      modusWaehlen('ungültig')
+      pruefen('Ungültige Auswahl bleibt wirkungslos', zustand.modus === 'aus')
+      modusWaehlen('automatisch')
+      bewegungSetzen(true)
+      pruefen(
+        'Reduzierte Bewegung wirkt zur Laufzeit',
+        !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      modusWaehlen('an')
+      pruefen('An übersteuert reduzierte Bewegung', anzeigeebeneAktiv.value && auftraege.size === 1)
+      sichtbarSetzen(false)
+      pruefen(
+        'Hintergrund pausiert auch An und beendet Messung',
+        !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      sekunden(10, 5)
+      sichtbarSetzen(true)
+      pruefen(
+        'Rückkehr startet frisch ohne Herunterstufung',
+        anzeigeebeneAktiv.value && !zustand.heruntergestuft
+      )
+      bewegungSetzen(false)
+      modusWaehlen('automatisch')
+      bild()
+      sekunden(4, 30)
+      pruefen(
+        '30 fps schalten automatisch ab und beenden sich selbst',
+        zustand.heruntergestuft && !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      bewegungSetzen(true)
+      bewegungSetzen(false)
+      sichtbarSetzen(false)
+      sichtbarSetzen(true)
+      pruefen(
+        'Herunterstufung bleibt in derselben Sitzung bestehen',
+        !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      modusWaehlen('an')
+      pruefen(
+        'An übersteuert Herunterstufung ohne neue Messschleife',
+        anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      modusWaehlen('automatisch')
+      pruefen('Zurück auf automatisch hebt Herunterstufung nicht auf', !anzeigeebeneAktiv.value)
+      pruefen(
+        'Nur der Modus wird gespeichert',
+        JSON.stringify(dokumentLaden().dokument.einstellungen) === '{"kinoModus":"automatisch"}'
+      )
+      const fremd = dokumentLaden().dokument
+      fremd.profil = { pruefmarke: 'anderer Verbraucher' }
+      fremd.einstellungen.sonstiges = 123
+      dokumentSpeichern(fremd)
+      modusWaehlen('aus')
+      pruefen(
+        'Modusänderung erhält neue fremde Bereiche und Einstellungen',
+        dokumentLaden().dokument.profil.pruefmarke === 'anderer Verbraucher' &&
+          dokumentLaden().dokument.einstellungen.sonstiges === 123
+      )
+      const vorher = localStorage.getItem('trackify')
+      Storage.prototype.setItem = () => {
+        throw new DOMException('Test', 'QuotaExceededError')
+      }
+      modusWaehlen('an')
+      pruefen(
+        'Schreibfehler: Auswahl wirkt, Hinweis sichtbar verfügbar, Bestand erhalten',
+        zustand.modus === 'an' &&
+          zustand.speicherHinweis.includes('voll') &&
+          localStorage.getItem('trackify') === vorher
+      )
+      Storage.prototype.setItem = original.setzen
+      modusWaehlen('aus')
+      pruefen('Erfolgreiches Speichern entfernt Fehlerhinweis', zustand.speicherHinweis === '')
+      localStorage.setItem('trackify', '{kaputt')
+      modusWaehlen('an')
+      pruefen(
+        'Kaputte Daten werden nicht überschrieben',
+        localStorage.getItem('trackify') === '{kaputt' &&
+          zustand.speicherHinweis.includes('unverändert')
+      )
+      dokumentZuruecksetzen(true)
+      anzeigeebeneBeenden()
+      OffscreenCanvas.prototype.getContext = () => null
+      anzeigeebeneStarten()
+      modusWaehlen('an')
+      pruefen(
+        'Fehlendes WebGL bleibt auch bei An ruhig',
+        !anzeigeebeneAktiv.value && !zustand.webgl && auftraege.size === 0
+      )
+      anzeigeebeneBeenden()
+      pruefen('Entfernen beendet sämtliche Messaufträge', auftraege.size === 0)
+      zeilen.push('ABSCHLUSS: Alle AV-Modulprüfungen bestanden.')
+    } catch (fehler) {
+      zeilen.push('ABBRUCH: ' + fehler.stack)
+    } finally {
+      if (testBegonnen) {
+        anzeigeebeneBeenden()
+        window.requestAnimationFrame = original.request
+        window.cancelAnimationFrame = original.cancel
+        window.matchMedia = original.media
+        OffscreenCanvas.prototype.getContext = original.kontext
+        Storage.prototype.setItem = original.setzen
+        if (original.sichtbarkeit)
+          Object.defineProperty(document, 'visibilityState', original.sichtbarkeit)
+        else delete document.visibilityState
+        dokumentZuruecksetzen(true)
+      }
+      ausgabe.textContent = zeilen.join('\n')
+    }
+  </script>
+</html>
