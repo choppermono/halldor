@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="de">
+  <meta charset="utf-8" />
+  <title>A2 Browserprüfung</title>
+  <h1>A2 Browserprüfung</h1>
+  <pre id="ergebnis">Prüfung läuft</pre>
+  <button id="neuladen" hidden>Neuladen prüfen und aufräumen</button>
+  <script type="module">
+    import {
+      leeresDokumentErzeugen,
+      dokumentLaden,
+      dokumentSpeichern,
+      dokumentZuruecksetzen,
+    } from '/src/lib/speicher.js'
+    const ausgabe = document.querySelector('#ergebnis')
+    const schluessel = 'trackify'
+    const protokollSchluessel = 'a2-pruefprotokoll'
+    const erwartungSchluessel = 'a2-erwartung'
+    const zeilen = []
+    function pruefen(name, bedingung) {
+      zeilen.push(`${bedingung ? 'BESTANDEN' : 'FEHLER'}: ${name}`)
+      ausgabe.textContent = zeilen.join('\n')
+      if (!bedingung) throw new Error(name)
+    }
+    function status(name, ist, soll) {
+      pruefen(`${name} -> ${soll}`, ist.status === soll)
+    }
+    try {
+      const vorher = sessionStorage.getItem(protokollSchluessel)
+      if (vorher !== null) {
+        zeilen.push(...JSON.parse(vorher))
+        const erwartet = sessionStorage.getItem(erwartungSchluessel)
+        status('Nach echtem Reload laden', dokumentLaden(), 'geladen')
+        pruefen(
+          'Reload erhält gesamtes Dokument unverändert',
+          JSON.stringify(dokumentLaden().dokument) === erwartet
+        )
+        pruefen('Reload erhält Rohwert bytegleich', localStorage.getItem(schluessel) === erwartet)
+        status('Explizit zurücksetzen', dokumentZuruecksetzen(true), 'zurueckgesetzt')
+        status('Nach Reset leer', dokumentLaden(), 'leer')
+        pruefen('Reset erhält fremden Schlüssel', localStorage.getItem('a2-fremd') === 'pruefmarke')
+        localStorage.removeItem('a2-fremd')
+        sessionStorage.removeItem(protokollSchluessel)
+        sessionStorage.removeItem(erwartungSchluessel)
+        pruefen(
+          'Testdaten vollständig aufgeräumt',
+          localStorage.length === 0 && sessionStorage.length === 0
+        )
+        zeilen.push('ABSCHLUSS: Alle Browserprüfungen bestanden; Ursprung wieder leer.')
+        ausgabe.textContent = zeilen.join('\n')
+      } else {
+        if (localStorage.length !== 0 || sessionStorage.length !== 0)
+          throw new Error('Ursprung enthält vorhandene Daten; Test abgebrochen ohne Änderung')
+        const leer = leeresDokumentErzeugen()
+        status('Leerer Speicher', dokumentLaden(), 'leer')
+        pruefen(
+          'Grundform exakt',
+          JSON.stringify(leer) ===
+            '{"version":1,"revision":0,"profil":null,"tage":{},"trainingseinheiten":[]}'
+        )
+        const anderes = leeresDokumentErzeugen()
+        anderes.tage.probe = {}
+        anderes.trainingseinheiten.push({})
+        pruefen(
+          'Leerdokumente teilen keine Referenzen',
+          Object.keys(leer.tage).length === 0 && leer.trainingseinheiten.length === 0
+        )
+        pruefen('Laden schreibt nichts', localStorage.length === 0)
+        const ersterSchreibvorgang = dokumentSpeichern(leer)
+        status('Erstes Speichern', ersterSchreibvorgang, 'gespeichert')
+        pruefen('Speichern zählt die Revision hoch', ersterSchreibvorgang.dokument.revision === 1)
+        status('Gültig laden', dokumentLaden(), 'geladen')
+        pruefen(
+          'Veralteter Stand wird abgewiesen',
+          dokumentSpeichern(leer).status === 'veralteter_stand'
+        )
+        pruefen(
+          'Abgewiesener Schreibvorgang meldet die gefundene Revision',
+          dokumentSpeichern(leer).revision === 1
+        )
+        pruefen(
+          'Veralteter Schreibvorgang ändert nichts',
+          JSON.parse(localStorage.getItem(schluessel)).revision === 1
+        )
+        const alt = localStorage.getItem(schluessel)
+        for (const [name, rohwert, erwartet] of [
+          ['Neuere Version', '{"version":2}', 'unbekannte_version'],
+          ['Ältere unbekannte Version', '{"version":0}', 'unbekannte_version'],
+          ['Kaputtes JSON', '{kaputt', 'kaputtes_json'],
+          ['Leerer Rohwert', '', 'kaputtes_json'],
+          ['Fremdes Objekt', '{"fremd":true}', 'fremder_inhalt'],
+          ['JSON null', 'null', 'fremder_inhalt'],
+          ['JSON Array', '[]', 'fremder_inhalt'],
+          ['JSON Zahl', '42', 'fremder_inhalt'],
+          ['JSON String', '"fremd"', 'fremder_inhalt'],
+          ['Version als String', '{"version":"1"}', 'fremder_inhalt'],
+          ['Fehlende Bereiche', '{"version":1}', 'fremder_inhalt'],
+          [
+            'Fehlende Revision',
+            '{"version":1,"profil":null,"tage":{},"trainingseinheiten":[]}',
+            'fremder_inhalt',
+          ],
+          [
+            'Negative Revision',
+            '{"version":1,"revision":-1,"profil":null,"tage":{},"trainingseinheiten":[]}',
+            'fremder_inhalt',
+          ],
+          [
+            'Falscher Profiltyp',
+            '{"version":1,"revision":0,"profil":[],"tage":{},"trainingseinheiten":[]}',
+            'fremder_inhalt',
+          ],
+          [
+            'Falscher Tagetyp',
+            '{"version":1,"revision":0,"profil":null,"tage":[],"trainingseinheiten":[]}',
+            'fremder_inhalt',
+          ],
+          [
+            'Falscher Trainingstyp',
+            '{"version":1,"revision":0,"profil":null,"tage":{},"trainingseinheiten":{}}',
+            'fremder_inhalt',
+          ],
+        ]) {
+          localStorage.setItem(schluessel, rohwert)
+          const geladen = dokumentLaden()
+          status(name, geladen, erwartet)
+          pruefen(
+            `${name}: benutzbare leere Grundform`,
+            JSON.stringify(geladen.dokument) === JSON.stringify(leer)
+          )
+          if (erwartet === 'unbekannte_version')
+            pruefen(`${name}: Version gemeldet`, geladen.version === JSON.parse(rohwert).version)
+          status(`${name}: Schreiben gesperrt`, dokumentSpeichern(leer), erwartet)
+          status(
+            `${name}: Reset ohne Bestätigung gesperrt`,
+            dokumentZuruecksetzen(),
+            'bestaetigung_noetig'
+          )
+          pruefen(`${name}: Rohwert erhalten`, localStorage.getItem(schluessel) === rohwert)
+        }
+        localStorage.setItem(schluessel, alt)
+        const kreis = leeresDokumentErzeugen()
+        kreis.profil = kreis
+        status('Zyklisches Dokument', dokumentSpeichern(kreis), 'ungueltiges_dokument')
+        status('Ungültige Eingabe', dokumentSpeichern({}), 'ungueltiges_dokument')
+        const unlesbarSerialisiert = leeresDokumentErzeugen()
+        unlesbarSerialisiert.toJSON = () => ({})
+        status(
+          'Ungültige serialisierte Form',
+          dokumentSpeichern(unlesbarSerialisiert),
+          'ungueltiges_dokument'
+        )
+        pruefen('Ungültige Eingaben erhalten Bestand', localStorage.getItem(schluessel) === alt)
+        // Deterministisch: ein Quotenfehler muss als speicher_voll ankommen.
+        const echtesSetItem = Storage.prototype.setItem
+        try {
+          Storage.prototype.setItem = function () {
+            throw new DOMException('Prüfung', 'QuotaExceededError')
+          }
+          status(
+            'Quotenfehler meldet speicher_voll',
+            dokumentSpeichern(dokumentLaden().dokument),
+            'speicher_voll'
+          )
+        } finally {
+          Storage.prototype.setItem = echtesSetItem
+        }
+        pruefen('Quotenfehler erhält Bestand', localStorage.getItem(schluessel) === alt)
+
+        // Zusätzlich mit der echten Quote. Wie gross die ist, entscheidet der
+        // Browser; deshalb wird sie ertastet statt angenommen.
+        let belegteMi = 0
+        try {
+          for (; belegteMi < 64; belegteMi++) {
+            localStorage.setItem('a2-quotenprobe-' + belegteMi, 'x'.repeat(1024 * 1024))
+          }
+        } catch {
+          // Quote erreicht; die Anzahl steht in belegteMi.
+        }
+        for (let i = 0; i <= belegteMi; i++) localStorage.removeItem('a2-quotenprobe-' + i)
+        if (belegteMi >= 64) {
+          zeilen.push('ÜBERSPRUNGEN: echte Quote bis 64 Mi Zeichen nicht erreicht')
+          ausgabe.textContent = zeilen.join('\n')
+        } else {
+          const gross = dokumentLaden().dokument
+          gross.profil = { prueftext: 'x'.repeat((belegteMi + 2) * 1024 * 1024) }
+          status(
+            `Echte Quote überschritten (ab etwa ${belegteMi} Mi Zeichen)`,
+            dokumentSpeichern(gross),
+            'speicher_voll'
+          )
+          pruefen('Voller Speicher erhält Bestand', localStorage.getItem(schluessel) === alt)
+        }
+        const aktuell = dokumentLaden().dokument
+        const beschreibung = Object.getOwnPropertyDescriptor(window, 'localStorage')
+        try {
+          Object.defineProperty(window, 'localStorage', {
+            configurable: true,
+            get() {
+              throw new DOMException('Prüfung', 'SecurityError')
+            },
+          })
+          status('Werfender Speicher-Getter', dokumentLaden(), 'nicht_verfuegbar')
+          status('Werfender Getter: Speichern', dokumentSpeichern(aktuell), 'nicht_verfuegbar')
+          status('Werfender Getter: Reset', dokumentZuruecksetzen(true), 'nicht_verfuegbar')
+        } finally {
+          Object.defineProperty(window, 'localStorage', beschreibung)
+        }
+        const setzen = Storage.prototype.setItem
+        const holen = Storage.prototype.getItem
+        const entfernen = Storage.prototype.removeItem
+        try {
+          Storage.prototype.setItem = function () {
+            throw new DOMException('Prüfung', 'SecurityError')
+          }
+          status(
+            'Lesen möglich, Schreiben blockiert',
+            dokumentSpeichern(aktuell),
+            'nicht_verfuegbar'
+          )
+          Storage.prototype.getItem = function () {
+            throw new DOMException('Prüfung', 'SecurityError')
+          }
+          status('getItem blockiert', dokumentLaden(), 'nicht_verfuegbar')
+          Storage.prototype.removeItem = function () {
+            throw new DOMException('Prüfung', 'SecurityError')
+          }
+          status('removeItem blockiert', dokumentZuruecksetzen(true), 'nicht_verfuegbar')
+        } finally {
+          Storage.prototype.setItem = setzen
+          Storage.prototype.getItem = holen
+          Storage.prototype.removeItem = entfernen
+        }
+        pruefen('Blockierte Zugriffe erhalten Bestand', localStorage.getItem(schluessel) === alt)
+        const quelltext = await (await fetch('/src/lib/speicher.js')).text()
+        const rahmen = document.createElement('iframe')
+        rahmen.setAttribute('sandbox', 'allow-scripts')
+        const gesperrt = new Promise((resolve, reject) => {
+          const zeitlimit = setTimeout(() => reject(new Error('Sandbox ohne Antwort')), 10000)
+          function antwort(ereignis) {
+            if (ereignis.source !== rahmen.contentWindow || ereignis.data?.kennung !== 'a2-sandbox')
+              return
+            clearTimeout(zeitlimit)
+            window.removeEventListener('message', antwort)
+            resolve(ereignis.data)
+          }
+          window.addEventListener('message', antwort)
+        })
+        rahmen.srcdoc =
+          '<!doctype html><script type="module">' +
+          quelltext +
+          '\nlet fehlername; try { globalThis.localStorage } catch (fehler) { fehlername = fehler.name }; parent.postMessage({kennung: "a2-sandbox", fehlername, laden: dokumentLaden(), speichern: dokumentSpeichern(leeresDokumentErzeugen()), reset: dokumentZuruecksetzen(true)}, "*")</scr' +
+          'ipt>'
+        document.body.append(rahmen)
+        const gesperrtErgebnis = await gesperrt
+        pruefen(
+          'Browser verweigert Speicher im Sandbox-Ursprung tatsächlich',
+          gesperrtErgebnis.fehlername === 'SecurityError'
+        )
+        status('Echt gesperrter Ursprung: Laden', gesperrtErgebnis.laden, 'nicht_verfuegbar')
+        status(
+          'Echt gesperrter Ursprung: Speichern',
+          gesperrtErgebnis.speichern,
+          'nicht_verfuegbar'
+        )
+        status('Echt gesperrter Ursprung: Reset', gesperrtErgebnis.reset, 'nicht_verfuegbar')
+        rahmen.remove()
+        const dokument = dokumentLaden().dokument
+        dokument.profil = { pruefmarke: 'synthetisch' }
+        dokument.tage = { probe: { pruefmarke: 'unveraendert' } }
+        dokument.trainingseinheiten = [{ pruefmarke: 'synthetisch' }]
+        const geschrieben = dokumentSpeichern(dokument)
+        status('Gesamtdokument mit synthetischen Bereichen', geschrieben, 'gespeichert')
+        pruefen(
+          'Inhalte werden ohne Fachprüfung durchgereicht',
+          JSON.stringify(dokumentLaden().dokument) === JSON.stringify(geschrieben.dokument)
+        )
+        pruefen(
+          'Genau ein App-Schlüssel',
+          localStorage.length === 1 && localStorage.key(0) === schluessel
+        )
+        localStorage.setItem('a2-fremd', 'pruefmarke')
+        status(
+          'Reset mit String statt true gesperrt',
+          dokumentZuruecksetzen('true'),
+          'bestaetigung_noetig'
+        )
+        sessionStorage.setItem(protokollSchluessel, JSON.stringify(zeilen))
+        sessionStorage.setItem(erwartungSchluessel, JSON.stringify(geschrieben.dokument))
+        const knopf = document.querySelector('#neuladen')
+        knopf.hidden = false
+        knopf.onclick = () => location.reload()
+        zeilen.push('BEREIT: Jetzt echten Reload auslösen.')
+        ausgabe.textContent = zeilen.join('\n')
+      }
+    } catch (fehler) {
+      ausgabe.textContent += '\nABBRUCH: ' + fehler.stack
+    }
+  </script>
+</html>
