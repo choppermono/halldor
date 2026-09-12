@@ -34,7 +34,7 @@ defineProps({ ergebnis: { type: Object, required: true } })
       <p>{{ ergebnis.meldung }}</p>
       <p v-if="ergebnis.hoechsteRateProzent !== undefined">
         <template v-if="ergebnis.hoechsteRateProzent !== null"
-          >Rechnerisch höchste Rate: {{ zahl(ergebnis.hoechsteRateProzent, 6) }} % pro
+          >Rechnerisch höchste Rate: {{ zahl(ergebnis.hoechsteRateProzent, 2) }} % pro
           Woche.</template
         >
         <template v-else>Auch ohne Defizit passen die Makros nicht in den Kalorienrahmen.</template>
