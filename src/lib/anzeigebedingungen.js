@@ -1,7 +1,12 @@
-// Eine kurze Kontextprobe ohne DOM, Zeichnung oder dauerhaft belegte GPU-Ressourcen.
+// Eine kurze Kontextprobe ohne Zeichnung und ohne dauerhaft belegte GPU-Ressourcen.
+// OffscreenCanvas gibt es nicht ueberall (Safari erst ab 16.4); fehlt es, wuerde
+// die Probe sonst "kein WebGL" melden, obwohl WebGL funktioniert.
 export function webglVerfuegbar() {
   try {
-    const probe = new OffscreenCanvas(1, 1)
+    const probe =
+      typeof OffscreenCanvas === 'function'
+        ? new OffscreenCanvas(1, 1)
+        : document.createElement('canvas')
     const kontext = probe.getContext('webgl2') || probe.getContext('webgl')
     if (!kontext) return false
     kontext.getExtension('WEBGL_lose_context')?.loseContext()
@@ -12,9 +17,17 @@ export function webglVerfuegbar() {
   }
 }
 
+// Abstaende darueber sind keine Langsamkeit, sondern eine Pause: ein verdecktes
+// Fenster, ein anderer Tab, ein zugeklappter Laptop. Der Browser zeichnet dann
+// gar nicht und liefert beim naechsten Bild einen Sprung von Sekunden. Unterhalb
+// von vier Bildern je Sekunde laesst sich beides nicht mehr unterscheiden; im
+// Zweifel behalten wir die Wahl des Nutzers, statt ihm die Effekte wegzunehmen.
+const maximalerBildabstand = 250
+
 export function bildrateMessen(beiLangsamerBildrate) {
   let bildAuftrag = null
   let fensterStart = null
+  let vorherigesBild = null
   let bilder = 0
   let langsameFenster = 0
   let beendet = false
@@ -28,7 +41,15 @@ export function bildrateMessen(beiLangsamerBildrate) {
   function bildMessen(zeit) {
     bildAuftrag = null
     if (beendet) return
-    if (fensterStart === null) {
+    const abstand = vorherigesBild === null ? 0 : zeit - vorherigesBild
+    vorherigesBild = zeit
+    if (abstand > maximalerBildabstand) {
+      // Ueber diese Pause wissen wir nichts. Das laufende Fenster ist wertlos,
+      // und die bisherige Serie ebenso: frisch anfangen statt falsch schliessen.
+      fensterStart = zeit
+      bilder = 0
+      langsameFenster = 0
+    } else if (fensterStart === null) {
       fensterStart = zeit
     } else {
       bilder += 1

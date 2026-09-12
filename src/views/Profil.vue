@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useAnzeigeebene } from '../composables/useAnzeigeebene.js'
 
 defineOptions({ name: 'ProfilAnsicht' })
-const { zustand, anzeigeebeneAktiv, modusWaehlen } = useAnzeigeebene()
+const { zustand, anzeigeebeneAktiv, webglAktiv, modusWaehlen } = useAnzeigeebene()
 const auswahl = [
   {
     wert: 'automatisch',
@@ -28,15 +28,19 @@ const erklaerung = computed(() => {
   if (!zustand.bereit) return 'Die Darstellung wird vorbereitet.'
   if (zustand.modus === 'aus') return 'Die ruhige Darstellung ist von dir gewählt.'
   if (!zustand.tabSichtbar) return 'Pausiert, solange dieser Tab im Hintergrund ist.'
-  if (!zustand.webgl)
-    return 'Dein Browser stellt die benötigte Grafikfunktion nicht bereit. Die ruhige Darstellung bleibt verfügbar.'
   if (zustand.modus === 'an') return 'Die Anzeigeebene ist ausdrücklich eingeschaltet.'
   if (zustand.reduzierteBewegung)
     return 'Automatisch ausgeschaltet: Du hast reduzierte Bewegung eingestellt.'
   if (zustand.heruntergestuft)
-    return 'Automatisch ausgeschaltet: Die Bildrate war zu niedrig. Die Ruhefassung gilt bis zum Neuladen; mit „An“ kannst du sie übersteuern.'
+    return 'Automatisch ausgeschaltet: Die Bildrate war zu niedrig. Wähle erneut, um es noch einmal zu versuchen.'
   return 'Dein Gerät und deine Bewegungseinstellung erlauben die Anzeigeebene.'
 })
+// Fehlendes WebGL nimmt nur die 3D-Szenen, nicht die Effekte aus CSS und JS.
+const dreidHinweis = computed(() =>
+  zustand.bereit && !zustand.webgl
+    ? 'Dein Browser stellt keine 3D-Grafik bereit. Effekte ohne 3D bleiben verfügbar.'
+    : ''
+)
 </script>
 
 <template>
@@ -84,9 +88,11 @@ const erklaerung = computed(() => {
       </fieldset>
       <div class="kino-status" role="status" aria-live="polite" aria-atomic="true">
         <p class="system-label">
-          {{ anzeigeebeneAktiv ? 'Anzeigeebene aktiv' : 'Ruhefassung aktiv' }}
+          {{ anzeigeebeneAktiv ? 'Anzeigeebene aktiv' : 'Ruhefassung aktiv'
+          }}<span v-if="anzeigeebeneAktiv"> · {{ webglAktiv ? '3D bereit' : 'ohne 3D' }}</span>
         </p>
         <p>{{ erklaerung }}</p>
+        <p v-if="dreidHinweis">{{ dreidHinweis }}</p>
       </div>
       <p class="speicher-hinweis" role="status" aria-live="polite">{{ zustand.speicherHinweis }}</p>
       <p class="kino-fussnote">

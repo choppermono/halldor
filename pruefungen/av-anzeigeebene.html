@@ -97,7 +97,7 @@
       OffscreenCanvas.prototype.getContext = () => ({ getExtension: () => ({ loseContext() {} }) })
       sichtbarSetzen(true)
       anzeigeebeneStarten()
-      const { zustand, anzeigeebeneAktiv, modusWaehlen } = useAnzeigeebene()
+      const { zustand, anzeigeebeneAktiv, webglAktiv, modusWaehlen } = useAnzeigeebene()
       pruefen(
         'Standard automatisch und aktiv',
         zustand.modus === 'automatisch' && anzeigeebeneAktiv.value
@@ -124,7 +124,8 @@
         !anzeigeebeneAktiv.value && auftraege.size === 0
       )
       modusWaehlen('an')
-      pruefen('An übersteuert reduzierte Bewegung', anzeigeebeneAktiv.value && auftraege.size === 1)
+      // «An» misst nicht: eine Herunterstufung koennte dort nichts bewirken.
+      pruefen('An übersteuert reduzierte Bewegung', anzeigeebeneAktiv.value && auftraege.size === 0)
       sichtbarSetzen(false)
       pruefen(
         'Hintergrund pausiert auch An und beendet Messung',
@@ -158,7 +159,12 @@
         anzeigeebeneAktiv.value && auftraege.size === 0
       )
       modusWaehlen('automatisch')
-      pruefen('Zurück auf automatisch hebt Herunterstufung nicht auf', !anzeigeebeneAktiv.value)
+      // Eine erneute Moduswahl ist ein ausdruecklicher zweiter Versuch: die
+      // Herunterstufung faellt und es wird wieder gemessen.
+      pruefen(
+        'Zurück auf automatisch ist ein neuer Versuch und misst wieder',
+        anzeigeebeneAktiv.value && !zustand.heruntergestuft && auftraege.size === 1
+      )
       pruefen(
         'Nur der Modus wird gespeichert',
         JSON.stringify(dokumentLaden().dokument.einstellungen) === '{"kinoModus":"automatisch"}'
@@ -199,9 +205,11 @@
       OffscreenCanvas.prototype.getContext = () => null
       anzeigeebeneStarten()
       modusWaehlen('an')
+      // Fehlendes WebGL nimmt nur die 3D-Szenen. Startsequenz, Glyphen und
+      // Film-Auflage sind CSS und JS und laufen weiter.
       pruefen(
-        'Fehlendes WebGL bleibt auch bei An ruhig',
-        !anzeigeebeneAktiv.value && !zustand.webgl && auftraege.size === 0
+        'Fehlendes WebGL nimmt nur 3D, nicht die Anzeigeebene',
+        anzeigeebeneAktiv.value && !webglAktiv.value && !zustand.webgl && auftraege.size === 0
       )
       anzeigeebeneBeenden()
       pruefen('Entfernen beendet sämtliche Messaufträge', auftraege.size === 0)

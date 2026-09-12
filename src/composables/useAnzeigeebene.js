@@ -13,14 +13,17 @@ const zustand = reactive({
   speicherHinweis: '',
 })
 const lesbarerZustand = readonly(zustand)
+// Effekte und 3D sind zwei verschiedene Fragen. Startsequenz und Glyphenaufloesung
+// sind reines CSS und JS und laufen auch dort, wo kein WebGL bereitsteht.
 const anzeigeebeneAktiv = computed(
   () =>
     zustand.bereit &&
     zustand.tabSichtbar &&
-    zustand.webgl &&
     (zustand.modus === 'an' ||
       (zustand.modus === 'automatisch' && !zustand.reduzierteBewegung && !zustand.heruntergestuft))
 )
+// Nur hieran haengen Three.js-Szenen.
+const webglAktiv = computed(() => anzeigeebeneAktiv.value && zustand.webgl)
 let bewegungsAbfrage = null
 let beobachtungBeenden = null
 let messungBeenden = null
@@ -39,6 +42,10 @@ function speicherproblemBeschreiben(status) {
 function modusWaehlen(modus) {
   if (!modi.includes(modus)) return
   zustand.modus = modus
+  // Eine erneute Wahl ist ein ausdrücklicher zweiter Versuch. Ohne dieses
+  // Zurücksetzen bliebe ein einmaliges Herunterstufen bis zum Neuladen bestehen,
+  // und ausgerechnet «Automatisch» erneut zu wählen würde nichts bewirken.
+  zustand.heruntergestuft = false
   // Frisch laden: spätere Profil- oder Tagebuchänderungen nicht zurückschreiben.
   const bestand = dokumentLaden()
   if (bestand.status !== Speicherstatus.leer && bestand.status !== Speicherstatus.geladen) {
@@ -81,13 +88,19 @@ export function anzeigeebeneStarten() {
   bewegungsAbfrage.addEventListener('change', bewegungAktualisieren)
   document.addEventListener('visibilitychange', sichtbarkeitAktualisieren)
   zustand.bereit = true
+  // Gemessen wird nur im Modus «automatisch». «An» uebersteuert eine
+  // Herunterstufung ohnehin und «aus» ist ruhig; dort zu messen kostet jedes
+  // Bild Rechenzeit fuer ein Ergebnis, das niemand verwendet. Dass nicht
+  // heruntergestuft ist, steckt im Modus «automatisch» schon in
+  // anzeigeebeneAktiv und braucht hier keine zweite Pruefung.
   beobachtungBeenden = watch(
-    () => anzeigeebeneAktiv.value && !zustand.heruntergestuft,
+    () => anzeigeebeneAktiv.value && zustand.modus === 'automatisch',
     (messen) => {
       messungBeenden?.()
       messungBeenden = messen
         ? bildrateMessen(() => {
             // Nur Arbeitsspeicher: beim Neuladen beginnt eine neue Sitzung.
+            // Eine erneute Moduswahl ist ein ausdruecklicher zweiter Versuch.
             zustand.heruntergestuft = true
           })
         : null
@@ -108,7 +121,7 @@ export function anzeigeebeneBeenden() {
 }
 
 export function useAnzeigeebene() {
-  return { zustand: lesbarerZustand, anzeigeebeneAktiv, modusWaehlen }
+  return { zustand: lesbarerZustand, anzeigeebeneAktiv, webglAktiv, modusWaehlen }
 }
 
 if (import.meta.hot) import.meta.hot.dispose(anzeigeebeneBeenden)

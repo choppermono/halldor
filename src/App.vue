@@ -34,8 +34,8 @@ function zumInhalt() {
     <main id="inhalt" ref="inhalt" class="seiteninhalt" tabindex="-1">
       <div role="status" aria-live="polite" aria-atomic="true">
         <p v-if="zustand.heruntergestuft && zustand.modus === 'automatisch'" class="routenhinweis">
-          Wegen niedriger Bildrate auf die ruhige Darstellung gewechselt. Das gilt bis zum Neuladen.
-          <RouterLink to="/profil#kino">Im Profil kannst du den Kino-Modus ändern.</RouterLink>
+          Wegen niedriger Bildrate auf die ruhige Darstellung gewechselt.
+          <RouterLink to="/profil#kino">Im Profil kannst du es erneut versuchen.</RouterLink>
         </p>
       </div>
       <RouterView />
