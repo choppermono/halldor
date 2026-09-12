@@ -70,10 +70,14 @@
   --a-8: 2rem; /* Abstand zwischen Abschnitten */
   --a-12: 3rem;
 
-  /* ---------- Radien ---------- */
-  --r-s: 8px; /* Eingaben */
-  --r-m: 14px; /* Karten, Sheets */
-  --r-voll: 999px; /* Knoepfe, Marken auf Fortschrittsboegen */
+  /* ---------- Radien ----------
+     Scharfe Kanten sind Teil der Dossier-Richtung, keine Geschmacksfrage:
+     runde Karten auf dunklem Grund mit einem Akzentton sind die Signatur
+     generierter Oberflaechen. Siehe Vault Planung/09-Kunstrichtung.md, E-105.
+     Knoepfe sind Rechtecke mit Linie, Karten sind Felder mit Rahmen. */
+  --r-s: 0; /* Eingaben */
+  --r-m: 0; /* Karten, Sheets */
+  --r-voll: 999px; /* NUR Marken auf Fortschrittsboegen, nie fuer Knoepfe */
 
   /* ---------- Bewegung ---------- */
   --dauer-schnell: 150ms;
