@@ -18,7 +18,7 @@ const auswahl = [
   {
     wert: 'an',
     titel: 'An',
-    text: 'Erlaubt Bewegung auch bei reduzierter Bewegung oder geringer Leistung.',
+    text: 'Schaltet die Anzeigeebene ein. Reduzierte Bewegung bleibt berücksichtigt.',
     nummer: '02',
   },
   {
@@ -32,9 +32,8 @@ const erklaerung = computed(() => {
   if (!zustand.bereit) return 'Die Darstellung wird vorbereitet.'
   if (zustand.modus === 'aus') return 'Die ruhige Darstellung ist von dir gewählt.'
   if (!zustand.tabSichtbar) return 'Pausiert, solange dieser Tab im Hintergrund ist.'
+  if (zustand.reduzierteBewegung) return 'Ruhefassung: Du hast reduzierte Bewegung eingestellt.'
   if (zustand.modus === 'an') return 'Die Anzeigeebene ist ausdrücklich eingeschaltet.'
-  if (zustand.reduzierteBewegung)
-    return 'Automatisch ausgeschaltet: Du hast reduzierte Bewegung eingestellt.'
   if (zustand.heruntergestuft)
     return 'Automatisch ausgeschaltet: Die Bildrate war zu niedrig. Wähle erneut, um es noch einmal zu versuchen.'
   return 'Dein Gerät und deine Bewegungseinstellung erlauben die Anzeigeebene.'
@@ -93,8 +92,13 @@ const dreidHinweis = computed(() =>
       </fieldset>
       <div class="kino-status" role="status" aria-live="polite" aria-atomic="true">
         <p class="system-label">
-          {{ anzeigeebeneAktiv ? 'Anzeigeebene aktiv' : 'Ruhefassung aktiv'
-          }}<span v-if="anzeigeebeneAktiv"> · {{ webglAktiv ? '3D bereit' : 'ohne 3D' }}</span>
+          {{
+            anzeigeebeneAktiv && !zustand.reduzierteBewegung
+              ? 'Anzeigeebene aktiv'
+              : 'Ruhefassung aktiv'
+          }}<span v-if="anzeigeebeneAktiv && !zustand.reduzierteBewegung">
+            · {{ webglAktiv ? '3D bereit' : 'ohne 3D' }}</span
+          >
         </p>
         <p>{{ erklaerung }}</p>
         <p v-if="dreidHinweis">{{ dreidHinweis }}</p>

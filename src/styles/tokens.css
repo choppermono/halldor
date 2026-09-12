@@ -7,7 +7,7 @@
    oder ein Abstand direkt. Immer eine Variable von hier.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import url('/fonts/fonts.css');
 
 :root {
   /* ---------- Flaechen ---------- */
@@ -40,8 +40,8 @@
   /* ---------- Schrift ---------- */
   --schrift-zahl: 'IBM Plex Mono', ui-monospace, monospace;
   --schrift-ui: 'IBM Plex Sans', system-ui, sans-serif;
-  /* MVP: dieselbe sachliche Sans fuer Titel; keine dekorative Serifenschrift. */
-  --schrift-display: var(--schrift-ui);
+  /* Enger Plex-Groteskschnitt als eigene Display-Stimme. */
+  --schrift-display: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
 
   /* ---------- Typo-Skala ----------
      Jeweils Groesse / Zeilenhoehe. --t-basis ist bewusst 16px:
@@ -78,7 +78,7 @@
      Knoepfe sind Rechtecke mit Linie, Karten sind Felder mit Rahmen. */
   --r-s: 0; /* Eingaben */
   --r-m: 0; /* Karten, Sheets */
-  --r-voll: 999px; /* NUR Marken auf Fortschrittsboegen, nie fuer Knoepfe */
+  --r-voll: 0; /* NUR Marken auf Fortschrittsboegen, nie fuer Knoepfe */
 
   /* ---------- Bewegung ---------- */
   --dauer-schnell: 150ms;
@@ -104,7 +104,7 @@
   --spike-ring-innen: min(57vw, 14rem);
   --fokus-abstand: 3px;
   /* ---------- A1: App-Hülle und Navigation ---------- */
-  --app-breite: 44rem;
+  --app-breite: 70rem;
   --t-seitentitel: 3.5rem;
   --t-seitentitel-zh: 1.1;
   --label-laufweite: 0.12em;
@@ -118,7 +118,7 @@
   /* Feste Abstände lassen vergrössertem Navigationstext mehr Platz. */
   --navigation-abstand: 8px;
   --navigation-rand: 16px;
-  --navigation-polster: 12px;
+  --navigation-polster: 8px;
   --navigation-text-rand: 4px;
   --navigation-reserve: calc(7rem + env(safe-area-inset-bottom, 0px));
   /* AV: feste Bedienabstände lassen bei 200% Schrift Platz für den Text. */
@@ -140,7 +140,7 @@
      Die Deckkraft begrenzt den Kontrast auch direkt hinter kleinen Labels. */
   --sterne-anzahl: 520;
   --sterne-groesse: 0.04;
-  --sterne-deckkraft: 0.45;
+  --sterne-deckkraft: 0.2;
   /* Raum und Kamera in Three.js-Einheiten; keine zentrale Figur oder Lichtquelle. */
   --sterne-breite: 20;
   --sterne-hoehe: 14;
@@ -166,6 +166,89 @@
   --z-leiste: 40;
   --z-sheet: 80;
   --z-hinweis: 120;
+
+  /* Visuell: feste Raender und Bedienmasse lassen vergroesserter Schrift Platz. */
+  --inhalt-min: 320px;
+  --inhalt-schmal: 46rem;
+  --seite-rand: clamp(16px, 4vw, 48px);
+  --titel-display: clamp(3.25rem, 6vw, 4.5rem);
+  --display-gewicht: 500;
+  --titel-zh: 0.98;
+  --zahl-instrument: min(7.75rem, 30cqi);
+  --zahl-instrument-lang: min(5.5rem, 21cqi);
+  --zahl-laufweite: -0.075em;
+  --makro-zahl: 2rem;
+  --text-gewicht: 400;
+  --label-gewicht: 500;
+  --betonung-gewicht: 600;
+  --register-breite: 36px;
+  --register-laufweite: 0.08em;
+  --feld-hoehe: 48px;
+  --feld-pfeil: 36px;
+  --feld-symbol: 18px;
+  --auswahl-pfeil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b8b19e' stroke-width='1.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --haken: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e4decb' stroke-width='1.5'%3E%3Cpath d='m5 12 4 4 10-10'/%3E%3C/svg%3E");
+  --datum-breite: 18rem;
+  --instrument-breite: 27rem;
+  --instrument-hoehe: 299 / 290;
+  --instrument-mitte: 54%;
+  --bogen-strich: 1.5;
+  --bogen-teilung: 1;
+  --bogen-teilungsfolge: 1 12;
+  --bogen-punktradius: 3;
+  --bogen-drehpunkt: 149.5px 170.5px;
+  --farbe-bogen: #b8b19e;
+  --farbe-bogen-ueber: #e4decb; /* Ueberschreitung = Elfenbein, keine Bewertung. */
+  --farbe-punkt: #fff6e0;
+  --farbe-licht: #29281f;
+  --lichtquelle: 12% 0%;
+  --material-licht: radial-gradient(
+    ellipse at var(--lichtquelle),
+    var(--farbe-licht),
+    transparent 64%
+  );
+  --material-vignette: radial-gradient(
+    ellipse at var(--lichtquelle),
+    transparent 28%,
+    var(--farbe-grund) 100%
+  );
+  --material-korn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.83' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h128v128H0z'/%3E%3C/svg%3E");
+  --material-kachel: 128px;
+  --material-korn-deckkraft: 0.027;
+  --material-vignette-deckkraft: 0.22;
+  --material-licht-deckkraft: 0.46;
+  --z-material: 60;
+  --z-start: 70;
+  --versteckt-mass: 1px;
+  --sprunglink-versatz: -200%;
+  --platzhalter-hoehe: 15rem;
+  --platzhalter-symbol: 5rem;
+  --nav-marker: 18px;
+
+  /* Zweckgebundene Kurven; keine animierten Layoutmasse. */
+  --kurve-eintritt: cubic-bezier(0.16, 1, 0.3, 1); /* raeumliche Orientierung */
+  --kurve-austritt: cubic-bezier(0.7, 0, 0.84, 0); /* alte Ansicht gibt Platz */
+  --kurve-technisch: steps(8, end); /* System liest sich in Schritten ein */
+  --kurve-bogen: cubic-bezier(0.22, 0.7, 0.2, 1); /* Instrument faehrt zum Messwert */
+  --kurve-kontakt: steps(2, end); /* unmittelbare Bedienrueckmeldung */
+  --kurve-linear: linear; /* Sternendrift ohne Beschleunigung */
+  --dauer-seite: 280ms;
+  --dauer-austritt: 160ms;
+  --dauer-staffel: 320ms;
+  --staffel-abstand: 40ms;
+  --staffel-max: 7;
+  --versatz-seite: 28px;
+  --versatz-staffel: 8px;
+  --dauer-glyphen: 420ms;
+  --glyphen-takt: 42ms;
+  --glyphen-zeichen: '0123456789/—:░';
+  --dauer-bogen: 760ms;
+  --dauer-start: 1100ms; /* unter 1.2s, jede Eingabe beendet sofort */
+  --dauer-start-linie: 360ms;
+  --dauer-start-zeile: 160ms;
+  --start-zeilen-abstand: 120ms;
+  --start-breite: 26rem;
+  --start-wortmarke: 4.5rem;
 }
 
 /* Dark only. Ein Light-Theme ist eine Erweiterung fuer Stufe 3,
@@ -179,7 +262,7 @@
    Wer sie abschaltet, verliert nichts ausser Bewegung. */
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --dauer-schnell: 1ms;
-    --dauer-normal: 1ms;
+    --dauer-schnell: 0ms;
+    --dauer-normal: 0ms;
   }
 }

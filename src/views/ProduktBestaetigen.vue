@@ -1,11 +1,14 @@
 <script setup>
 import { computed, onUnmounted, reactive, ref } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import RouterLink from '../components/SeitenLink.vue'
 import { produktLaden } from '../lib/openfoodfacts.js'
 import { NAEHRWERTE, PRODUKT_GRENZEN, produktPruefen } from '../lib/lebensmittel.js'
 import { datumPruefen } from '../lib/ernaehrung.js'
 import { kalorien, lokalesDatum, zahl } from '../lib/darstellung.js'
 import { useTagebuch } from '../composables/useTagebuch.js'
+import GlyphenText from '../components/GlyphenText.vue'
+import SystemSymbol from '../components/SystemSymbol.vue'
 defineOptions({ name: 'ProduktBestaetigenAnsicht' })
 const route = useRoute()
 const router = useRouter()
@@ -107,9 +110,15 @@ onUnmounted(() => {
 </script>
 <template>
   <section class="ansicht produkt">
-    <RouterLink class="zurueck" :to="{ path: '/', query: { datum } }">← Tagesprotokoll</RouterLink>
+    <RouterLink class="zurueck" :to="{ path: '/', query: { datum } }"
+      ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
+    >
     <p class="system-label seitenrubrik">Ernährung / {{ datum }}</p>
     <h1>{{ schritt === 'produkt' ? 'Produkt.' : 'Menge.' }}</h1>
+    <ol class="schrittanzeige" aria-label="Erfassung">
+      <li :aria-current="schritt === 'produkt' ? 'step' : undefined"><span>01</span> Produkt</li>
+      <li :aria-current="schritt === 'menge' ? 'step' : undefined"><span>02</span> Menge</li>
+    </ol>
     <template v-if="schritt === 'produkt'">
       <form class="barcode-formular" @submit.prevent="suchen">
         <label
@@ -123,14 +132,26 @@ onUnmounted(() => {
             required
             autocomplete="off"
         /></label>
-        <button type="submit" :disabled="laden">
-          {{ laden ? 'Abfrage läuft …' : suchfehler ? 'Erneut abfragen' : 'Barcode abfragen' }}
+        <button
+          type="submit"
+          :disabled="laden"
+          :aria-label="
+            laden ? 'Abfrage läuft …' : suchfehler ? 'Erneut abfragen' : 'Barcode abfragen'
+          "
+        >
+          <SystemSymbol name="barcode" />
+          {{ laden ? 'Abfrage …' : suchfehler ? 'Wiederholen' : 'Abfragen' }}
         </button>
       </form>
       <p v-if="suchmeldung" :class="suchfehler ? 'meldung' : 'statuszeile'" role="status">
         {{ suchmeldung }}
       </p>
       <button class="textknopf" type="button" @click="manuell">Von Hand eintragen</button>
+      <div v-if="quelle" class="produkt-treffer">
+        <span class="system-label">Datensatz / {{ ergebnisBarcode }}</span>
+        <h2><GlyphenText :wert="produkt.name" /></h2>
+        <p v-if="produkt.marke" class="klein">{{ produkt.marke }}</p>
+      </div>
       <form class="abschnitt" @submit.prevent="weiter">
         <h2>Angaben pro 100 g</h2>
         <p class="klein">
@@ -168,10 +189,11 @@ onUnmounted(() => {
         <button class="primaer" type="submit" :disabled="laden">Zur Menge</button>
       </form>
     </template>
-    <form v-else @submit.prevent="bestaetigen">
-      <h2>{{ produkt.name }}</h2>
+    <form v-else class="mengenformular" @submit.prevent="bestaetigen">
+      <p class="system-label">Portion / {{ datum }}</p>
+      <h2 class="produktname">{{ produkt.name }}</h2>
       <p v-if="produkt.marke" class="klein">{{ produkt.marke }}</p>
-      <label
+      <label class="mengenfeld"
         >Menge in Gramm<input
           v-model.number="mengeG"
           type="number"
@@ -185,7 +207,7 @@ onUnmounted(() => {
         Eine vorbelegte Menge stammt aus der Portionsangabe des Produkts. Prüfe die tatsächlich
         erfasste Grammmenge.
       </p>
-      <dl class="messwerte">
+      <dl class="messwerte staffel">
         <div v-for="feld in NAEHRWERTE.slice(0, 4)" :key="feld.key">
           <dt>{{ feld.label }}</dt>
           <dd>

@@ -4,6 +4,7 @@ import { REGELN, zielBerechnen } from '../lib/ernaehrung.js'
 import { lokalesDatum } from '../lib/darstellung.js'
 import { useProfil } from '../composables/useProfil.js'
 import ZielHerleitung from './ZielHerleitung.vue'
+import DatumFeld from './DatumFeld.vue'
 
 const props = defineProps({ onboarding: Boolean })
 const emit = defineEmits(['gespeichert'])
@@ -64,7 +65,7 @@ function speichern() {
 <template>
   <form class="profil-formular" @submit.prevent="speichern" @input="meldung = ''">
     <fieldset class="formulargruppe">
-      <legend>Körperdaten</legend>
+      <legend><span class="register-index">01</span> Körperdaten</legend>
       <p class="klein">
         Die Angaben dienen einer rechnerischen Schätzung. Eingabegrenzen sind technische Grenzen,
         keine Gesundheitsbewertung.
@@ -78,9 +79,8 @@ function speichern() {
           </select></label
         >
         <label
-          >Geburtsdatum<input
+          >Geburtsdatum<DatumFeld
             v-model="eingabe.geburtsdatum"
-            type="date"
             min="1900-01-01"
             :max="heute"
             required
@@ -115,7 +115,7 @@ function speichern() {
       >
     </fieldset>
     <fieldset class="formulargruppe">
-      <legend>Ziel und Tempo</legend>
+      <legend><span class="register-index">02</span> Ziel und Tempo</legend>
       <label
         >Ziel<select v-model="eingabe.ziel">
           <option value="halten">Halten</option>

@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import RouterLink from './SeitenLink.vue'
 
 defineOptions({ name: 'HauptNavigation' })
 

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { zahl } from '../lib/darstellung.js'
+import GlyphenText from './GlyphenText.vue'
 defineOptions({ name: 'MakroBalken' })
 const props = defineProps({
   name: { type: String, required: true },
@@ -18,10 +19,15 @@ const anteil = computed(() =>
 <template>
   <div class="makrozeile">
     <div class="makrokopf">
-      <span>{{ name }}</span
-      ><span class="messzahl">{{ zahl(bilanz.bekannt) }} / {{ zahl(ziel) }} g</span>
+      <span class="makro-name">{{ name }}</span
+      ><span class="messzahl"
+        ><strong><GlyphenText :wert="zahl(bilanz.bekannt)" /></strong
+        ><span class="makroziel"> / {{ zahl(ziel) }} g</span></span
+      >
     </div>
-    <div class="skala" aria-hidden="true"><span :style="{ width: `${anteil}%` }"></span></div>
+    <div class="skala" aria-hidden="true">
+      <span :style="{ transform: `scaleX(${anteil / 100})` }"></span>
+    </div>
     <span v-if="!bilanz.vollstaendig" class="klein"
       >Bekannter Anteil, gerundet. {{ bilanz.unbekannt }} Eintrag/Einträge mit unbekanntem
       Wert.</span
