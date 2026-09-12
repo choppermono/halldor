@@ -8,6 +8,50 @@ auf einem Rechner liegt, kann niemand nachvollziehen.
 Die Seiten sind nicht Teil der App. Sie werden nicht importiert und landen in
 keinem Produktionsbuild.
 
+## mvp-ernaehrung.html — Rechenkern, API und Momentaufnahmen
+
+Auf einem eigenen, leeren Browserursprung öffnen. Die Seite prüft echte Module
+mit festen Stichtagen und injizierten API-Antworten. Sie bricht bei vorhandenem
+App-Dokument ohne Änderung ab und räumt ausschliesslich eigene Testdaten auf.
+
+Enthalten sind Geburtstage/Schalttage, Mifflin-St Jeor, Altersregel, Rate vor
+Defizit, ungültige Makros ohne Deckelung, höchste einsetzbare Rate, NaN/Infinity,
+180 kombinierte Eingaben, unbekannte Nährwerte, API-Fehler und leere Ergebnisse,
+Gramm-Anteile, unveränderliche Produkt- und Zielmomentaufnahmen sowie Löschen.
+Der Export `produkteSuchen` ist eine Schnittstelle ohne Suchoberfläche.
+
+API-Tests prüfen `fields=`, HTTP 503/429/500/404, ungültiges JSON, fehlendes Netz,
+fehlende/unplausible Werte und Portionsangaben. Ein echter Barcode und der
+gesamte App-Ablauf werden zusätzlich im Browser geprüft; simulierte Antworten
+belegen keine Erreichbarkeit von Open Food Facts.
+
+Technische Eingabegrenzen (Alter 10–120, Gewicht 20–400 kg, Grösse 100–250 cm,
+Erfassungsmenge 0.1–10000 g, Vorbelegung höchstens 2000 g) sind ausdrücklich
+unbelegte Plausibilitätsgrenzen. Die 0.5–1-%-Rate ist für Gewichtsverlust belegt;
+die gleiche Aufbau-Spanne ist eine unbelegte Produktannahme. Der rechnerische
+Makroanker ist keine medizinische Mindestenergie und keine zusätzliche kcal-Konstante.
+
+### App-Ablauf reproduzieren
+
+1. Eigenen Browserkontext bei 375 px öffnen; die tatsächlich von Vite ausgegebene URL verwenden.
+2. Profil: männlich, 12.09.1996, 180 cm, 80 kg, regelmässig aktiv, Halten.
+   Hinweis bestätigen, Rechenweg lesen, speichern.
+3. Von Hand «Haferflocken»: pro 100 g 380 kcal, 13 g Protein, 7 g Fett, 60 g
+   Kohlenhydrate; 50 g bestätigen. Auf Heute erscheinen etwa 200 kcal.
+4. Barcode `3017620422003` eintippen, Abfrage abwarten, 15 g bestätigen.
+   Haferflocken löschen. Reload: gesamtes Dokument einschliesslich Revision unverändert.
+5. Vorherigen Tag öffnen, Leerzustand prüfen, zurück zu heute. Produkt ohne
+   Nährwerte erfassen: Teilsumme und Unvollständigkeit sichtbar, kein Restziel.
+6. Im Browser Netzwerk auf offline stellen: gestern/heute, Löschen und manuelle
+   Erfassung bleiben bedienbar. Eine Barcode-Abfrage meldet den Netzausfall.
+7. Profil: weiblich, 12.09.1956, 140 cm, 40 kg, überwiegend sitzend, Abnehmen,
+   Rate 1. Am Stichtag 12.09.2026 kein Makroziel, höchste Rate 0.847272 %.
+8. 200 % Wurzelschrift bei 375 px: alle Formulare, Heute, Mengenbestätigung und
+   Kino-Radiogruppe bedienen; kein horizontaler Überlauf. Eine Menge über dem
+   Tagesziel prüfen: alle Skalen enden bei 100 %, Wortlaut bleibt neutral.
+9. Löschtest unten ausführen und den Ablauf im gebauten Preview ohne `src/kino`
+   wiederholen. Offline-Fehler separat von der normalen Browserkonsole bewerten.
+
 ## Ausführen
 
 ```bash

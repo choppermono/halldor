@@ -148,8 +148,10 @@ Produktentscheidungen, keine Nettigkeiten:
 - **Keine Serien, Abzeichen oder Belohnungen fürs Tracken.** Nichts, was ein
   Defizit belohnt
 - Kein Zielgewicht, kein Countdown, kein Fortschrittsbalken zum Abnehmen
-- Die Kalorien-Untergrenze (1500 kcal männlich, 1200 kcal weiblich) wird nie
-  unterschritten, und **wenn sie greift, sagt die App das sichtbar**
+- Keine feste Kalorienuntergrenze. Ein rechnerisch unmögliches Makroziel
+  wird mit Fehler und höchster passender Änderungsrate gemeldet, nie gedeckelt.
+  Die Makrogrenze ist keine medizinische Aussage zur ausreichenden Energiezufuhr.
+- Unter 18 kein Abnehmziel; die Regel liegt im Rechenkern, nicht nur im Formular
 - Keine bewertende Sprache. Ein Tag über dem Ziel ist ein Tag über dem Ziel,
   kein Misserfolg
 - Beim Onboarding steht, dass die App keine medizinische oder
