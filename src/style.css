@@ -27,6 +27,10 @@ a:focus-visible {
 }
 
 .app-huelle {
+  isolation: isolate;
+  /* Hier steht bewusst KEIN Hintergrund. Die Huelle ist der Stapelkontext des
+     Sternenfelds; eine Grundfarbe auf ihr deckt das Canvas zu. Die Grundfarbe
+     gehoert auf :root, das Sternenfeld liegt mit --z-hintergrund darueber. */
   min-height: 100svh;
   padding-top: env(safe-area-inset-top, 0px);
 }
@@ -36,6 +40,9 @@ a:focus-visible {
 .navigationsziele {
   width: min(100%, var(--app-breite));
   margin-inline: auto;
+  /* Haelt den Inhalt ueber dem Sternenfeld, das als fixe Flaeche darunter liegt. */
+  position: relative;
+  z-index: var(--z-inhalt);
 }
 
 .app-kopf {

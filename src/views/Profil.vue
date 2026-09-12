@@ -96,7 +96,7 @@ const dreidHinweis = computed(() =>
       </div>
       <p class="speicher-hinweis" role="status" aria-live="polite">{{ zustand.speicherHinweis }}</p>
       <p class="kino-fussnote">
-        Visuelle Effekte folgen später. Aktuell bleibt die Darstellung in allen Modi ruhig.
+        Bewegte Hintergründe sind optional. Die ruhige Darstellung bleibt vollständig.
       </p>
     </section>
 

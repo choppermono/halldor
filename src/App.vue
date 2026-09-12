@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import Navigationsleiste from './components/Navigationsleiste.vue'
+import KinoHintergrund from './components/KinoHintergrund.vue'
 
 import {
   anzeigeebeneStarten,
@@ -26,6 +27,7 @@ function zumInhalt() {
 
 <template>
   <div class="app-huelle" :style="{ '--navigation-hoehe': navigationHoehe }">
+    <KinoHintergrund />
     <a class="sprunglink" href="#inhalt" @click.prevent="zumInhalt">Zum Inhalt</a>
     <header class="app-kopf">
       <span class="wortmarke">Trackify<span aria-hidden="true">.</span></span>
