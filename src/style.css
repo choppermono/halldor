@@ -75,13 +75,14 @@ a:focus-visible {
 }
 
 .seiteninhalt {
-  padding: var(--a-12) max(var(--a-6), env(safe-area-inset-right, 0px))
+  padding: var(--a-8) max(var(--formular-rand), env(safe-area-inset-right, 0px))
     calc(var(--navigation-hoehe, var(--navigation-reserve)) + var(--a-8))
-    max(var(--a-6), env(safe-area-inset-left, 0px));
+    max(var(--formular-rand), env(safe-area-inset-left, 0px));
 }
 
 .ansicht {
   overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 .seitenrubrik {
@@ -100,7 +101,7 @@ a:focus-visible {
 
 h1 {
   margin: var(--a-3) 0 var(--a-8);
-  font: 500 var(--t-seitentitel) / var(--t-seitentitel-zh) var(--schrift-display);
+  font: 500 var(--titel-kompakt) / var(--t-seitentitel-zh) var(--schrift-display);
   letter-spacing: var(--titel-laufweite);
 }
 
@@ -214,4 +215,341 @@ h1 {
 
 .sprunglink:focus {
   transform: none;
+}
+
+/* Gemeinsame Mess- und Formularsprache des Ernaehrungs-MVP. */
+.ansicht {
+  font-size: var(--t-basis);
+  line-height: var(--t-basis-zh);
+}
+.ansicht h2 {
+  margin: var(--a-3) 0 var(--a-4);
+  font: 500 var(--t-titel) / var(--t-titel-zh) var(--schrift-ui);
+}
+.einleitung {
+  color: var(--farbe-text-leise);
+  margin-bottom: var(--a-6);
+}
+.klein {
+  color: var(--farbe-text-leise);
+  font-size: var(--t-klein);
+  line-height: var(--t-klein-zh);
+}
+.messzahl,
+.messwerte,
+.rechenweg,
+.ziel-zahl,
+.tageszahl,
+.zielbezug,
+.differenz,
+.ansicht input,
+.ansicht select,
+.ansicht .system-label,
+.ansicht .klein,
+.ansicht .meldung {
+  font-variant-numeric: tabular-nums;
+}
+.messzahl {
+  font-family: var(--schrift-zahl);
+}
+.ansicht button,
+.knopf,
+.ansicht input,
+.ansicht select {
+  border: var(--linien-breite) solid var(--farbe-linie-stark);
+  border-radius: var(--r-s);
+  background: var(--farbe-flaeche);
+  color: var(--farbe-text);
+  font: inherit;
+  min-width: 0;
+  min-height: var(--treffer-min);
+  padding: var(--feld-polster);
+}
+.ansicht button,
+.knopf {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+}
+.ansicht button:disabled {
+  cursor: default;
+  color: var(--farbe-text-leise);
+  border-color: var(--farbe-linie);
+}
+.ansicht .primaer {
+  background: var(--farbe-akzent);
+  color: var(--farbe-auf-akzent);
+  border-color: var(--farbe-akzent);
+  font-weight: 500;
+}
+.ansicht :is(button, input, select):focus-visible {
+  outline: var(--fokus-breite) solid var(--farbe-auf-akzent);
+  outline-offset: var(--fokus-abstand);
+}
+@media (hover: hover) {
+  .ansicht button:hover:not(:disabled),
+  .knopf:hover {
+    border-color: var(--farbe-text);
+  }
+}
+.ansicht form > label,
+.formulargruppe > label,
+.formularraster > label,
+.barcode-formular > label {
+  display: grid;
+  gap: var(--a-2);
+  margin-bottom: var(--a-4);
+  min-width: 0;
+}
+.ansicht input:not([type='radio'], [type='checkbox']),
+.ansicht select {
+  width: 100%;
+}
+.ansicht select {
+  text-overflow: ellipsis;
+}
+.ansicht input::placeholder {
+  color: var(--farbe-text-leise);
+}
+.formulargruppe {
+  margin: 0 0 var(--a-6);
+  padding: var(--a-4) 0 0;
+  min-width: 0;
+  border: 0;
+  border-top: var(--linien-breite) solid var(--farbe-linie-stark);
+}
+.formulargruppe legend {
+  padding: 0 var(--a-3) 0 0;
+  font-weight: 500;
+}
+.formularraster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--formular-spalte)), 1fr));
+  gap: 0 var(--a-4);
+}
+.ansicht .bestaetigung {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--a-3);
+  padding-block: var(--a-4);
+}
+.bestaetigung input {
+  flex-shrink: 0;
+  width: var(--profil-radio);
+  min-height: var(--treffer-min);
+  margin: 0;
+  accent-color: var(--farbe-akzent);
+}
+.meldung {
+  border-left: var(--markierungs-breite) solid var(--farbe-akzent);
+  padding: var(--a-3) var(--a-4);
+  background: var(--farbe-flaeche);
+}
+.meldung::before {
+  content: '!';
+  font-family: var(--schrift-zahl);
+  font-weight: 600;
+  color: var(--farbe-fehler);
+  margin-right: var(--a-2);
+}
+.meldung p {
+  margin: var(--a-2) 0;
+}
+.statuszeile {
+  border-left: var(--markierungs-breite) solid var(--farbe-text-leise);
+  padding-left: var(--a-3);
+}
+.abschnitt {
+  margin-block: var(--a-6);
+  padding-top: var(--a-4);
+  border-top: var(--linien-breite) solid var(--farbe-linie-stark);
+}
+.abschnittkopf {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--a-3);
+  flex-wrap: wrap;
+}
+.ziel-zahl {
+  font: 500 var(--t-zahl-m) / var(--t-zahl-m-zh) var(--schrift-zahl);
+}
+.ziel-zahl span {
+  font-size: var(--t-basis);
+}
+.messwerte,
+.rechenweg {
+  margin: var(--a-4) 0;
+}
+.messwerte > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--a-2) var(--a-4);
+  padding-block: var(--a-2);
+  border-bottom: var(--linien-breite) solid var(--farbe-linie);
+}
+.messwerte dd {
+  margin: 0;
+  font-family: var(--schrift-zahl);
+}
+.rechenweg > div {
+  padding-block: var(--a-3);
+  border-bottom: var(--linien-breite) solid var(--farbe-linie);
+}
+.rechenweg dt {
+  font-weight: 500;
+  margin-bottom: var(--a-2);
+}
+.rechenweg dd {
+  margin: 0;
+  color: var(--farbe-text-leise);
+  font-size: var(--t-klein);
+}
+.quellen a,
+.off-quelle a {
+  display: inline-flex;
+  min-height: var(--treffer-min);
+  align-items: center;
+  margin-right: var(--a-2);
+}
+.datumswechsler {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--a-2);
+}
+.datumswechsler button {
+  min-width: var(--treffer-min);
+  justify-content: center;
+}
+.datumfeld {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: var(--a-1);
+  font-size: var(--t-klein);
+}
+.datumfeld input {
+  font-size: var(--t-basis);
+}
+.ansicht .textknopf {
+  background: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+  margin-block: var(--a-2);
+  padding-inline: 0;
+}
+.tagesmessung {
+  margin: var(--a-12) 0 var(--a-6);
+}
+.tageszahl {
+  margin: var(--a-6) 0;
+  font: 500 var(--zahl-kompakt) / var(--t-zahl-xl-zh) var(--schrift-zahl);
+  letter-spacing: var(--titel-laufweite);
+}
+.tageszahl .einheit {
+  display: block;
+  margin-top: var(--a-4);
+  font: 400 var(--t-basis) / var(--t-basis-zh) var(--schrift-zahl);
+}
+.groesser {
+  font-size: var(--t-zahl-m);
+}
+.zielbezug,
+.differenz {
+  margin-block: var(--a-3);
+}
+.skala {
+  height: var(--skala-hoehe);
+  background: var(--farbe-linie);
+  overflow: hidden;
+}
+.skala > span {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  background: var(--farbe-text-leise);
+  transition: width var(--dauer-normal) var(--kurve-messung);
+}
+.energieskala {
+  height: var(--energie-skala-hoehe);
+  margin-left: calc(-1 * var(--formular-rand));
+}
+.makrozeile {
+  margin-block: var(--a-4);
+}
+.makrokopf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--a-2);
+  margin-bottom: var(--a-2);
+}
+.leerzustand {
+  padding-block: var(--a-4);
+  color: var(--farbe-text-leise);
+}
+.eintragsliste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.eintragsliste li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3);
+  align-items: center;
+  padding-block: var(--a-4);
+  border-top: var(--linien-breite) solid var(--farbe-linie);
+}
+.eintragsdaten {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: var(--a-1);
+}
+.eintragsliste button {
+  font-size: var(--t-klein);
+}
+.zurueck {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--treffer-min);
+  margin-bottom: var(--a-4);
+}
+.barcode-formular {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--a-3);
+}
+.barcode-formular > label {
+  flex: 1;
+  margin-bottom: 0;
+}
+.aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3);
+}
+.off-quelle {
+  margin-top: var(--a-8);
+  padding-top: var(--a-4);
+  border-top: var(--linien-breite) solid var(--farbe-linie);
+}
+.tagesherleitung {
+  margin-block: var(--a-4);
+}
+.tagesherleitung summary {
+  min-height: var(--treffer-min);
+  padding-block: var(--a-3);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.tagesherleitung summary:focus-visible {
+  outline: var(--fokus-breite) solid var(--farbe-auf-akzent);
+  outline-offset: var(--fokus-abstand);
 }

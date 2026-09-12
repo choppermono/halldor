@@ -3,6 +3,8 @@ import Heute from '../views/Heute.vue'
 import Training from '../views/Training.vue'
 import Rang from '../views/Rang.vue'
 import Profil from '../views/Profil.vue'
+import Onboarding from '../views/Onboarding.vue'
+import ProduktBestaetigen from '../views/ProduktBestaetigen.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,6 +13,18 @@ const router = createRouter({
     { path: '/training', name: 'Training', component: Training, meta: { titel: 'Training' } },
     { path: '/rang', name: 'Rang', component: Rang, meta: { titel: 'Rang' } },
     { path: '/profil', name: 'Profil', component: Profil, meta: { titel: 'Profil' } },
+    {
+      path: '/onboarding',
+      name: 'Onboarding',
+      component: Onboarding,
+      meta: { titel: 'Einrichtung' },
+    },
+    {
+      path: '/produkt',
+      name: 'ProduktBestaetigen',
+      component: ProduktBestaetigen,
+      meta: { titel: 'Produkt erfassen' },
+    },
     { path: '/:pfad(.*)*', redirect: '/' },
   ],
   scrollBehavior(ziel, ursprung, gespeichertePosition) {

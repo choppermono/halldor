@@ -50,9 +50,25 @@ function eintragHinzufuegen(datum, produkt, mengeG, stichtag) {
       eintraege: [],
     }
   }
+  let id
+  try {
+    // randomUUID fehlt auf unverschlüsselten LAN-Adressen. Zufallsbytes sind
+    // dort trotzdem verfügbar; 128 Bit dienen nur der Eintragsidentifikation.
+    id = globalThis.crypto.randomUUID
+      ? globalThis.crypto.randomUUID()
+      : Array.from(globalThis.crypto.getRandomValues(new Uint8Array(16)), (wert) =>
+          wert.toString(16).padStart(2, '0')
+        ).join('')
+  } catch {
+    return {
+      status: 'kennung_nicht_verfuegbar',
+      meldung:
+        'Der Browser kann keine Eintragskennung erzeugen. Die Erfassung wurde nicht gespeichert.',
+    }
+  }
   const eintrag = {
     ...pruefung.wert,
-    id: crypto.randomUUID(),
+    id,
     zeit: new Date().toISOString(),
     mengeG,
   }

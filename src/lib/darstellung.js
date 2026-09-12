@@ -1,4 +1,7 @@
-import { kcalRunden } from './ernaehrung.js'
+import { REGELN } from './ernaehrung.js'
+export function kcalRunden(wert) {
+  return Number.isFinite(wert) ? Math.round(wert / REGELN.kcalRundung) * REGELN.kcalRundung : null
+}
 export function zahl(wert, stellen = 0) {
   return Number.isFinite(wert)
     ? wert.toLocaleString('de-CH', { maximumFractionDigits: stellen })

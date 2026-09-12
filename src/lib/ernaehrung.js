@@ -295,7 +295,3 @@ export function zielBerechnen(profil, stichtag) {
     { ...herleitung, ankerKcal: makros.herleitung.ankerKcal }
   )
 }
-
-export function kcalRunden(wert) {
-  return Number.isFinite(wert) ? Math.round(wert / REGELN.kcalRundung) * REGELN.kcalRundung : null
-}

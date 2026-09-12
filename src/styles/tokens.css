@@ -7,7 +7,7 @@
    oder ein Abstand direkt. Immer eine Variable von hier.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 :root {
   /* ---------- Flaechen ---------- */
@@ -40,7 +40,8 @@
   /* ---------- Schrift ---------- */
   --schrift-zahl: 'IBM Plex Mono', ui-monospace, monospace;
   --schrift-ui: 'IBM Plex Sans', system-ui, sans-serif;
-  --schrift-display: 'Cormorant Garamond', Georgia, serif;
+  /* MVP: dieselbe sachliche Sans fuer Titel; keine dekorative Serifenschrift. */
+  --schrift-display: var(--schrift-ui);
 
   /* ---------- Typo-Skala ----------
      Jeweils Groesse / Zeilenhoehe. --t-basis ist bewusst 16px:
@@ -124,6 +125,16 @@
   --profil-polster: 16px;
   --profil-abstand: 12px;
   --profil-radio: 18px;
+  /* MVP: Dichte Formulare und feste Seitenraender erhalten Platz bei 200% Schrift.
+     Einziger Raumbruch: die Energieskala verlaengert die Achse bis zum Seitenrand. */
+  --formular-spalte: 15rem;
+  --formular-rand: 16px;
+  --feld-polster: 10px;
+  --skala-hoehe: 3px;
+  --energie-skala-hoehe: 6px;
+  --zahl-kompakt: clamp(2.5rem, 16vw, 4.5rem);
+  --titel-kompakt: 2.25rem;
+  --kurve-messung: steps(8, end); /* Skalen rasten in Messschritten ein. */
   /* ---------- K7: Sternenfeld ----------
      Wenige matte Punkte geben Tiefe, ohne eine Zahl oder Aktion zu bewerten.
      Die Deckkraft begrenzt den Kontrast auch direkt hinter kleinen Labels. */

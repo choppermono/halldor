@@ -1,9 +1,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useAnzeigeebene } from '../composables/useAnzeigeebene.js'
+import { useProfil } from '../composables/useProfil.js'
+import ProfilFormular from '../components/ProfilFormular.vue'
 
 defineOptions({ name: 'ProfilAnsicht' })
 const { zustand, anzeigeebeneAktiv, webglAktiv, modusWaehlen } = useAnzeigeebene()
+const { profilLaden } = useProfil()
+profilLaden()
 const auswahl = [
   {
     wert: 'automatisch',
@@ -47,7 +51,8 @@ const dreidHinweis = computed(() =>
   <section class="ansicht profil" aria-labelledby="profil-titel">
     <p class="system-label seitenrubrik">Dein Dossier / Profil</p>
     <h1 id="profil-titel">Profil.</h1>
-    <p class="profil-einleitung">Du entscheidest, wie ruhig Trackify bleibt.</p>
+    <p class="profil-einleitung">Körperdaten, Rechenweg und Darstellung.</p>
+    <ProfilFormular />
 
     <section id="kino" class="kino-einstellung" aria-labelledby="kino-titel">
       <div class="kino-kopf">
@@ -99,12 +104,6 @@ const dreidHinweis = computed(() =>
         Bewegte Hintergründe sind optional. Die ruhige Darstellung bleibt vollständig.
       </p>
     </section>
-
-    <div class="profil-ausblick">
-      <p class="system-label">Als Nächstes</p>
-      <h2>Persönliche Angaben</h2>
-      <p>Profildaten und Ziele können noch nicht eingegeben oder gespeichert werden.</p>
-    </div>
   </section>
 </template>
 
@@ -119,6 +118,7 @@ const dreidHinweis = computed(() =>
   line-height: var(--t-basis-zh);
 }
 .kino-einstellung {
+  margin-top: var(--a-12);
   border-top: var(--linien-breite) solid var(--farbe-linie-stark);
   scroll-margin-top: var(--a-6);
 }
