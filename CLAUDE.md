@@ -8,21 +8,21 @@ Obsidian-Vault unter `Projekt/Projekt-1_Webapp/`.
 
 ---
 
-## Die Regel, die über allen anderen steht
+## Arbeitsweise
 
-> Das Projekt bekommt zwei Noten: eine auf das Produkt und eine auf eine
-> **mündliche Prüfung, in der auf einzelne Zeilen dieses Codes gezeigt wird.**
+Selbständiges Projekt. Werkzeuge, Bibliotheken und KI-Einsatz sind frei.
+Anwendungscode schreibt ChatGPT (Astra), Claude prüft.
 
-Daraus folgt für jeden Auftrag in diesem Repo:
+Was bleibt, weil es technisch trägt — nicht als Erlaubnisfrage:
 
-1. **Ein Arbeitspaket pro Auftrag. Niemals «bau die App».**
-2. **Kein Merge, bevor der Diff gelesen wurde.**
-3. **Pro Paket tippt einer von beiden eine Kernfunktion selbst neu, aus einer
-   leeren Datei.** Lesen fühlt sich nach Verstehen an und ist es nicht.
-4. **Jedes Paket erzeugt am selben Tag einen Eintrag in
-   `Pruefung/01-Code-Erklaeren.md`** im Vault — Was · Warum so · Alternative · Stand.
+- **Ein Arbeitspaket pro Branch.** Nicht wegen einer Regel, sondern weil zwei
+  Entwickler sonst in dieselbe Datei laufen.
+- **Der Löschtest vor jedem Paketabschluss.** `src/kino` raus, Lint und Build
+  müssen laufen. Das ist gleichzeitig die Barebones-Fassung.
+- **`main` bleibt lauffähig.**
 
-Wenn ein Auftrag grösser wirkt als ein Arbeitspaket: nachfragen, nicht bauen.
+`Pruefung/01-Code-Erklaeren.md` im Vault sammelt, was fürs mündliche Gespräch
+erklärbar sein muss. Es ist eine Ressource, kein Merge-Tor.
 
 ---
 
