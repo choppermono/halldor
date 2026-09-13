@@ -113,7 +113,7 @@
   --linien-breite: 1px;
   --fokus-breite: 2px;
   --markierungs-breite: 3px;
-  --symbol-groesse: 1.5rem;
+  --symbol-groesse: 24px; /* Schriftvergroesserung braucht Platz fuer Labels, nicht groessere Piktogramme. */
   --symbol-strich: 1.5;
   /* Feste Abstände lassen vergrössertem Navigationstext mehr Platz. */
   --navigation-abstand: 8px;
@@ -224,6 +224,10 @@
   --platzhalter-hoehe: 15rem;
   --platzhalter-symbol: 5rem;
   --nav-marker: 18px;
+  --navigation-spalte: 4.5rem; /* Bei 200% Schrift werden aus vier Zielen zwei Reihen. */
+  --barcode-eingabebreite: 9rem; /* Nur grosse Schrift darf die Zeile sinnvoll umbrechen. */
+  --eintragsdaten-breite: 12rem;
+  --titel-containergrenze: 24cqi; /* Einzelwoerter bleiben auch bei Schriftvergroesserung ganz. */
 
   /* Zweckgebundene Kurven; keine animierten Layoutmasse. */
   --kurve-eintritt: cubic-bezier(0.16, 1, 0.3, 1); /* raeumliche Orientierung */
@@ -241,7 +245,7 @@
   --versatz-staffel: 8px;
   --dauer-glyphen: 420ms;
   --glyphen-takt: 42ms;
-  --glyphen-zeichen: '0123456789/—:░';
+  --glyphen-zeichen: '0123456789/—:';
   --dauer-bogen: 760ms;
   --dauer-start: 1100ms; /* unter 1.2s, jede Eingabe beendet sofort */
   --dauer-start-linie: 360ms;

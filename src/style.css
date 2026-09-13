@@ -1,4 +1,5 @@
 :root {
+  scroll-padding-bottom: calc(var(--navigation-hoehe, var(--navigation-reserve)) + var(--a-4));
   font-family: var(--schrift-ui);
   color: var(--farbe-text);
   background: var(--farbe-grund);
@@ -97,6 +98,7 @@ body::before {
     max(var(--seite-rand), env(safe-area-inset-left, 0px));
 }
 .ansicht {
+  container-type: inline-size;
   font-size: var(--t-basis);
   line-height: var(--t-basis-zh);
   overflow-wrap: anywhere;
@@ -122,6 +124,7 @@ h1 {
   margin: var(--a-3) 0 var(--a-8);
   font: var(--display-gewicht) var(--titel-display) / var(--titel-zh) var(--schrift-display);
   letter-spacing: var(--titel-laufweite);
+  font-size: min(var(--titel-display), var(--titel-containergrenze));
 }
 .ansicht h2 {
   margin: var(--a-3) 0 var(--a-4);
@@ -215,6 +218,10 @@ h1 {
   display: block;
   position: relative;
   min-width: 0;
+}
+.datum-eingabe:focus-within {
+  outline: var(--fokus-breite) solid var(--farbe-auf-akzent);
+  outline-offset: var(--fokus-abstand);
 }
 .datum-eingabe input {
   appearance: none;
@@ -404,6 +411,7 @@ summary {
   color: var(--farbe-text-leise);
 }
 .heute-kopf {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: var(--a-2);
@@ -426,7 +434,7 @@ summary {
   padding: 0;
 }
 .datum-register {
-  position: relative;
+  position: static;
 }
 .datum-register summary {
   display: flex;
@@ -609,8 +617,8 @@ summary {
   border-top: var(--linien-breite) solid var(--farbe-linie);
 }
 .eintragsdaten {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 var(--eintragsdaten-breite);
+  min-width: min(100%, var(--eintragsdaten-breite));
   display: grid;
   gap: var(--a-1);
 }
@@ -632,9 +640,9 @@ summary {
   align-items: end;
   gap: var(--a-3);
 }
-.barcode-formular > label {
-  flex: 1;
-  min-width: 0;
+.ansicht .barcode-formular > label {
+  flex: 1 1 var(--barcode-eingabebreite);
+  min-width: min(100%, var(--barcode-eingabebreite));
   margin-bottom: 0;
 }
 .barcode-formular button {
@@ -724,7 +732,7 @@ summary {
 }
 .navigationsziele {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--navigation-spalte)), 1fr));
   gap: var(--navigation-abstand);
   max-width: var(--inhalt-schmal);
 }
@@ -795,6 +803,8 @@ summary {
 .glyphen-dekor {
   position: absolute;
   inset: 0;
+  overflow: clip;
+  white-space: pre;
   pointer-events: none;
 }
 .glyphen-text:has(.glyphen-dekor) .glyphen-endwert {
@@ -851,6 +861,13 @@ summary {
 ::view-transition-new(root) {
   animation: none;
 }
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(*) {
+  animation-duration: var(--dauer-seite);
+  animation-timing-function: var(--kurve-eintritt);
+}
 ::view-transition-old(seite) {
   animation: seite-raus var(--dauer-austritt) var(--kurve-austritt) both;
 }
@@ -884,6 +901,17 @@ summary {
   transition: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
+  /* Die CSS-Ruhefassung greift schon vor dem naechsten Vue-/MediaQuery-Ereignis. */
+  .glyphen-dekor,
+  .bogen-aufzug,
+  .startsequenz,
+  .sternenfeld {
+    display: none !important;
+  }
+  .glyphen-text .glyphen-endwert,
+  .tagesinstrument > .tagesbogen:not(.bogen-aufzug) :is(.bogen-spur, .bogen-punkt) {
+    opacity: 1 !important;
+  }
   *,
   *::before,
   *::after {

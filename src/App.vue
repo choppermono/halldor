@@ -38,6 +38,12 @@ onMounted(() => {
 onUnmounted(() => eingaben.forEach((art) => window.removeEventListener(art, startBeenden, true)))
 
 const navigationHoehe = ref()
+function navigationAnpassen(hoehe) {
+  navigationHoehe.value = hoehe
+  // Auch der Browserfokus muss die feste Leiste als verdeckten Bereich kennen.
+  document.documentElement.style.setProperty('--navigation-hoehe', hoehe)
+}
+onUnmounted(() => document.documentElement.style.removeProperty('--navigation-hoehe'))
 const inhalt = ref(null)
 
 // Der Sprunglink bleibt ein echter Anker, setzt den Fokus aber selbst.
@@ -70,6 +76,6 @@ function zumInhalt() {
       </div>
       <RouterView />
     </main>
-    <Navigationsleiste @hoehe="navigationHoehe = $event" />
+    <Navigationsleiste @hoehe="navigationAnpassen" />
   </div>
 </template>

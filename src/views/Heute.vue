@@ -41,13 +41,19 @@ const anteil = computed(() =>
 const differenz = computed(() => (ziel.value ? ziel.value.kcal - bilanz.value.kcal.bekannt : null))
 const meldung = ref('')
 const datumRegister = ref(null)
+const datumEntwurf = ref(datum.value)
 const datumBeschriftung = computed(() =>
   new Intl.DateTimeFormat('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
     new Date(`${datum.value}T12:00:00`)
   )
 )
+function datumSchliessen() {
+  if (!datumRegister.value?.open) return
+  datumRegister.value.open = false
+  datumRegister.value.querySelector('summary')?.focus({ preventScroll: true })
+}
 function wechseln(wert) {
-  if (datumRegister.value) datumRegister.value.open = false
+  datumSchliessen()
   heute.value = lokalesDatum()
   if (datumPruefen(wert).status === 'ok' && wert <= heute.value)
     router.replace({ path: '/', query: { datum: wert } })
@@ -71,17 +77,24 @@ function loeschen(id) {
         >
           <SystemSymbol name="links" />
         </button>
-        <details ref="datumRegister" class="datum-register">
+        <details
+          ref="datumRegister"
+          class="datum-register"
+          @toggle="datumEntwurf = datum"
+          @keydown.esc="datumSchliessen"
+        >
           <summary :aria-label="`Datum auswählen, ${datumBeschriftung}`">
             {{ datumBeschriftung }}<SystemSymbol name="unten" />
           </summary>
-          <label class="datum-auswahl"
-            >Datum<DatumFeld
-              :model-value="datum"
-              min="1900-01-01"
-              :max="heute"
-              @update:model-value="wechseln"
-          /></label>
+          <form class="datum-auswahl" @submit.prevent="wechseln(datumEntwurf)">
+            <label
+              >Datum<DatumFeld
+                v-model="datumEntwurf"
+                min="1900-01-01"
+                :max="heute"
+                required /></label
+            ><button type="submit">Tag öffnen</button>
+          </form>
         </details>
         <button
           class="datum-pfeil"
@@ -105,7 +118,7 @@ function loeschen(id) {
         <div class="tagesmessung">
           <TagesBogen :anteil="anteil" :ueberschritten="differenz !== null && differenz < 0">
             <p class="system-label">
-              {{ bilanz.kcal.vollstaendig ? 'Erfasst' : 'Bekannte Energie · Bilanz unvollständig' }}
+              {{ bilanz.kcal.vollstaendig ? 'Erfasst' : 'Bekannte Energie' }}
             </p>
             <p class="tageszahl">
               <GlyphenText :wert="kalorien(bilanz.kcal.bekannt)" /><span class="einheit"
@@ -124,6 +137,7 @@ function loeschen(id) {
             {{ differenz >= 0 ? 'bis zum Ziel' : 'über dem Ziel' }}
           </p>
           <p v-else-if="!bilanz.kcal.vollstaendig" class="klein">
+            <span class="system-label">Bilanz unvollständig</span><br />
             Energie bei {{ bilanz.kcal.unbekannt }} Eintrag/Einträgen unbekannt. Die bekannte
             Teilsumme erlaubt keine vollständige Tagesbilanz.
           </p>

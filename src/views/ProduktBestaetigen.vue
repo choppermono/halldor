@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onUnmounted, reactive, ref } from 'vue'
+import { computed, nextTick, onUnmounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RouterLink from '../components/SeitenLink.vue'
 import { produktLaden } from '../lib/openfoodfacts.js'
@@ -29,6 +29,14 @@ const quelle = ref(false)
 const mengeG = ref('')
 const meldung = ref('')
 const schritt = ref('produkt')
+const titel = ref(null)
+function titelFokussieren() {
+  nextTick(() => titel.value?.focus({ preventScroll: true }))
+}
+function angabenBearbeiten() {
+  schritt.value = 'produkt'
+  titelFokussieren()
+}
 const produkt = reactive({
   name: '',
   marke: '',
@@ -94,6 +102,7 @@ function weiter() {
   if (pruefung.status === 'ok') {
     schritt.value = 'menge'
     window.scrollTo({ top: 0 })
+    titelFokussieren()
   }
 }
 function bestaetigen() {
@@ -114,7 +123,7 @@ onUnmounted(() => {
       ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
     >
     <p class="system-label seitenrubrik">Ernährung / {{ datum }}</p>
-    <h1>{{ schritt === 'produkt' ? 'Produkt.' : 'Menge.' }}</h1>
+    <h1 ref="titel" tabindex="-1">{{ schritt === 'produkt' ? 'Produkt.' : 'Menge.' }}</h1>
     <ol class="schrittanzeige" aria-label="Erfassung">
       <li :aria-current="schritt === 'produkt' ? 'step' : undefined"><span>01</span> Produkt</li>
       <li :aria-current="schritt === 'menge' ? 'step' : undefined"><span>02</span> Menge</li>
@@ -227,7 +236,7 @@ onUnmounted(() => {
       </p>
       <div class="aktionen">
         <button class="primaer" type="submit">Menge bestätigen und erfassen</button
-        ><button type="button" @click="schritt = 'produkt'">Produktangaben ändern</button>
+        ><button type="button" @click="angabenBearbeiten">Produktangaben ändern</button>
       </div>
     </form>
     <p class="klein off-quelle">
