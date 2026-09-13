@@ -597,7 +597,7 @@ summary {
   color: var(--farbe-text-leise);
 }
 .erfassen {
-  width: 100%;
+  width: min(100%, var(--aktion-breite));
 }
 .leerzustand {
   padding-block: var(--a-4);

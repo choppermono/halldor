@@ -26,8 +26,8 @@
   /* ---------- Akzent ----------
      Der einzige bunte Ton der App. Wer einen zweiten braucht,
      hat ein Hierarchieproblem, kein Farbproblem. */
-  --farbe-akzent: #be3a2e;
-  --farbe-auf-akzent: #fff6e0; /* 5.09:1 auf dem roten Akzent */
+  --farbe-akzent: #b5362b; /* Etwas dunkler: Textkontrast bleibt auch unter der Film-Auflage erhalten. */
+  --farbe-auf-akzent: #fff6e0; /* 5.53:1 auf dem roten Akzent, konservativ 4.61:1 mit Material. */
 
   /* ---------- Semantik ---------- */
   --farbe-fehler: #d67a70;
@@ -215,7 +215,7 @@
   --material-korn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.83' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h128v128H0z'/%3E%3C/svg%3E");
   --material-kachel: 128px;
   --material-korn-deckkraft: 0.027;
-  --material-vignette-deckkraft: 0.22;
+  --material-vignette-deckkraft: 0.1; /* Der Rand darf die Textkontraste nicht aufzehren. */
   --material-licht-deckkraft: 0.46;
   --z-material: 60;
   --z-start: 70;
@@ -227,6 +227,7 @@
   --navigation-spalte: 4.5rem; /* Bei 200% Schrift werden aus vier Zielen zwei Reihen. */
   --barcode-eingabebreite: 9rem; /* Nur grosse Schrift darf die Zeile sinnvoll umbrechen. */
   --eintragsdaten-breite: 12rem;
+  --aktion-breite: 24rem; /* Der rote Erfassungsknopf bleibt auf breiten Ansichten eine Aktion, keine Flaeche. */
   --titel-containergrenze: 24cqi; /* Einzelwoerter bleiben auch bei Schriftvergroesserung ganz. */
 
   /* Zweckgebundene Kurven; keine animierten Layoutmasse. */
