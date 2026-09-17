@@ -9,12 +9,6 @@ const leiste = ref(null)
 const ziele = [
   { name: 'Heute', pfad: '/', symbol: 'M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9' },
   {
-    name: 'Training',
-    pfad: '/training',
-    symbol: 'M3 9v6m3-9v12m0-6h12m0-6v12m3-9v6',
-  },
-  { name: 'Rang', pfad: '/rang', symbol: 'm12 3 8 9-8 9-8-9 8-9Zm-4 9 4-4 4 4-4 4-4-4Z' },
-  {
     name: 'Scan',
     pfad: '/scan',
     symbol: 'M3 5v14m3-14v14m3-14v14m4-14v14m2-14v14m3-14v14m3-14v14',

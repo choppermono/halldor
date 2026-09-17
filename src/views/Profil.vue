@@ -1,109 +1,18 @@
 <script setup>
-import { computed } from 'vue'
-import { useAnzeigeebene } from '../composables/useAnzeigeebene.js'
 import { useProfil } from '../composables/useProfil.js'
 import ProfilFormular from '../components/ProfilFormular.vue'
 
 defineOptions({ name: 'ProfilAnsicht' })
-const { zustand, anzeigeebeneAktiv, webglAktiv, modusWaehlen } = useAnzeigeebene()
 const { profilLaden } = useProfil()
 profilLaden()
-const auswahl = [
-  {
-    wert: 'automatisch',
-    titel: 'Automatisch',
-    text: 'Passt sich deinem Gerät und deiner Bewegungseinstellung an.',
-  },
-  {
-    wert: 'an',
-    titel: 'An',
-    text: 'Schaltet die Anzeigeebene ein. Reduzierte Bewegung bleibt berücksichtigt.',
-  },
-  {
-    wert: 'aus',
-    titel: 'Aus',
-    text: 'Die ruhige Darstellung. Alle Informationen bleiben erhalten.',
-  },
-]
-const erklaerung = computed(() => {
-  if (!zustand.bereit) return 'Die Darstellung wird vorbereitet.'
-  if (zustand.modus === 'aus') return 'Die ruhige Darstellung ist von dir gewählt.'
-  if (!zustand.tabSichtbar) return 'Pausiert, solange dieser Tab im Hintergrund ist.'
-  if (zustand.reduzierteBewegung) return 'Ruhefassung: Du hast reduzierte Bewegung eingestellt.'
-  if (zustand.modus === 'an') return 'Die Anzeigeebene ist ausdrücklich eingeschaltet.'
-  if (zustand.heruntergestuft)
-    return 'Automatisch ausgeschaltet: Die Bildrate war zu niedrig. Wähle erneut, um es noch einmal zu versuchen.'
-  return 'Dein Gerät und deine Bewegungseinstellung erlauben die Anzeigeebene.'
-})
-// Fehlendes WebGL nimmt nur die 3D-Szenen, nicht die Effekte aus CSS und JS.
-const dreidHinweis = computed(() =>
-  zustand.bereit && !zustand.webgl
-    ? 'Dein Browser stellt keine 3D-Grafik bereit. Effekte ohne 3D bleiben verfügbar.'
-    : ''
-)
 </script>
 
 <template>
   <section class="ansicht profil" aria-labelledby="profil-titel">
     <p class="system-label seitenrubrik">Dein Dossier / Profil</p>
     <h1 id="profil-titel">Profil.</h1>
-    <p class="profil-einleitung">Körperdaten, Rechenweg und Darstellung.</p>
+    <p class="profil-einleitung">Körperdaten und Rechenweg.</p>
     <ProfilFormular />
-
-    <section id="kino" class="kino-einstellung" aria-labelledby="kino-titel">
-      <div class="kino-kopf">
-        <p class="system-label">Darstellung</p>
-        <span class="system-label">Präferenzen</span>
-      </div>
-      <h2 id="kino-titel">Kino-Modus</h2>
-      <p id="kino-beschreibung" class="kino-beschreibung">
-        Mehr Bewegung oder volle Ruhe. Deine Inhalte bleiben dieselben.
-      </p>
-      <fieldset class="kino-auswahl" aria-describedby="kino-beschreibung">
-        <legend>Darstellung wählen</legend>
-        <label
-          v-for="option in auswahl"
-          :key="option.wert"
-          class="modus-option"
-          :class="{ 'modus-gewaehlt': zustand.modus === option.wert }"
-        >
-          <input
-            type="radio"
-            name="kino-modus"
-            :value="option.wert"
-            :checked="zustand.modus === option.wert"
-            :aria-labelledby="`modus-${option.wert}`"
-            :aria-describedby="`beschreibung-${option.wert}`"
-            @change="modusWaehlen(option.wert)"
-          />
-          <span class="modus-inhalt">
-            <span class="modus-kopf">
-              <strong :id="`modus-${option.wert}`">{{ option.titel }}</strong>
-            </span>
-            <span :id="`beschreibung-${option.wert}`" class="modus-beschreibung">{{
-              option.text
-            }}</span>
-          </span>
-        </label>
-      </fieldset>
-      <div class="kino-status" role="status" aria-live="polite" aria-atomic="true">
-        <p class="system-label">
-          {{
-            anzeigeebeneAktiv && !zustand.reduzierteBewegung
-              ? 'Anzeigeebene aktiv'
-              : 'Ruhefassung aktiv'
-          }}<span v-if="anzeigeebeneAktiv && !zustand.reduzierteBewegung">
-            · {{ webglAktiv ? '3D bereit' : 'ohne 3D' }}</span
-          >
-        </p>
-        <p>{{ erklaerung }}</p>
-        <p v-if="dreidHinweis">{{ dreidHinweis }}</p>
-      </div>
-      <p class="speicher-hinweis" role="status" aria-live="polite">{{ zustand.speicherHinweis }}</p>
-      <p class="kino-fussnote">
-        Bewegte Hintergründe sind optional. Die ruhige Darstellung bleibt vollständig.
-      </p>
-    </section>
   </section>
 </template>
 

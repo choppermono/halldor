@@ -65,7 +65,7 @@ function zumInhalt() {
     <a class="sprunglink" href="#inhalt" @click.prevent="zumInhalt">Zum Inhalt</a>
     <header class="app-kopf">
       <span class="wortmarke">Trackify<span aria-hidden="true">.</span></span>
-      <span class="system-label kopf-register">Ernährung &amp; Training</span>
+      <span class="system-label kopf-register">Ernährung</span>
     </header>
     <main id="inhalt" ref="inhalt" class="seiteninhalt" tabindex="-1">
       <div role="status" aria-live="polite" aria-atomic="true">
