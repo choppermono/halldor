@@ -5,7 +5,7 @@ import { useAnzeigeebene } from '../composables/useAnzeigeebene.js'
 defineOptions({ inheritAttrs: false })
 const { zustand } = useAnzeigeebene()
 // Vue Router startet push sofort. Nur der Browser animiert die Schnappschuesse.
-const uebergang = computed(() => zustand.modus !== 'aus' && !zustand.reduzierteBewegung)
+const uebergang = computed(() => !zustand.reduzierteBewegung)
 </script>
 
 <template>
