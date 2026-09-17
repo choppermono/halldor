@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterView } from 'vue-router'
-import RouterLink from './components/SeitenLink.vue'
 import Navigationsleiste from './components/Navigationsleiste.vue'
 import KinoHintergrund from './components/KinoHintergrund.vue'
 import KinoAuflage from './components/KinoAuflage.vue'
@@ -57,7 +56,7 @@ function zumInhalt() {
 <template>
   <div
     class="app-huelle"
-    :data-ruhe="zustand.modus === 'aus' || zustand.reduzierteBewegung"
+    :data-ruhe="zustand.reduzierteBewegung"
     :style="{ '--navigation-hoehe': navigationHoehe }"
   >
     <KinoHintergrund />
@@ -69,9 +68,9 @@ function zumInhalt() {
     </header>
     <main id="inhalt" ref="inhalt" class="seiteninhalt" tabindex="-1">
       <div role="status" aria-live="polite" aria-atomic="true">
-        <p v-if="zustand.heruntergestuft && zustand.modus === 'automatisch'" class="routenhinweis">
-          Wegen niedriger Bildrate auf die ruhige Darstellung gewechselt.
-          <RouterLink to="/profil#kino">Im Profil kannst du es erneut versuchen.</RouterLink>
+        <p v-if="zustand.heruntergestuft" class="routenhinweis">
+          Wegen niedriger Bildrate auf die ruhige Darstellung gewechselt. Beim nächsten Wechsel
+          zurück in dieses Fenster wird es erneut versucht.
         </p>
       </div>
       <RouterView />

@@ -16,7 +16,7 @@
       anzeigeebeneBeenden,
       useAnzeigeebene,
     } from '/src/composables/useAnzeigeebene.js'
-    import { dokumentLaden, dokumentSpeichern, dokumentZuruecksetzen } from '/src/lib/speicher.js'
+    import { dokumentZuruecksetzen } from '/src/lib/speicher.js'
 
     const ausgabe = document.querySelector('#ergebnis')
     const zeilen = []
@@ -97,128 +97,79 @@
       OffscreenCanvas.prototype.getContext = () => ({ getExtension: () => ({ loseContext() {} }) })
       sichtbarSetzen(true)
       anzeigeebeneStarten()
-      const { zustand, anzeigeebeneAktiv, webglAktiv, modusWaehlen } = useAnzeigeebene()
-      pruefen(
-        'Standard automatisch und aktiv',
-        zustand.modus === 'automatisch' && anzeigeebeneAktiv.value
-      )
+      const { zustand, anzeigeebeneAktiv, webglAktiv } = useAnzeigeebene()
+
+      // Es gibt keinen Modus mehr. Die Anzeigeebene laeuft, sobald sie kann,
+      // und wird nur von Geraetebedingungen zurueckgehalten.
+      pruefen('Nach dem Start sofort aktiv', anzeigeebeneAktiv.value)
+      pruefen('Kein Modus im Zustand', !('modus' in zustand))
       pruefen('Initialisierung schreibt nichts', localStorage.length === 0)
       pruefen(
         'Alle Verbraucher teilen Zustand und Ableitung',
         useAnzeigeebene().zustand === zustand &&
           useAnzeigeebene().anzeigeebeneAktiv === anzeigeebeneAktiv
       )
+      pruefen('Kein Schalter nach aussen', useAnzeigeebene().modusWaehlen === undefined)
       anzeigeebeneStarten()
       pruefen('Mehrfacher Start erzeugt nur einen Messauftrag', auftraege.size === 1)
-      modusWaehlen('aus')
-      pruefen(
-        'Aus deaktiviert und beendet Messung',
-        !anzeigeebeneAktiv.value && auftraege.size === 0
-      )
-      modusWaehlen('ungültig')
-      pruefen('Ungültige Auswahl bleibt wirkungslos', zustand.modus === 'aus')
-      modusWaehlen('automatisch')
+
       bewegungSetzen(true)
       pruefen(
-        'Reduzierte Bewegung wirkt zur Laufzeit',
-        !anzeigeebeneAktiv.value && auftraege.size === 0
-      )
-      modusWaehlen('an')
-      // Reduzierte Bewegung ist eine Betriebssystempräferenz und hat Vorrang vor dem App-Modus.
-      // Diese Zusicherung war bis 17.09.2026 umgekehrt («An übersteuert reduzierte
-      // Bewegung», E-88). Die Umkehr ist als R-09 im Entscheidungslog festgehalten.
-      pruefen(
-        'An respektiert reduzierte Bewegung',
+        'Reduzierte Bewegung wirkt zur Laufzeit und beendet die Messung',
         !anzeigeebeneAktiv.value && auftraege.size === 0
       )
       bewegungSetzen(false)
+      pruefen(
+        'Zuruecknehmen der Reduktion aktiviert wieder und misst',
+        anzeigeebeneAktiv.value && auftraege.size === 1
+      )
+
       sichtbarSetzen(false)
       pruefen(
-        'Hintergrund pausiert auch An und beendet Messung',
+        'Hintergrund pausiert und beendet die Messung',
         !anzeigeebeneAktiv.value && auftraege.size === 0
       )
       sekunden(10, 5)
       sichtbarSetzen(true)
       pruefen(
-        'Rückkehr startet frisch ohne Herunterstufung',
+        'Rueckkehr startet frisch ohne Herunterstufung',
         anzeigeebeneAktiv.value && !zustand.heruntergestuft
       )
-      bewegungSetzen(false)
-      modusWaehlen('automatisch')
+
       bild()
       sekunden(4, 30)
       pruefen(
-        '30 fps schalten automatisch ab und beenden sich selbst',
+        '30 fps stufen herunter und beenden die Messung selbst',
         zustand.heruntergestuft && !anzeigeebeneAktiv.value && auftraege.size === 0
       )
       bewegungSetzen(true)
       bewegungSetzen(false)
+      pruefen(
+        'Herunterstufung bleibt, solange das Fenster sichtbar bleibt',
+        zustand.heruntergestuft && !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      // Der zweite Versuch. Frueher war das eine erneute Moduswahl im Profil
+      // (E-109); ohne Schalter uebernimmt die Rueckkehr ins Fenster diese Rolle.
       sichtbarSetzen(false)
       sichtbarSetzen(true)
       pruefen(
-        'Herunterstufung bleibt in derselben Sitzung bestehen',
-        !anzeigeebeneAktiv.value && auftraege.size === 0
-      )
-      modusWaehlen('an')
-      pruefen(
-        'An übersteuert Herunterstufung ohne neue Messschleife',
-        anzeigeebeneAktiv.value && auftraege.size === 0
-      )
-      modusWaehlen('automatisch')
-      // Eine erneute Moduswahl ist ein ausdruecklicher zweiter Versuch: die
-      // Herunterstufung faellt und es wird wieder gemessen.
-      pruefen(
-        'Zurück auf automatisch ist ein neuer Versuch und misst wieder',
+        'Rueckkehr ins Fenster ist der zweite Versuch und misst wieder',
         anzeigeebeneAktiv.value && !zustand.heruntergestuft && auftraege.size === 1
       )
-      pruefen(
-        'Nur der Modus wird gespeichert',
-        JSON.stringify(dokumentLaden().dokument.einstellungen) === '{"kinoModus":"automatisch"}'
-      )
-      const fremd = dokumentLaden().dokument
-      fremd.profil = { pruefmarke: 'anderer Verbraucher' }
-      fremd.einstellungen.sonstiges = 123
-      dokumentSpeichern(fremd)
-      modusWaehlen('aus')
-      pruefen(
-        'Modusänderung erhält neue fremde Bereiche und Einstellungen',
-        dokumentLaden().dokument.profil.pruefmarke === 'anderer Verbraucher' &&
-          dokumentLaden().dokument.einstellungen.sonstiges === 123
-      )
-      const vorher = localStorage.getItem('trackify')
-      Storage.prototype.setItem = () => {
-        throw new DOMException('Test', 'QuotaExceededError')
-      }
-      modusWaehlen('an')
-      pruefen(
-        'Schreibfehler: Auswahl wirkt, Hinweis sichtbar verfügbar, Bestand erhalten',
-        zustand.modus === 'an' &&
-          zustand.speicherHinweis.includes('voll') &&
-          localStorage.getItem('trackify') === vorher
-      )
-      Storage.prototype.setItem = original.setzen
-      modusWaehlen('aus')
-      pruefen('Erfolgreiches Speichern entfernt Fehlerhinweis', zustand.speicherHinweis === '')
-      localStorage.setItem('trackify', '{kaputt')
-      modusWaehlen('an')
-      pruefen(
-        'Kaputte Daten werden nicht überschrieben',
-        localStorage.getItem('trackify') === '{kaputt' &&
-          zustand.speicherHinweis.includes('unverändert')
-      )
-      dokumentZuruecksetzen(true)
+
+      pruefen('Die Anzeigeebene schreibt nie in den Speicher', localStorage.length === 0)
+
       anzeigeebeneBeenden()
       OffscreenCanvas.prototype.getContext = () => null
       anzeigeebeneStarten()
-      modusWaehlen('an')
       // Fehlendes WebGL nimmt nur die 3D-Szenen. Startsequenz, Glyphen und
       // Film-Auflage sind CSS und JS und laufen weiter.
       pruefen(
         'Fehlendes WebGL nimmt nur 3D, nicht die Anzeigeebene',
-        anzeigeebeneAktiv.value && !webglAktiv.value && !zustand.webgl && auftraege.size === 0
+        anzeigeebeneAktiv.value && !webglAktiv.value && !zustand.webgl && auftraege.size === 1
       )
       anzeigeebeneBeenden()
-      pruefen('Entfernen beendet sämtliche Messaufträge', auftraege.size === 0)
+      pruefen('Entfernen beendet saemtliche Messauftraege', auftraege.size === 0)
       zeilen.push('ABSCHLUSS: Alle AV-Modulprüfungen bestanden.')
     } catch (fehler) {
       zeilen.push('ABBRUCH: ' + fehler.stack)
