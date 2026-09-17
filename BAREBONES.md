@@ -26,12 +26,12 @@ Operation gewesen; hier ist er ein Löschen.
 - Training und Rang samt Routen und Navigationseinträgen
 - der Kino-Modus im Profil
 
-> [!note] Warum der Kino-Modus mit rausgeflogen ist
-> Er stand nicht auf der Streichliste. Aber ohne `src/kino/` steuert der
-> Schalter nichts mehr: die Auswahl wird gespeichert, der Text ändert sich,
-> sichtbar passiert nichts. **Ein Bedienelement ohne Wirkung ist in der
-> Prüfungsfassung schlimmer als Komplexität** — die erste Frage wäre «und was
-> macht das?», und die ehrliche Antwort wäre «nichts».
+> [!note] Der Kino-Modus ist inzwischen auch aus `main` verschwunden
+> Er flog hier zuerst raus, weil er ohne `src/kino/` nichts mehr steuerte.
+> Kurz darauf fiel er auch in der Vollversion: **die soll immer gut
+> aussehen, und ein Schalter, der sie schlechter macht, hat darin nichts zu
+> suchen.** Der Unterschied zwischen den beiden Fassungen ist damit der
+> Branch, nicht eine Einstellung.
 
 ## Was das bringt
 
@@ -47,25 +47,27 @@ Der Scanner bleibt der grösste Einzelposten. Er wird erst geladen, wenn
 jemand `/scan` öffnet, und er ist der Grund, warum es die App gibt — der
 bleibt.
 
-## Was übrig ist und du entscheiden solltest
+## Was übrig ist
 
 `KinoAuflage.vue`, `KinoHintergrund.vue`, `useAnzeigeebene.js` und
-`anzeigebedingungen.js` sind noch da. Das ist die Maschinerie der
-Anzeigeebene: Bildratenmessung, WebGL-Probe, Herunterstufung, Tab-Sichtbarkeit,
-reduzierte Bewegung.
+`anzeigebedingungen.js` stehen noch. Seit `main` den Schalter losgeworden ist,
+ist das Composable allerdings ein anderes Tier: **90 Zeilen statt 150**, ohne
+Modus, ohne Persistenz, ohne Speicherhinweise.
 
-Sie schadet nichts — die Einhängepunkte finden kein Modul und rendern nichts,
-genau wie im Löschtest. Aber sie steuert auf diesem Branch auch nichts mehr.
+Und es ist hier nicht ganz wirkungslos: `SeitenLink.vue` liest daraus
+`reduzierteBewegung` und schaltet danach die Seitenübergänge ab. Die
+Übergänge sind Kern, nicht Kino — sie bleiben also auch in dieser Fassung.
 
-Zwei vertretbare Wege, und es ist deine Wahl:
+Ohne Wirkung sind nur noch die Bildratenmessung und die WebGL-Probe: sie
+messen für Szenen, die es auf diesem Branch nicht gibt.
 
-1. **Drinlassen.** Es ist die anspruchsvollste eigene Logik im Projekt und
-   damit gutes Gesprächsmaterial — aber du musst erklären können, warum sie
-   in einer Fassung steht, in der sie nichts bewirkt.
-2. **Rausnehmen.** Dann ist der Branch vollständig konsistent: keine
-   Anzeigeebene, kein Begriff davon, nichts zu erklären. Kostet Änderungen in
-   `App.vue`, `GlyphenText.vue`, `KameraScanner.vue`, `TagesBogen.vue` und
-   `SeitenLink.vue`.
+Zwei vertretbare Wege:
+
+1. **Drinlassen.** Es ist eigene Logik und im Gespräch brauchbar — du musst
+   erklären können, warum gemessen wird, wo nichts zu schützen ist.
+2. **Auf das Nötige eindampfen.** `SeitenLink.vue` liest
+   `prefers-reduced-motion` direkt, danach fallen Composable und
+   Einhängepunkte weg. Dann ist der Branch vollständig konsistent.
 
 ## Pflege
 
@@ -79,5 +81,16 @@ Nichts auf diesem Branch geht je zurück nach `main`.
 Kein `three`-Bündel mehr, keine Verweise auf Training, Rang oder `src/kino/`
 im Quelltext.
 
-==Ein Durchklicken im Browser steht noch aus.== Es ist derselbe Code wie auf
-`main`, nur mit weniger Dateien, aber gesehen hat diesen Branch noch niemand.
+Kopflos durchgeklickt bei 375 px, alle Routen:
+
+|                          |                                             |
+| ------------------------ | ------------------------------------------- |
+| Navigation               | Heute · Scan · Profil                       |
+| `canvas` je Route        | 0 — kein Sternenfeld                        |
+| Kino-Abschnitt im Profil | nicht vorhanden                             |
+| `/training`, `/rang`     | fallen auf Heute zurück, keine toten Routen |
+| Waagrechter Überlauf     | keiner                                      |
+| Konsolenfehler           | keine                                       |
+
+Die AV-Prüfseite läuft auch hier: **33 Prüfpunkte bestanden**, Speicher danach
+leer.
