@@ -230,3 +230,55 @@ und ist ohne Eingriff im Vercel-Projekt nicht prüfbar.
 
 Nach den Korrekturen: `npm run lint`, `npm run build` und
 `npx prettier --check .` bestanden.
+
+---
+
+## Abschluss 17.09.2026 — die offenen Nachweise sind erbracht
+
+Nachdem Vercel Authentication auf dem Projekt abgeschaltet wurde (Konto des
+Projektpartners), war die Branch-Vorschau erreichbar.
+
+### Auf der Vorschau geprüft
+
+| Prüfung                                    | Ergebnis                                               |
+| ------------------------------------------ | ------------------------------------------------------ |
+| `/scan` direkt aufgerufen                  | `200`, echtes `index.html` (622 Bytes)                 |
+| `/rang`, `/tief/er/gibtsnicht`             | `200` — die SPA-Umleitung greift auch verschachtelt    |
+| `fonts/jetbrains-mono-500-latin.woff2`     | `200`, `font/woff2`, 31 432 Bytes                      |
+| `fonts/cormorant-garamond-300-latin.woff2` | `200`, `font/woff2`, 37 640 Bytes                      |
+| `fonts/plex-1.ttf`                         | fällt in die Umleitung — die TTF-Dateien sind entfernt |
+
+Das ausgelieferte Stylesheet heisst `index-DRNpyiOB.css` und trägt damit
+denselben Inhalts-Hash wie der lokale Build desselben Commits. Vite benennt
+nach Inhalt, gleiche Prüfsumme heisst byteweise gleiche Datei: die Vorschau
+führt genau den Stand aus, der lokal geprüft wurde.
+
+### Auf einem echten Gerät geprüft
+
+**Physischer Barcode-Scan bestanden.** Florian hat ein reales Produkt
+gescannt, die Erkennung lief durch bis zum Produkt. Zusätzlich **auf Safari**
+bestanden — das war die Plattform mit dem grössten Restrisiko, weil
+`getUserMedia` dort anders behandelt wird als in Chrome und lokal nicht
+prüfbar war.
+
+Damit sind die beiden zuvor offenen Nachweise erbracht:
+
+- ~~Physischer Barcode-Scan auf einem Handy über HTTPS~~ — bestanden
+- ~~SPA-Direktaufruf auf der Vercel-Vorschau~~ — bestanden
+
+### Weiterhin ungeprüft
+
+- Tatsächlicher Berechtigungsentzug in den Einstellungen eines realen
+  Zielbrowsers. Der verweigerte Zustand wurde echt ausgelöst (die
+  Prüfumgebung blockierte den Kamerazugriff), der Weg über die
+  Browsereinstellungen nicht.
+- Gerät ohne Kamera — simuliert geprüft, nicht real.
+- Ob der Kamerastrom beim Verlassen der Ansicht **auf dem Handy** endet.
+  Lokal geprüft und bestanden; auf dem Gerät nicht ausdrücklich bestätigt.
+  Sichtbar am Kamerasymbol in der Statusleiste.
+
+## Stand des Pakets
+
+P-A ist fachlich abgeschlossen: Kamera, Erkennung, Rückfallweg, Produktabfrage,
+Fehlerfälle, Inszenierung, Schichtgrenze, Deploy und Vorschau stehen und sind
+geprüft.
