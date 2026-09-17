@@ -9,7 +9,10 @@ defineProps({ ergebnis: { type: Object, required: true } })
     <p class="system-label">Schätzung / pro Tag</p>
     <h2 id="ziel-titel">Dein Rechenweg</h2>
     <template v-if="ergebnis.status === 'ok'">
-      <p class="ziel-zahl">Etwa {{ kalorien(ergebnis.wert.kcal) }} <span>kcal</span></p>
+      <p class="ziel-zahl">
+        <span class="ziel-naeherung">Etwa</span> {{ kalorien(ergebnis.wert.kcal) }}
+        <span>kcal</span>
+      </p>
       <dl class="messwerte">
         <div>
           <dt>Protein</dt>
@@ -47,58 +50,61 @@ defineProps({ ergebnis: { type: Object, required: true } })
     <template
       v-if="ergebnis.herleitung?.bmrKcal !== null && ergebnis.herleitung?.bmrKcal !== undefined"
     >
-      <dl class="rechenweg">
-        <div>
-          <dt>Grundlage</dt>
-          <dd>
-            {{ zahl(ergebnis.herleitung.gewichtKg, 1) }} kg ·
-            {{ zahl(ergebnis.herleitung.groesseCm, 1) }} cm · {{ ergebnis.herleitung.alter }} Jahre
-            · {{ ergebnis.herleitung.stichtag }}
-          </dd>
-        </div>
-        <div>
-          <dt>Mifflin-St Jeor · belegt</dt>
-          <dd>
-            {{ ergebnis.herleitung.rechnung }}<br />Grundumsatz: etwa
-            {{ kalorien(ergebnis.herleitung.bmrKcal) }} kcal
-          </dd>
-        </div>
-        <div>
-          <dt>Gesamtumsatz · Faustregel</dt>
-          <dd>
-            Grundumsatz × {{ ergebnis.herleitung.aktivitaet }} = etwa
-            {{ kalorien(ergebnis.herleitung.tdeeKcal) }} kcal. Primärquelle des Aktivitätsfaktors
-            offen.
-          </dd>
-        </div>
-        <div>
-          <dt>Tempo zuerst</dt>
-          <dd>
-            {{ zahl(ergebnis.herleitung.rateProzent, 6) }} % ×
-            {{ zahl(ergebnis.herleitung.gewichtKg, 1) }} kg / 100 =
-            {{ zahl(ergebnis.herleitung.kgJeWoche, 3) }} kg pro Woche.<br />×
-            {{ REGELN.kcalJeKg }} kcal/kg / {{ REGELN.tageJeWoche }} = etwa
-            {{ kalorien(ergebnis.herleitung.aenderungKcal) }} kcal
-            {{ ergebnis.herleitung.ziel === 'abnehmen' ? 'Defizit' : 'Zuschlag' }} pro Tag.
-          </dd>
-        </div>
-        <div>
-          <dt>Umrechnung · Faustregel</dt>
-          <dd>
-            {{ REGELN.kcalJeKg }} kcal je kg ist eine vereinfachte Annahme, Primärquelle offen. Die
-            Rate ist für Gewichtsverlust belegt; ihre Übertragung auf Aufbau ist unbelegt.
-          </dd>
-        </div>
-        <div>
-          <dt>Aufteilung</dt>
-          <dd>
-            Protein: {{ REGELN.proteinJeKg }} g/kg (Morton et al., Erwachsene mit Krafttraining;
-            obere Intervallgrenze {{ REGELN.proteinMaximumJeKg }} g/kg). Fett:
-            {{ REGELN.fettJeKg }} g/kg (Faustregel). Verbleibende Energie /
-            {{ REGELN.energie.kohlenhydrate }} ergibt Kohlenhydrate.
-          </dd>
-        </div>
-      </dl>
+      <details class="rechen-details">
+        <summary>Berechnung im Detail</summary>
+        <dl class="rechenweg">
+          <div>
+            <dt>Grundlage</dt>
+            <dd>
+              {{ zahl(ergebnis.herleitung.gewichtKg, 1) }} kg ·
+              {{ zahl(ergebnis.herleitung.groesseCm, 1) }} cm ·
+              {{ ergebnis.herleitung.alter }} Jahre · {{ ergebnis.herleitung.stichtag }}
+            </dd>
+          </div>
+          <div>
+            <dt>Mifflin-St Jeor · belegt</dt>
+            <dd>
+              {{ ergebnis.herleitung.rechnung }}<br />Grundumsatz: etwa
+              {{ kalorien(ergebnis.herleitung.bmrKcal) }} kcal
+            </dd>
+          </div>
+          <div>
+            <dt>Gesamtumsatz · Faustregel</dt>
+            <dd>
+              Grundumsatz × {{ ergebnis.herleitung.aktivitaet }} = etwa
+              {{ kalorien(ergebnis.herleitung.tdeeKcal) }} kcal. Primärquelle des Aktivitätsfaktors
+              offen.
+            </dd>
+          </div>
+          <div>
+            <dt>Tempo zuerst</dt>
+            <dd>
+              {{ zahl(ergebnis.herleitung.rateProzent, 6) }} % ×
+              {{ zahl(ergebnis.herleitung.gewichtKg, 1) }} kg / 100 =
+              {{ zahl(ergebnis.herleitung.kgJeWoche, 3) }} kg pro Woche.<br />×
+              {{ REGELN.kcalJeKg }} kcal/kg / {{ REGELN.tageJeWoche }} = etwa
+              {{ kalorien(ergebnis.herleitung.aenderungKcal) }} kcal
+              {{ ergebnis.herleitung.ziel === 'abnehmen' ? 'Defizit' : 'Zuschlag' }} pro Tag.
+            </dd>
+          </div>
+          <div>
+            <dt>Umrechnung · Faustregel</dt>
+            <dd>
+              {{ REGELN.kcalJeKg }} kcal je kg ist eine vereinfachte Annahme, Primärquelle offen.
+              Die Rate ist für Gewichtsverlust belegt; ihre Übertragung auf Aufbau ist unbelegt.
+            </dd>
+          </div>
+          <div>
+            <dt>Aufteilung</dt>
+            <dd>
+              Protein: {{ REGELN.proteinJeKg }} g/kg (Morton et al., Erwachsene mit Krafttraining;
+              obere Intervallgrenze {{ REGELN.proteinMaximumJeKg }} g/kg). Fett:
+              {{ REGELN.fettJeKg }} g/kg (Faustregel). Verbleibende Energie /
+              {{ REGELN.energie.kohlenhydrate }} ergibt Kohlenhydrate.
+            </dd>
+          </div>
+        </dl>
+      </details>
     </template>
     <p class="klein">
       Eine Schätzung, keine Messung. Die rechnerische Makrogrenze prüft nur, ob Protein und Fett

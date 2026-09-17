@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import Heute from '../views/Heute.vue'
 import Training from '../views/Training.vue'
@@ -37,8 +38,23 @@ const router = createRouter({
 
 // Der Titel haengt bewusst an meta.titel und nicht am Routennamen: eine
 // spaetere Route ohne Namen wuerde sonst still «undefined · Trackify» zeigen.
-router.afterEach((ziel) => {
+const reihenfolge = ['/', '/produkt', '/training', '/rang', '/profil', '/onboarding']
+router.beforeEach((ziel, ursprung) => {
+  document.documentElement.style.setProperty(
+    '--seitenrichtung',
+    reihenfolge.indexOf(ziel.path) < reihenfolge.indexOf(ursprung.path) ? '-1' : '1'
+  )
+})
+router.afterEach((ziel, ursprung, fehler) => {
+  if (fehler) return
   document.title = ziel.meta.titel ? `${ziel.meta.titel} · Trackify` : 'Trackify'
+  // Kein Fokusverlust beim Wechsel per Tastatur; Datumsaenderungen bleiben am Register.
+  if (ursprung.matched.length && ziel.path !== ursprung.path)
+    nextTick(() => {
+      const titel = document.querySelector('main h1')
+      titel?.setAttribute('tabindex', '-1')
+      titel?.focus({ preventScroll: true })
+    })
 })
 
 export default router

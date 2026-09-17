@@ -13,28 +13,24 @@ const auswahl = [
     wert: 'automatisch',
     titel: 'Automatisch',
     text: 'Passt sich deinem Gerät und deiner Bewegungseinstellung an.',
-    nummer: '01',
   },
   {
     wert: 'an',
     titel: 'An',
-    text: 'Erlaubt Bewegung auch bei reduzierter Bewegung oder geringer Leistung.',
-    nummer: '02',
+    text: 'Schaltet die Anzeigeebene ein. Reduzierte Bewegung bleibt berücksichtigt.',
   },
   {
     wert: 'aus',
     titel: 'Aus',
     text: 'Die ruhige Darstellung. Alle Informationen bleiben erhalten.',
-    nummer: '03',
   },
 ]
 const erklaerung = computed(() => {
   if (!zustand.bereit) return 'Die Darstellung wird vorbereitet.'
   if (zustand.modus === 'aus') return 'Die ruhige Darstellung ist von dir gewählt.'
   if (!zustand.tabSichtbar) return 'Pausiert, solange dieser Tab im Hintergrund ist.'
+  if (zustand.reduzierteBewegung) return 'Ruhefassung: Du hast reduzierte Bewegung eingestellt.'
   if (zustand.modus === 'an') return 'Die Anzeigeebene ist ausdrücklich eingeschaltet.'
-  if (zustand.reduzierteBewegung)
-    return 'Automatisch ausgeschaltet: Du hast reduzierte Bewegung eingestellt.'
   if (zustand.heruntergestuft)
     return 'Automatisch ausgeschaltet: Die Bildrate war zu niedrig. Wähle erneut, um es noch einmal zu versuchen.'
   return 'Dein Gerät und deine Bewegungseinstellung erlauben die Anzeigeebene.'
@@ -57,7 +53,7 @@ const dreidHinweis = computed(() =>
     <section id="kino" class="kino-einstellung" aria-labelledby="kino-titel">
       <div class="kino-kopf">
         <p class="system-label">Darstellung</p>
-        <span class="system-label">01 / Präferenzen</span>
+        <span class="system-label">Präferenzen</span>
       </div>
       <h2 id="kino-titel">Kino-Modus</h2>
       <p id="kino-beschreibung" class="kino-beschreibung">
@@ -83,7 +79,6 @@ const dreidHinweis = computed(() =>
           <span class="modus-inhalt">
             <span class="modus-kopf">
               <strong :id="`modus-${option.wert}`">{{ option.titel }}</strong>
-              <span class="modus-nummer" aria-hidden="true">{{ option.nummer }}</span>
             </span>
             <span :id="`beschreibung-${option.wert}`" class="modus-beschreibung">{{
               option.text
@@ -93,8 +88,13 @@ const dreidHinweis = computed(() =>
       </fieldset>
       <div class="kino-status" role="status" aria-live="polite" aria-atomic="true">
         <p class="system-label">
-          {{ anzeigeebeneAktiv ? 'Anzeigeebene aktiv' : 'Ruhefassung aktiv'
-          }}<span v-if="anzeigeebeneAktiv"> · {{ webglAktiv ? '3D bereit' : 'ohne 3D' }}</span>
+          {{
+            anzeigeebeneAktiv && !zustand.reduzierteBewegung
+              ? 'Anzeigeebene aktiv'
+              : 'Ruhefassung aktiv'
+          }}<span v-if="anzeigeebeneAktiv && !zustand.reduzierteBewegung">
+            · {{ webglAktiv ? '3D bereit' : 'ohne 3D' }}</span
+          >
         </p>
         <p>{{ erklaerung }}</p>
         <p v-if="dreidHinweis">{{ dreidHinweis }}</p>
@@ -192,12 +192,6 @@ input {
   gap: var(--a-3);
   font-size: var(--t-basis);
   line-height: var(--t-basis-zh);
-}
-.modus-nummer {
-  flex-shrink: 0;
-  color: var(--farbe-text-leise);
-  font: 400 var(--t-label) / var(--t-label-zh) var(--schrift-zahl);
-  font-variant-numeric: tabular-nums;
 }
 .modus-beschreibung {
   display: block;

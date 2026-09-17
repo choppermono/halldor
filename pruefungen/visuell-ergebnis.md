@@ -1,0 +1,61 @@
+# Trackify – visueller Abschluss
+
+Stand: 13.09.2026. Repository `D:\Projekte\ascend`, Branch `feature/visuell`, Ausgangspunkt `cb7ff29`. Kein Push und kein Merge.
+
+## Sichtbare Änderungen
+
+Alle vorhandenen Ansichten verwenden jetzt dieselbe Dossier-Gestaltung: Plex Condensed für Titel, Plex Mono für Messwerte, Elfenbein, scharfe Kanten und dünne Linien. Die Tageszahl sitzt groß im offenen SVG-Instrument. Ziel, Differenz und Makros bilden getrennte Ebenen; Rundung und Zielstand sind beschriftete Werte, ihre vollständigen Erklärungen bleiben aufklappbar.
+
+Die Navigation zeigt eine kurze rote Markierung. Formulare haben zusammengehörige Register, unterstrichene Eingaben und einheitliche Bedienhöhen. Barcode-Feld und Abfrageknopf stehen bei normaler Schrift auf einer Linie. Datum und native Auswahlfunktionen bleiben tastatur- und mobilgeeignet, erhalten aber eine eigene sichtbare Gestaltung. Auf Heute öffnet das kompakte Datum ein beschriftetes Register. Rechenweg, Produkt-Treffer, Mengenbestätigung, Profil/Kino sowie Training und Rang sind mitgestaltet.
+
+K1 startet einmal pro Sitzung, zeichnet Linien und löst die Wortmarke auf. K2 überlagert Tageszahl, Makrowerte und gefundenen Produktnamen mit dekorativen Glyphen. K4 fährt Spur und Endpunkt zum Messwert. Überschreitungen bleiben auf 100 % begrenzt und wechseln zu hellem Elfenbein. K3 ergänzt schwaches statisches Korn und eine Vignette mit einer Lichtquelle oben links. K5 gibt Seitenwechseln Richtung und Listen 40 ms Staffelung.
+
+## Erhaltene Grenzen
+
+- `src/lib/`, `src/composables/`, `package.json` und `package-lock.json` sind gegenüber `cb7ff29` unverändert. Rechenkern, Speicher, API, Datenmodell und fachliche Fehlerbehandlung wurden nicht geändert.
+- Verantwortungsbezogene Inhalte, Altersregel, Hinweis und Meldung zum ungültigen Makroziel bleiben erhalten. Erklärungen wurden höchstens in aufklappbare Abschnitte verschoben.
+- Die tatsächlichen Werte stehen sofort im DOM. Glyphenkopien sind `aria-hidden`; das vollständige statische SVG gehört zum Kern.
+- K1, K2 und K4 werden über `anzeigeebeneAktiv` geladen. Ein zusätzlicher Schutz setzt reduzierte Bewegung immer durch. Es gibt keinen direkten Import aus `src/kino/`; optionale Glob-Register dürfen leer sein.
+- Nur der Startmarker verwendet `sessionStorage`. Keine neue npm-Abhängigkeit. Die lokal ausgelieferten Plex-Schriften enthalten ihre SIL Open Font License.
+
+## Ausgeführte Prüfung
+
+Dev-Server selbst gestartet: `http://127.0.0.1:5173`. Preview für den gebauten Kern ohne Kino: `http://127.0.0.1:4173`. Browserprüfung mit Chromium/Playwright in getrennten frischen Kontexten; keine fremden App-Daten gelöscht.
+
+| Prüfung                                              | Tatsächliches Ergebnis                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Alle Bildschirme, 375 und 1280 px                    | Je 14 Zustände als Vollseiten- und Viewport-Screenshot: Heute ohne Profil, Onboarding leer/Rechenweg, Heute leer, Produkt leer/Treffer, Menge, Heute mit Eintrag, gestern, Training, Rang, Profil/Rechenweg/Kino. Kein horizontaler Überlauf, keine App-Konsolen- oder Laufzeitfehler.                                                                    |
+| Vollständiger Ablauf, beide Breiten                  | Profil über UI angelegt: männlich, 12.09.1996, 180 cm, 80 kg, regelmässig aktiv, Halten. Ziel geprüft und gespeichert. Echte API-Abfrage `3017620422003` ergab Nutella. 15 g bestätigt, Heute geprüft, Eintrag gelöscht, echter Reload, gestern geöffnet. Löschung blieb erhalten; gespeicherter Zustand nach Reload bytegleich.                          |
+| Barcode-Ausrichtung                                  | Eingabe und Knopf jeweils 48 px hoch, identische y-Position: 375.14 px mobil, 394.73 px bei 1280.                                                                                                                                                                                                                                                         |
+| Schriftgröße 200 %                                   | Root-Schrift tatsächlich 32 px; je 13 Zustände bei 375 und 1280 px einschließlich geöffnetem Datum, Rechenweg, Kino, überschrittenem Ziel und unbekannten Nährwerten. Keine herausragenden sichtbaren Felder oder horizontalen Überläufe. Screenshots visuell geprüft.                                                                                    |
+| Tastatur bei 200 %                                   | Alle erwarteten sichtbaren Bedienziele erreicht: Onboarding 17, Profil mit Rechenweg 18, Heute 10, Rückblick mit Herleitung 17, Produkt 21, Menge 11, Training 5, Rang 5. Fokus sichtbar und nicht hinter der festen Navigation. Kino per Pfeiltasten, Datum per Enter, Produkt/Menge per Enter und Überschriftenfokus geprüft.                           |
+| Aus / reduzierte Bewegung / An + reduzierte Bewegung | Je sieben Ansichten einschließlich Menge: fertige Werte, keine versteckten Endwerte, keine aktiven Animationen, keine Kino-Auflagen und kein Canvas. Auch während laufendem Bogen/Glyphen auf Reduktion umgestellt: Endwert sofort sichtbar; Ressourcen danach entfernt.                                                                                  |
+| Startsequenz                                         | Gemessen rund 1.04 s sichtbar, unter 1.2 s. Tastatur, Zeiger und Mausrad beenden sofort; kein Wiederholen nach Reload in derselben Sitzung.                                                                                                                                                                                                               |
+| Überschreitung / unbekannte Werte                    | Bogen bei 4000 kcal auf 100 % begrenzt, Farbe Elfenbein. Bekannte Teilsumme und Hinweis auf unvollständige Bilanz bleiben sichtbar. Ungültiges Makroziel zusätzlich im Profil angesehen.                                                                                                                                                                  |
+| View Transitions / Rückfall                          | Vorwärts- und Rückwärtsrichtung tatsächlich beobachtet, rund 290 ms. Navigation ohne `document.startViewTransition` funktionsfähig. Fehlendes `Element.animate` zeigt den fertigen Bogen ohne Fehler. Schnelle aufeinanderfolgende Navigation wartete nicht auf Effekte.                                                                                  |
+| Scrollen / Bildrate                                  | Scrollserie bei 375/1280 px: Canvas blieb am Viewport, keine schwarze Abdeckung sichtbar. Lokale zweisekündige rAF-Stichprobe beim Scrollen: rund 240 Aufrufe/s, 95. Perzentil 4.2–4.3 ms, größter Abstand 4.7 ms.                                                                                                                                        |
+| `mvp-ernaehrung.html`                                | **145 bestanden**, eigener leerer Kontext, danach Speicher leer.                                                                                                                                                                                                                                                                                          |
+| `av-anzeigeebene.html`                               | **38 bestanden**, eigener leerer Kontext, danach Speicher leer.                                                                                                                                                                                                                                                                                           |
+| `a2-speicher.html`                                   | **151 vor**, **158 insgesamt nach echtem Reload** über den angebotenen Knopf; danach Speicher leer.                                                                                                                                                                                                                                                       |
+| Löschtest                                            | `av-loeschtest.ps1 -Aktion auslagern`: Lint und Build bestanden. Mit fehlendem `src/kino/` den gesamten UI-Ablauf inklusive echtem Barcode, 15 g, Löschen/Reload/gestern und allen Kino-Modi bei 375 px ausgeführt: keine Fehler, kein Canvas, keine Kino-Ressourcen. Anschließend wiederhergestellt. Abschließender Standard-Löschtest erneut bestanden. |
+| Abschlussbefehle                                     | `npm run lint`, `npm run build` und `npx prettier --check .` bestanden. Vollständiger Build nach Wiederherstellung erzeugt.                                                                                                                                                                                                                               |
+
+Die Modulprüfungen wurden nicht geändert. Beim ersten direkten Aufruf der separaten MVP-Prüfseite meldete Chromium einmal `/favicon.ico` mit HTTP 404; die Prüfseite verlinkt kein Icon. Die 145 Prüfpunkte bestanden. Die App selbst verlinkt ihr vorhandenes SVG-Icon und hatte diesen Fehler nicht.
+
+## Selbst getroffene Entscheidungen
+
+- **Bedienbarkeit der Auswahlfelder:** native `select`- und `date`-Semantik bleibt erhalten; sichtbare Pfeile, Kalenderzeichen und Feldgestaltung sind angepasst. Keine selbst erfundene Listbox oder Kalender-Tastatursteuerung.
+- **Reduzierte Bewegung schlägt „An“:** Der aktuelle Auftrag ist strenger als der bestehende AV-Zustandsvertrag. Deshalb sperren die visuellen Einhängepunkte zusätzlich, während der geprüfte Composable unverändert bleibt.
+- **Display-Stimme:** IBM Plex Sans Condensed ergänzt die vorhandene Plex-Familie. Lokale Dateien vermeiden eine externe Schriftanfrage.
+- **Token-Erweiterungen:** Display- und Instrumentgrößen begründen Hierarchie; feste Feldmaße, Navigation und Containergrenzen sichern vergrößerte Schrift; Bogenwerte beschreiben das Instrument; Materialtokens begrenzen das Licht; separate Eintritts-, Austritts-, Schritt-, Bogen- und lineare Kurven geben jeder Bewegung ihren Zweck. Die Gründe stehen auch direkt bei den Token-Gruppen.
+- **Kontrast unter Material:** Vignette auf 0.1 begrenzt und Akzent leicht dunkler abgestimmt. Knopftext erreicht 5.53:1 ohne Auflage; konservativ mit maximaler Vignette, schwarzem Korn auf Text und weißem Korn auf Grund noch 4.61:1. Leiser Text wird für kleine Labels verwendet; `--farbe-text-schwach` wird in der App nicht eingesetzt.
+- **200 % Schrift:** Navigation darf zwei Reihen bilden. Ihre gemessene Höhe bestimmt Inhaltspolster und Scrollreserve, damit der Tastaturfokus sichtbar bleibt.
+- **Vault-Pfad:** Die genannten Planungsdateien lagen tatsächlich unter `IPT-4.1_Webentwicklung-II` und wurden dort gelesen.
+
+## Offene Grenzen
+
+Der zuvor gemeldete schwarze Scrollblock ließ sich nicht reproduzieren. Deshalb ist keine gezielte Behebung dieses unbekannten Fehlers behauptet; die feste Ebenenordnung und Scrollserie sind geprüft.
+
+Der vollständige Build meldet weiterhin den bereits vorhandenen, separat geladenen Three.js-Chunk mit 524.17 kB über Vites 500-kB-Hinweisgrenze. Die Grenze wurde nicht verändert. Der App-Hauptchunk liegt bei 147.96 kB, ohne Kino bei 145.46 kB.
+
+Die Bildratenmessung gilt für diesen Rechner, nicht als Nachweis auf physischer Mobilhardware. Reale iOS-/Android-Geräte und ein tatsächlich laufender Screenreader wurden nicht getestet. Semantik, Tastatur, Endwerte im DOM und dekorative ARIA-Ausblendung wurden geprüft. Kamera-Hardware war nicht Teil des Barcode-Tests; die Eingabe erfolgte über das Barcode-Feld.

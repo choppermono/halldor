@@ -1,8 +1,10 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import RouterLink from './components/SeitenLink.vue'
 import Navigationsleiste from './components/Navigationsleiste.vue'
 import KinoHintergrund from './components/KinoHintergrund.vue'
+import KinoAuflage from './components/KinoAuflage.vue'
 
 import {
   anzeigeebeneStarten,
@@ -14,7 +16,34 @@ const { zustand } = useAnzeigeebene()
 onMounted(anzeigeebeneStarten)
 onUnmounted(anzeigeebeneBeenden)
 
+const startBeginn = performance.now()
+const startZeigen = ref(false)
+const eingaben = ['pointerdown', 'keydown', 'wheel', 'touchstart', 'input', 'focusin']
+function startBeenden() {
+  startZeigen.value = false
+}
+onMounted(() => {
+  try {
+    if (!sessionStorage.getItem('trackify-start')) {
+      sessionStorage.setItem('trackify-start', 'gesehen')
+      startZeigen.value = true
+    }
+  } catch {
+    /* Ohne Sitzungsmarker bleibt der Start ruhig. */
+  }
+  eingaben.forEach((art) =>
+    window.addEventListener(art, startBeenden, { capture: true, passive: true })
+  )
+})
+onUnmounted(() => eingaben.forEach((art) => window.removeEventListener(art, startBeenden, true)))
+
 const navigationHoehe = ref()
+function navigationAnpassen(hoehe) {
+  navigationHoehe.value = hoehe
+  // Auch der Browserfokus muss die feste Leiste als verdeckten Bereich kennen.
+  document.documentElement.style.setProperty('--navigation-hoehe', hoehe)
+}
+onUnmounted(() => document.documentElement.style.removeProperty('--navigation-hoehe'))
 const inhalt = ref(null)
 
 // Der Sprunglink bleibt ein echter Anker, setzt den Fokus aber selbst.
@@ -26,12 +55,17 @@ function zumInhalt() {
 </script>
 
 <template>
-  <div class="app-huelle" :style="{ '--navigation-hoehe': navigationHoehe }">
+  <div
+    class="app-huelle"
+    :data-ruhe="zustand.modus === 'aus' || zustand.reduzierteBewegung"
+    :style="{ '--navigation-hoehe': navigationHoehe }"
+  >
     <KinoHintergrund />
+    <KinoAuflage v-if="startZeigen" name="StartSequenz" :beginn="startBeginn" />
     <a class="sprunglink" href="#inhalt" @click.prevent="zumInhalt">Zum Inhalt</a>
     <header class="app-kopf">
       <span class="wortmarke">Trackify<span aria-hidden="true">.</span></span>
-      <span class="system-label">Dein Dossier</span>
+      <span class="system-label kopf-register">Ernährung &amp; Training</span>
     </header>
     <main id="inhalt" ref="inhalt" class="seiteninhalt" tabindex="-1">
       <div role="status" aria-live="polite" aria-atomic="true">
@@ -42,6 +76,6 @@ function zumInhalt() {
       </div>
       <RouterView />
     </main>
-    <Navigationsleiste @hoehe="navigationHoehe = $event" />
+    <Navigationsleiste @hoehe="navigationAnpassen" />
   </div>
 </template>

@@ -1,12 +1,16 @@
 <script setup>
+import SystemSymbol from '../components/SystemSymbol.vue'
 defineOptions({ name: 'TrainingAnsicht' })
 </script>
 
 <template>
-  <section class="ansicht" aria-labelledby="training-titel">
+  <section class="ansicht ruhende-ansicht" aria-labelledby="training-titel">
     <p class="system-label seitenrubrik">Stufe 2</p>
     <h1 id="training-titel">Training</h1>
     <div class="platzhalter">
+      <div class="platzhalter-schema" aria-hidden="true">
+        <SystemSymbol name="training" /><span class="system-label">Noch keine Daten</span>
+      </div>
       <p class="platzhalter-label">Dein Training folgt in Stufe 2.</p>
       <p>Trainingspläne und das Erfassen von Sätzen sind noch nicht verfügbar.</p>
     </div>
