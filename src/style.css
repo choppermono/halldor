@@ -392,9 +392,13 @@ h1 {
 .quellen a,
 .off-quelle a {
   display: inline-flex;
+  min-width: var(--treffer-min);
   min-height: var(--treffer-min);
   align-items: center;
   margin-right: var(--a-2);
+}
+[data-scanner-schrifttest='200'] {
+  font-size: 200%;
 }
 summary {
   cursor: pointer;
@@ -639,6 +643,130 @@ summary {
   flex-wrap: wrap;
   align-items: end;
   gap: var(--a-3);
+}
+.kamera-scanner {
+  margin-bottom: var(--scanner-formular-abstand);
+  padding: var(--s-3);
+  border: var(--linien-breite) solid var(--line-strong);
+  background: var(--ash);
+}
+.scanner-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: start;
+  gap: var(--s-2) var(--s-3);
+  margin-bottom: var(--s-3);
+}
+.scanner-kopf h2 {
+  margin-bottom: 0;
+}
+.scanner-zustand {
+  color: var(--sig-text);
+  font: var(--scanner-code-gewicht) var(--t-label) / var(--t-label-zh) var(--mono);
+  letter-spacing: var(--scanner-status-laufweite);
+}
+.scanner-buehne {
+  container-type: size;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-height: var(--scanner-buehne-min);
+  aspect-ratio: var(--scanner-buehne-aspekt);
+  overflow: hidden;
+  border: var(--linien-breite) solid var(--line);
+  background: var(--void);
+}
+.scanner-buehne video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.scanner-buehne-inaktiv video {
+  opacity: var(--scanner-video-inaktiv);
+}
+.scanner-ruhemarken {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.scanner-ruhemarken i {
+  position: absolute;
+  width: var(--scanner-ecke);
+  height: var(--scanner-ecke);
+  border-color: var(--sig-text);
+  border-style: solid;
+}
+.scanner-ruhemarken i:nth-child(1) {
+  left: var(--scanner-raster-x);
+  top: var(--scanner-raster-y);
+  border-width: var(--scanner-linie) 0 0 var(--scanner-linie);
+}
+.scanner-ruhemarken i:nth-child(2) {
+  right: var(--scanner-raster-x);
+  top: var(--scanner-raster-y);
+  border-width: var(--scanner-linie) var(--scanner-linie) 0 0;
+}
+.scanner-ruhemarken i:nth-child(3) {
+  left: var(--scanner-raster-x);
+  bottom: var(--scanner-raster-y);
+  border-width: 0 0 var(--scanner-linie) var(--scanner-linie);
+}
+.scanner-ruhemarken i:nth-child(4) {
+  right: var(--scanner-raster-x);
+  bottom: var(--scanner-raster-y);
+  border-width: 0 var(--scanner-linie) var(--scanner-linie) 0;
+}
+.scanner-buehne:has(.scanner-inszenierung) .scanner-ruhemarken {
+  opacity: 0;
+}
+.scanner-code {
+  margin: var(--s-3) 0 0;
+  color: var(--bone-dim);
+  font-family: var(--mono);
+  overflow-wrap: anywhere;
+}
+.scanner-code output {
+  color: var(--bone);
+  letter-spacing: var(--scanner-code-laufweite);
+}
+.scanner-meldung {
+  margin-top: var(--s-3);
+}
+.scanner-meldung .textknopf {
+  min-height: var(--treffer-min);
+  margin-bottom: 0;
+}
+.scanner-aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-block: var(--s-3);
+}
+.scanner-aktionen:empty {
+  display: none;
+}
+.scanner .barcode-formular {
+  padding-top: var(--s-4);
+  border-top: var(--linien-breite) solid var(--line);
+}
+.scanner .produkt-treffer h2 {
+  font-family: var(--display);
+  font-size: var(--scanner-treffer-titel);
+  font-weight: 400;
+  line-height: var(--scanner-treffer-zeilenhoehe);
+}
+.nur-vorlesbar {
+  position: absolute !important;
+  width: var(--versteckt-mass) !important;
+  height: var(--versteckt-mass) !important;
+  padding: 0 !important;
+  margin: calc(-1 * var(--versteckt-mass)) !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 .ansicht .barcode-formular > label {
   flex: 1 1 var(--barcode-eingabebreite);

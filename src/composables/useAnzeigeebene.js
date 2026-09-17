@@ -19,8 +19,8 @@ const anzeigeebeneAktiv = computed(
   () =>
     zustand.bereit &&
     zustand.tabSichtbar &&
-    (zustand.modus === 'an' ||
-      (zustand.modus === 'automatisch' && !zustand.reduzierteBewegung && !zustand.heruntergestuft))
+    !zustand.reduzierteBewegung &&
+    (zustand.modus === 'an' || (zustand.modus === 'automatisch' && !zustand.heruntergestuft))
 )
 // Nur hieran haengen Three.js-Szenen.
 const webglAktiv = computed(() => anzeigeebeneAktiv.value && zustand.webgl)

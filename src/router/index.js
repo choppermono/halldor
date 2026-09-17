@@ -7,6 +7,8 @@ import Profil from '../views/Profil.vue'
 import Onboarding from '../views/Onboarding.vue'
 import ProduktBestaetigen from '../views/ProduktBestaetigen.vue'
 
+const Scan = () => import('../views/Scan.vue')
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -14,6 +16,7 @@ const router = createRouter({
     { path: '/training', name: 'Training', component: Training, meta: { titel: 'Training' } },
     { path: '/rang', name: 'Rang', component: Rang, meta: { titel: 'Rang' } },
     { path: '/profil', name: 'Profil', component: Profil, meta: { titel: 'Profil' } },
+    { path: '/scan', name: 'Scan', component: Scan, meta: { titel: 'Barcode scannen' } },
     {
       path: '/onboarding',
       name: 'Onboarding',
@@ -38,7 +41,7 @@ const router = createRouter({
 
 // Der Titel haengt bewusst an meta.titel und nicht am Routennamen: eine
 // spaetere Route ohne Namen wuerde sonst still «undefined · Trackify» zeigen.
-const reihenfolge = ['/', '/produkt', '/training', '/rang', '/profil', '/onboarding']
+const reihenfolge = ['/', '/produkt', '/training', '/rang', '/scan', '/profil', '/onboarding']
 router.beforeEach((ziel, ursprung) => {
   document.documentElement.style.setProperty(
     '--seitenrichtung',

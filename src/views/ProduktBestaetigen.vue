@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onUnmounted, reactive, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RouterLink from '../components/SeitenLink.vue'
 import { produktLaden } from '../lib/openfoodfacts.js'
@@ -10,6 +10,12 @@ import { useTagebuch } from '../composables/useTagebuch.js'
 import GlyphenText from '../components/GlyphenText.vue'
 import SystemSymbol from '../components/SystemSymbol.vue'
 defineOptions({ name: 'ProduktBestaetigenAnsicht' })
+const KameraScanner = defineAsyncComponent(() => import('../components/KameraScanner.vue'))
+const props = defineProps({
+  scanner: { type: Boolean, default: false },
+  scannerPruefzustand: { type: String, default: '' },
+  scannerPruefcode: { type: String, default: '' },
+})
 const route = useRoute()
 const router = useRouter()
 const { eintragHinzufuegen } = useTagebuch()
@@ -24,6 +30,7 @@ const barcode = ref('')
 const laden = ref(false)
 const suchmeldung = ref('')
 const suchfehler = ref(false)
+const scannerAbfrageStatus = ref('bereit')
 const ergebnisBarcode = ref(null)
 const quelle = ref(false)
 const mengeG = ref('')
@@ -64,7 +71,7 @@ async function suchen() {
   ergebnisBarcode.value = null
   quelle.value = false
   const antwort = await produktLaden(gesucht)
-  if (nummer !== anfrageNummer) return
+  if (nummer !== anfrageNummer) return null
   laden.value = false
   if (antwort.status !== 'gefunden') {
     produkt.name = ''
@@ -73,7 +80,7 @@ async function suchen() {
     mengeG.value = ''
     suchmeldung.value = antwort.meldung
     suchfehler.value = antwort.status !== 'unbekannt'
-    return
+    return antwort.status
   }
   produkt.name = antwort.produkt.name
   produkt.marke = antwort.produkt.marke ?? ''
@@ -84,6 +91,19 @@ async function suchen() {
   suchmeldung.value = antwort.produkt.volumenbasis
     ? 'Produkt gefunden. Angaben pro 100 ml sind ohne Dichte nicht in Gramm umrechenbar; Nährwerte bleiben unbekannt.'
     : 'Produkt gefunden. Nährwerte prüfen und Menge bestätigen.'
+  return antwort.status
+}
+async function scannerErkannt(code) {
+  barcode.value = code
+  scannerAbfrageStatus.value = 'laedt'
+  const status = await suchen()
+  if (status === 'gefunden') scannerAbfrageStatus.value = 'treffer'
+  else if (status === 'unbekannt') scannerAbfrageStatus.value = 'unbekannt'
+  else if (status) scannerAbfrageStatus.value = 'abfragefehler'
+}
+function eingabeSuchen() {
+  scannerAbfrageStatus.value = 'manuell'
+  suchen()
 }
 function manuell() {
   ++anfrageNummer
@@ -91,6 +111,7 @@ function manuell() {
   ergebnisBarcode.value = null
   quelle.value = false
   suchmeldung.value = ''
+  scannerAbfrageStatus.value = 'manuell'
   produkt.name = ''
   produkt.marke = ''
   for (const feld of NAEHRWERTE) produkt.pro100g[feld.key] = ''
@@ -118,20 +139,33 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <section class="ansicht produkt">
+  <section class="ansicht produkt" :class="{ scanner: props.scanner }">
     <RouterLink class="zurueck" :to="{ path: '/', query: { datum } }"
       ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
     >
-    <p class="system-label seitenrubrik">Ernährung / {{ datum }}</p>
-    <h1 ref="titel" tabindex="-1">{{ schritt === 'produkt' ? 'Produkt.' : 'Menge.' }}</h1>
+    <p class="system-label seitenrubrik">
+      {{ props.scanner ? 'Scanner' : 'Ernährung' }} / {{ datum }}
+    </p>
+    <h1 ref="titel" tabindex="-1">
+      {{ schritt === 'produkt' ? (props.scanner ? 'Scan.' : 'Produkt.') : 'Menge.' }}
+    </h1>
     <ol class="schrittanzeige" aria-label="Erfassung">
       <li :aria-current="schritt === 'produkt' ? 'step' : undefined"><span>01</span> Produkt</li>
       <li :aria-current="schritt === 'menge' ? 'step' : undefined"><span>02</span> Menge</li>
     </ol>
     <template v-if="schritt === 'produkt'">
-      <form class="barcode-formular" @submit.prevent="suchen">
+      <KameraScanner
+        v-if="props.scanner"
+        :abfrage-status="scannerAbfrageStatus"
+        :produktname="produkt.name"
+        :pruefzustand="props.scannerPruefzustand"
+        :pruefcode="props.scannerPruefcode"
+        @erkannt="scannerErkannt"
+      />
+      <form class="barcode-formular" @submit.prevent="eingabeSuchen">
         <label
           >Barcode eintippen<input
+            id="barcode-eingabe"
             v-model="barcode"
             type="text"
             inputmode="numeric"
@@ -152,13 +186,20 @@ onUnmounted(() => {
           {{ laden ? 'Abfrage …' : suchfehler ? 'Wiederholen' : 'Abfragen' }}
         </button>
       </form>
-      <p v-if="suchmeldung" :class="suchfehler ? 'meldung' : 'statuszeile'" role="status">
+      <p
+        v-if="suchmeldung"
+        :class="[
+          suchfehler ? 'meldung' : 'statuszeile',
+          { 'nur-vorlesbar': props.scanner && scannerAbfrageStatus === 'unbekannt' },
+        ]"
+        role="status"
+      >
         {{ suchmeldung }}
       </p>
       <button class="textknopf" type="button" @click="manuell">Von Hand eintragen</button>
       <div v-if="quelle" class="produkt-treffer">
         <span class="system-label">Datensatz / {{ ergebnisBarcode }}</span>
-        <h2><GlyphenText :wert="produkt.name" /></h2>
+        <h2><GlyphenText :wert="produkt.name" :aktiv="!props.scanner" /></h2>
         <p v-if="produkt.marke" class="klein">{{ produkt.marke }}</p>
       </div>
       <form class="abschnitt" @submit.prevent="weiter">
