@@ -15,6 +15,11 @@ const ziele = [
   },
   { name: 'Rang', pfad: '/rang', symbol: 'm12 3 8 9-8 9-8-9 8-9Zm-4 9 4-4 4 4-4 4-4-4Z' },
   {
+    name: 'Scan',
+    pfad: '/scan',
+    symbol: 'M3 5v14m3-14v14m3-14v14m4-14v14m2-14v14m3-14v14m3-14v14',
+  },
+  {
     name: 'Profil',
     pfad: '/profil',
     symbol: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-2a8 8 0 0 1 16 0v2',

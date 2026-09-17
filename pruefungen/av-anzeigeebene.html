@@ -124,8 +124,12 @@
         !anzeigeebeneAktiv.value && auftraege.size === 0
       )
       modusWaehlen('an')
-      // «An» misst nicht: eine Herunterstufung koennte dort nichts bewirken.
-      pruefen('An übersteuert reduzierte Bewegung', anzeigeebeneAktiv.value && auftraege.size === 0)
+      // Reduzierte Bewegung ist eine Betriebssystempräferenz und hat Vorrang vor dem App-Modus.
+      pruefen(
+        'An respektiert reduzierte Bewegung',
+        !anzeigeebeneAktiv.value && auftraege.size === 0
+      )
+      bewegungSetzen(false)
       sichtbarSetzen(false)
       pruefen(
         'Hintergrund pausiert auch An und beendet Messung',

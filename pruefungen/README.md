@@ -97,7 +97,7 @@ separaten Browser-Testprofil `/profil` öffnen:
 - Aus: Ruhefassung. Neu laden: Aus bleibt gewählt.
 - In den Browser-Entwicklerwerkzeugen unter Rendering die Medienfunktion
   `prefers-reduced-motion` auf `reduce` setzen, dann zurück. Automatisch
-  reagiert ohne Neuladen; An übersteuert diese Einstellung.
+  reagiert ohne Neuladen; auch An respektiert diese Einstellung.
 - Ohne verfügbaren WebGL-Kontext bleibt auch An ruhig. AV prüft dies durch eine
   kurzlebige `OffscreenCanvas`-Kontextprobe im Speicher; kein Canvas im DOM,
   keine Zeichnung. Fehlt OffscreenCanvas, gilt ebenfalls die Ruhefassung.

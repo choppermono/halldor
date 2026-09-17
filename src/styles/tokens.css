@@ -10,6 +10,35 @@
 @import url('/fonts/fonts.css');
 
 :root {
+  /* ---------- Kunstrichtung vom 17.09.2026 ---------- */
+  --void: #100f0d;
+  --ash: #16150f;
+  --panel: #1c1b14;
+  --panel-solid: #221f18;
+  --bone: #dcd8c0;
+  --bone-dim: #a9a48a;
+  --bone-mute: #8f8a73;
+  --line: #dcd8c033;
+  --line-strong: #dcd8c06b;
+  --sig-text: #e0574f;
+  --sig-fill: #bc3f3c;
+  --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --body: 'Barlow', system-ui, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 16px;
+  --s-4: 24px;
+  --s-5: 40px;
+  --s-6: 64px;
+  --fast: 0.14s;
+  --base: 0.26s;
+  --slow: 0.62s;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --nav-h: 64px;
+  --gutter: clamp(18px, 4.5vw, 64px);
+  --wrap: 1320px;
+
   /* ---------- Flaechen ---------- */
   --farbe-grund: #08080a;
   --farbe-flaeche: #100f0d;
@@ -254,6 +283,26 @@
   --start-zeilen-abstand: 120ms;
   --start-breite: 26rem;
   --start-wortmarke: 4.5rem;
+  /* ---------- Scanner ---------- */
+  --scanner-buehne-aspekt: 4 / 3;
+  --scanner-buehne-min: 14rem;
+  --scanner-ecke: var(--s-4);
+  --scanner-linie: 2px;
+  --scanner-raster-x: 8%;
+  --scanner-raster-y: 14%;
+  --scanner-scan-start: -34cqh;
+  --scanner-scan-ende: 34cqh;
+  --scanner-glitch-versatz: var(--s-4);
+  --scanner-code-groesse: clamp(1rem, 5vw, 1.5rem);
+  --scanner-code-gewicht: 500;
+  --scanner-code-laufweite: 0.14em;
+  --scanner-schreibmarke-breite: 2px;
+  --scanner-treffer-titel: clamp(2.875rem, 13vw, 5rem);
+  --scanner-treffer-zeilenhoehe: 0.9;
+  --scanner-treffer-unten: 28%;
+  --scanner-video-inaktiv: 0.22;
+  --scanner-status-laufweite: 0.18em;
+  --scanner-formular-abstand: var(--s-5);
 }
 
 /* Dark only. Ein Light-Theme ist eine Erweiterung fuer Stufe 3,
@@ -269,5 +318,8 @@
   :root {
     --dauer-schnell: 0ms;
     --dauer-normal: 0ms;
+    --fast: 0ms;
+    --base: 0ms;
+    --slow: 0ms;
   }
 }
