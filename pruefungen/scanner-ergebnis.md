@@ -163,3 +163,70 @@ und ein physischer EAN-Scan zu prüfen.
 - Gerät ohne Kamera: ungeprüft; Zustand wurde simuliert geprüft
 - SPA-Direktaufruf auf der Vercel-Vorschau: wegen vorgeschalteter Vercel-
   Anmeldung ungeprüft; im lokalen Produktions-Preview funktioniert `/scan`
+
+---
+
+## Nachtrag 17.09.2026 — Review und Korrekturen
+
+Durchsicht des Branches durch Claude. Drei Befunde, zwei davon behoben.
+
+### Behoben: Schriften fielen still zurück
+
+`tokens.css` erklärte `--display`, `--body` und `--mono` nach der
+Kunstrichtung, aber `fonts.css` lieferte nur Cormorant Garamond aus. **Barlow
+und JetBrains Mono fehlten.** `--mono` wird an drei Stellen benutzt, unter
+anderem für die Code-Anzeige des Scanners — die rendete damit auf Windows in
+Consolas statt in JetBrains Mono, ohne jede Fehlermeldung.
+
+Beide Familien sind jetzt vorhanden. Im Browser nachgemessen:
+`document.fonts` meldet `JetBrains Mono 500` als geladen, die Scanner-Anzeige
+bekommt die vorgesehene Schrift.
+
+### Behoben: 2.4 MB Schriften als TTF
+
+Alle Schriftdateien lagen als TTF ohne Teilmengen vor, Cormorant Garamond
+allein mit **1.17 MB**. Ersetzt durch woff2 mit `unicode-range`-Aufteilung in
+`latin` und `latin-ext`.
+
+|                    | vorher  | nachher            |
+| ------------------ | ------- | ------------------ |
+| Dateien            | 9 TTF   | 32 woff2           |
+| Auf der Platte     | 2.4 MB  | 844 kB             |
+| Cormorant Garamond | 1.17 MB | 3 × ~37 kB (latin) |
+
+Tatsächlich geladen wird weniger: der Browser holt nur die Teilmengen, die der
+angezeigte Text braucht, und eine Familie wird überhaupt erst geladen, wenn
+sie verwendet wird. Auf `/scan` lädt die App heute Plex plus JetBrains Mono —
+Cormorant und Barlow kosten nichts, bis P-C sie bindet.
+
+Zuordnung und Lizenzen: `public/fonts/SCHRIFTEN.md`.
+
+### Festgehalten statt stillschweigend: E-88 ist umgedreht
+
+`useAnzeigeebene.js` lässt reduzierte Bewegung jetzt jeden Modus sperren, auch
+`an`. Das kehrt **E-88** vom 11.09.2026 um, und der zugehörige Prüfpunkt in
+`av-anzeigeebene.html` wurde mit umgedreht — im selben Branch wie das geprüfte
+Verhalten. Der Bericht oben nennt «38 Prüfpunkte bestanden», ohne zu sagen,
+dass einer davon jetzt das Gegenteil prüft.
+
+Die Änderung selbst ist gewollt und bleibt: eine Betriebssystem-Einstellung
+schlägt einen App-Schalter. Sie ist als **R-09** im Entscheidungslog
+festgehalten, mit der Reichweite — `webglAktiv` hängt an `anzeigeebeneAktiv`,
+also hält jetzt auch das Sternenfeld bei reduzierter Bewegung an. Der
+Prüfpunkt trägt einen Kommentar, der auf R-09 verweist.
+
+### Nebenbefund
+
+Der Fehlerfall «Erlaubnis verweigert» war oben als _simuliert geprüft_
+geführt. Er ist jetzt **echt ausgelöst** worden: der Browser der Prüfumgebung
+blockierte den Kamerazugriff, die Ansicht zeigte die vorgesehene Erklärung und
+den Verweis aufs Eingabefeld.
+
+### Weiterhin offen
+
+Physischer Barcode-Scan am Handy über HTTPS und der SPA-Direktaufruf auf der
+Vorschau. Beides hängt an Vercel Authentication vor den Preview-Deployments
+und ist ohne Eingriff im Vercel-Projekt nicht prüfbar.
+
+Nach den Korrekturen: `npm run lint`, `npm run build` und
+`npx prettier --check .` bestanden.

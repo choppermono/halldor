@@ -22,6 +22,10 @@
   --line-strong: #dcd8c06b;
   --sig-text: #e0574f;
   --sig-fill: #bc3f3c;
+  /* Alle drei liegen als woff2 in public/fonts/ und werden selbst
+     ausgeliefert. --mono traegt heute schon die Scanner-Anzeige.
+     --display und --body binden erst P-C flaechendeckend; bis dahin
+     laeuft der --schrift-*-Satz weiter (siehe public/fonts/SCHRIFTEN.md). */
   --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --body: 'Barlow', system-ui, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
@@ -67,6 +71,9 @@
   --farbe-relikt-warm: #d5b66d;
 
   /* ---------- Schrift ---------- */
+  /* Aelterer Satz, wird in P-C durch --display/--body/--mono ersetzt.
+     Solange beide Saetze nebeneinander stehen: keinen neuen Code an
+     --schrift-* haengen. */
   --schrift-zahl: 'IBM Plex Mono', ui-monospace, monospace;
   --schrift-ui: 'IBM Plex Sans', system-ui, sans-serif;
   /* Enger Plex-Groteskschnitt als eigene Display-Stimme. */

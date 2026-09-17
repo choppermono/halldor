@@ -125,6 +125,8 @@
       )
       modusWaehlen('an')
       // Reduzierte Bewegung ist eine Betriebssystempräferenz und hat Vorrang vor dem App-Modus.
+      // Diese Zusicherung war bis 17.09.2026 umgekehrt («An übersteuert reduzierte
+      // Bewegung», E-88). Die Umkehr ist als R-09 im Entscheidungslog festgehalten.
       pruefen(
         'An respektiert reduzierte Bewegung',
         !anzeigeebeneAktiv.value && auftraege.size === 0
