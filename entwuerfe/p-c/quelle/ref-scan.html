@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        />
+        <style>
+          body {
+            margin: 0;
+            background: #100f0d;
+          }
+        </style>
+      </helmet>
+      <div
+        style="
+          width: 390px;
+          height: 844px;
+          box-sizing: border-box;
+          position: relative;
+          overflow: hidden;
+          background: #100f0d;
+          color: #dcd8c0;
+          font-family: 'Barlow', system-ui, sans-serif;
+          font-variant-numeric: tabular-nums;
+        "
+      >
+        <div
+          style="
+            height: 64px;
+            box-sizing: border-box;
+            padding: 0 18px;
+            border-bottom: 1px solid #dcd8c033;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          <div
+            style="
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 11px;
+              letter-spacing: 0.18em;
+              font-weight: 500;
+            "
+          >
+            TRACKIFY
+          </div>
+          <div
+            style="
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 11px;
+              letter-spacing: 0.14em;
+              color: #8f8a73;
+            "
+          >
+            SCAN
+          </div>
+        </div>
+
+        <div style="padding: 20px 18px 0; display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <div style="width: 6px; height: 6px; background: #e0574f"></div>
+            <div
+              style="
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.24em;
+                color: #8f8a73;
+              "
+            >
+              KAMERA AKTIV
+            </div>
+            <div style="flex-grow: 1; height: 1px; background: #dcd8c033"></div>
+            <div
+              style="
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                color: #8f8a73;
+              "
+            >
+              EAN-13
+            </div>
+          </div>
+
+          <div
+            style="
+              position: relative;
+              height: 300px;
+              background: #0b0a08;
+              border: 1px solid #dcd8c033;
+              overflow: hidden;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(
+                  70% 55% at 50% 45%,
+                  rgba(220, 216, 192, 0.07) 0%,
+                  rgba(11, 10, 8, 0) 72%
+                );
+              "
+            ></div>
+
+            <div
+              style="
+                position: absolute;
+                top: 14px;
+                left: 14px;
+                width: 26px;
+                height: 26px;
+                border-top: 1px solid #e0574f;
+                border-left: 1px solid #e0574f;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                width: 26px;
+                height: 26px;
+                border-top: 1px solid #e0574f;
+                border-right: 1px solid #e0574f;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 14px;
+                left: 14px;
+                width: 26px;
+                height: 26px;
+                border-bottom: 1px solid #e0574f;
+                border-left: 1px solid #e0574f;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 14px;
+                right: 14px;
+                width: 26px;
+                height: 26px;
+                border-bottom: 1px solid #e0574f;
+                border-right: 1px solid #e0574f;
+              "
+            ></div>
+
+            <div
+              style="
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                align-items: flex-end;
+                gap: 2px;
+                height: 86px;
+                opacity: 0.85;
+              "
+            >
+              <div style="width: 3px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 5px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 2px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 4px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 2px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 6px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 3px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 5px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 2px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 4px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 3px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 6px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 2px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 5px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 3px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 1px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 4px; height: 86px; background: #dcd8c0"></div>
+              <div style="width: 2px; height: 86px; background: #dcd8c0"></div>
+            </div>
+
+            <div
+              style="
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 62%;
+                height: 1px;
+                background: #e0574f;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: calc(62% - 22px);
+                height: 22px;
+                background: linear-gradient(
+                  to bottom,
+                  rgba(224, 87, 79, 0) 0%,
+                  rgba(224, 87, 79, 0.18) 100%
+                );
+              "
+            ></div>
+
+            <div
+              style="
+                position: absolute;
+                left: 14px;
+                bottom: 50px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                color: #8f8a73;
+              "
+            >
+              SUCHE&#8230;
+            </div>
+          </div>
+
+          <div
+            style="
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 12px;
+              line-height: 1.9;
+              color: #a9a48a;
+            "
+          >
+            <div>&gt; raster ausgerichtet</div>
+            <div>&gt; code erfasst</div>
+            <div style="color: #dcd8c0">
+              &gt; 3017620422003<span
+                style="
+                  display: inline-block;
+                  width: 7px;
+                  height: 14px;
+                  background: #e0574f;
+                  margin-left: 5px;
+                  vertical-align: -2px;
+                "
+              ></span>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid #dcd8c06b; padding-top: 18px">
+            <div
+              style="
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 9px;
+                letter-spacing: 0.24em;
+                color: #8f8a73;
+              "
+            >
+              TREFFER &middot; OPEN FOOD FACTS
+            </div>
+            <div
+              style="
+                font-family: 'Cormorant Garamond', Georgia, serif;
+                font-weight: 400;
+                font-size: 46px;
+                line-height: 1.05;
+                margin-top: 10px;
+              "
+            >
+              Nutella
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 20px;
+                margin-top: 14px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 11px;
+                color: #a9a48a;
+              "
+            >
+              <div>539 kcal</div>
+              <div>6.3 E</div>
+              <div>57.5 K</div>
+              <div>30.9 F</div>
+            </div>
+            <div
+              style="
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                color: #8f8a73;
+                margin-top: 6px;
+              "
+            >
+              je 100 g
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 64px;
+            border-top: 1px solid #dcd8c033;
+            background: #100f0d;
+            display: flex;
+            align-items: stretch;
+          "
+        >
+          <a
+            href="Main.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #8f8a73;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+            "
+            >HEUTE</a
+          >
+          <a
+            href="Scanner.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #dcd8c0;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+              border-top: 1px solid #e0574f;
+              margin-top: -1px;
+            "
+            >SCAN</a
+          >
+          <a
+            href="Training.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #8f8a73;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+            "
+            >TRAINING</a
+          >
+          <a
+            href="Rang.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #8f8a73;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+            "
+            >RANG</a
+          >
+        </div>
+      </div>
+    </x-dc>
+    <script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+      class Component extends DCLogic {
+        renderVals() {
+          return {}
+        }
+      }
+    </script>
+  </body>
+</html>

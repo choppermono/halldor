@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Einheit starten</title>
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        />
+        <style>
+          body {
+            margin: 0;
+            background: #100f0d;
+          }
+          .app {
+            --void: #100f0d;
+            --ash: #16150f;
+            --panel: #1c1b14;
+            --panel2: #221f18;
+            --bone: #dcd8c0;
+            --dim: #a9a48a;
+            --mute: #8f8a73;
+            --line: #dcd8c033;
+            --lines: #dcd8c06b;
+            --sig: #e0574f;
+            --sigf: #bc3f3c;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            background: var(--void);
+            color: var(--bone);
+            font-family: 'Barlow', system-ui, sans-serif;
+            font-variant-numeric: tabular-nums;
+          }
+          .mono {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+          }
+          .disp {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+          }
+          .lbl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: var(--mute);
+            text-transform: uppercase;
+          }
+          .kopf {
+            height: 56px;
+            box-sizing: border-box;
+            padding: 0 18px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .marke {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            font-weight: 500;
+          }
+          .nav {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 64px;
+            border-top: 1px solid var(--line);
+            background: var(--void);
+            display: flex;
+          }
+          .nav a {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            color: var(--mute);
+            font-size: 11px;
+          }
+          .nav a.an {
+            color: var(--bone);
+            border-top: 1px solid var(--sig);
+            margin-top: -1px;
+          }
+          .nav svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+          }
+          .knopf {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px;
+            box-sizing: border-box;
+            background: var(--sigf);
+            color: #fffbe8;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            border-radius: var(--r);
+            border: 0;
+          }
+          .leise {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            color: var(--dim);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            border-bottom: 1px solid var(--lines);
+          }
+          .check {
+            width: 14px;
+            height: 14px;
+            stroke: var(--bone);
+            fill: none;
+            stroke-width: 2;
+          }
+        </style>
+      </helmet>
+      <div class="app" style="width: 390px; height: 844px; --r: 0px">
+        <header class="kopf">
+          <span class="marke">TRACKIFY</span><span class="lbl">Training</span>
+        </header>
+        <main style="padding: 22px 18px 0; display: flex; flex-direction: column; gap: 18px">
+          <div>
+            <p class="lbl" style="margin: 0">Nächste Einheit</p>
+            <h1
+              class="disp"
+              style="margin: 6px 0 0; font-weight: 300; font-size: 58px; line-height: 0.95"
+            >
+              Oberkörper.
+            </h1>
+            <p
+              class="mono"
+              style="margin: 12px 0 0; font-size: 11px; letter-spacing: 0.12em; color: var(--dim)"
+            >
+              11 ÜBUNGEN · 20 SÄTZE · DANACH UNTERKÖRPER
+            </p>
+          </div>
+          <div
+            style="display: flex; gap: 6px"
+            aria-label="Rhythmus: Oberkörper, Unterkörper, Oberkörper"
+          >
+            <span style="flex: 1; height: 3px; background: var(--sig)"></span>
+            <span style="flex: 1; height: 3px; background: var(--line)"></span>
+            <span style="flex: 1; height: 3px; background: var(--line)"></span>
+          </div>
+          <div style="border-bottom: 1px solid var(--line)">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Latzug</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Preacher Curl</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">3 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Seitenheben</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Schulterpresse</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Rear Delt Fly</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">1 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Single Arm Tricep Extension</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">JM Press</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">1 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Incline Smith Press</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Pec Deck</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">Low Row</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">1 × 6–10</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+              "
+            >
+              <span style="font-size: 15px">T-Bar Row</span
+              ><span class="mono" style="font-size: 11px; color: var(--mute)">2 × 6–10</span>
+            </div>
+          </div>
+        </main>
+        <div style="position: absolute; left: 18px; right: 18px; bottom: 82px">
+          <a class="knopf" href="Aktiv-kantig.dc.html">EINHEIT STARTEN</a>
+        </div>
+        <nav class="nav" aria-label="Hauptnavigation">
+          <a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9"></path></svg
+            ><span>Heute</span></a
+          ><a href="Main.dc.html" class="an"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 9v6m3-9v12m0-6h12m0-6v12m3-9v6"></path></svg
+            ><span>Training</span></a
+          ><a href="Rang.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 3 8 9-8 9-8-9 8-9Z"></path></svg
+            ><span>Rang</span></a
+          ><a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14"></path></svg
+            ><span>Scan</span></a
+          ><a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-2a8 8 0 0 1 16 0v2"></path></svg
+            ><span>Profil</span></a
+          >
+        </nav>
+      </div>
+    </x-dc>
+    <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+      class Component extends DCLogic {
+        renderVals() { return {}; }
+      }
+    </script>
+  </body>
+</html>

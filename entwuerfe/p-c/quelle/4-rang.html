@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rang</title>
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        />
+        <style>
+          body {
+            margin: 0;
+            background: #100f0d;
+          }
+          .app {
+            --void: #100f0d;
+            --ash: #16150f;
+            --panel: #1c1b14;
+            --panel2: #221f18;
+            --bone: #dcd8c0;
+            --dim: #a9a48a;
+            --mute: #8f8a73;
+            --line: #dcd8c033;
+            --lines: #dcd8c06b;
+            --sig: #e0574f;
+            --sigf: #bc3f3c;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            background: var(--void);
+            color: var(--bone);
+            font-family: 'Barlow', system-ui, sans-serif;
+            font-variant-numeric: tabular-nums;
+          }
+          .mono {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+          }
+          .disp {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+          }
+          .lbl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: var(--mute);
+            text-transform: uppercase;
+          }
+          .kopf {
+            height: 56px;
+            box-sizing: border-box;
+            padding: 0 18px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .marke {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            font-weight: 500;
+          }
+          .nav {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 64px;
+            border-top: 1px solid var(--line);
+            background: var(--void);
+            display: flex;
+          }
+          .nav a {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            color: var(--mute);
+            font-size: 11px;
+          }
+          .nav a.an {
+            color: var(--bone);
+            border-top: 1px solid var(--sig);
+            margin-top: -1px;
+          }
+          .nav svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+          }
+          .knopf {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px;
+            box-sizing: border-box;
+            background: var(--sigf);
+            color: #fffbe8;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            border-radius: var(--r);
+            border: 0;
+          }
+          .leise {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            color: var(--dim);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            border-bottom: 1px solid var(--lines);
+          }
+          .check {
+            width: 14px;
+            height: 14px;
+            stroke: var(--bone);
+            fill: none;
+            stroke-width: 2;
+          }
+        </style>
+      </helmet>
+      <div class="app" style="width: 390px; height: 844px; --r: 0px">
+        <header class="kopf">
+          <span class="marke">TRACKIFY</span><span class="lbl">Rang</span>
+        </header>
+        <main style="padding: 22px 18px 0">
+          <p class="lbl" style="margin: 0">Eigener Fortschritt</p>
+          <h1
+            class="disp"
+            style="margin: 6px 0 0; font-weight: 300; font-size: 52px; line-height: 0.95"
+          >
+            Rang.
+          </h1>
+          <p
+            class="mono"
+            style="margin: 12px 0 6px; font-size: 10px; letter-spacing: 0.1em; color: var(--sig)"
+          >
+            BEISPIELWERTE · DEINE SCHWELLEN SIND NOCH NICHT FESTGELEGT
+          </p>
+          <ol style="margin: 0; padding: 0; border-bottom: 1px solid var(--line)">
+            <li style="list-style: none; border-top: 1px solid var(--line); padding: 16px 0">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: baseline;
+                  gap: 12px;
+                "
+              >
+                <h2 class="disp" style="margin: 0; font-weight: 400; font-size: 26px">T-Bar Row</h2>
+                <span class="disp" style="font-style: italic; font-size: 24px; color: var(--sig)"
+                  >Gold</span
+                >
+              </div>
+              <p class="mono" style="margin: 6px 0 12px; font-size: 11px; color: var(--dim)">
+                BESTE LAST 70 KG × 8
+              </p>
+              <div style="display: flex; gap: 3px" aria-hidden="true">
+                <span style="flex: 1; height: 4px; background: var(--bone)"></span
+                ><span style="flex: 1; height: 4px; background: var(--bone)"></span
+                ><span style="flex: 1; height: 4px; background: var(--sig)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span>
+              </div>
+              <div
+                class="mono"
+                style="display: flex; margin-top: 7px; font-size: 9px; color: var(--mute)"
+              >
+                <span style="flex: 1">B 30</span><span style="flex: 1">S 50</span
+                ><span style="flex: 1; color: var(--sig)">G 70</span
+                ><span style="flex: 1">P 90</span><span style="flex: 1">D 110</span>
+              </div>
+              <p
+                class="mono"
+                style="margin: 8px 0 0; font-size: 10px; letter-spacing: 0.08em; color: var(--dim)"
+              >
+                PLATIN AB 90 KG · NOCH 20 KG
+              </p>
+            </li>
+
+            <li style="list-style: none; border-top: 1px solid var(--line); padding: 16px 0">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: baseline;
+                  gap: 12px;
+                "
+              >
+                <h2 class="disp" style="margin: 0; font-weight: 400; font-size: 26px">Latzug</h2>
+                <span class="disp" style="font-style: italic; font-size: 24px; color: var(--sig)"
+                  >Silber</span
+                >
+              </div>
+              <p class="mono" style="margin: 6px 0 12px; font-size: 11px; color: var(--dim)">
+                BESTE LAST 55 KG × 9
+              </p>
+              <div style="display: flex; gap: 3px" aria-hidden="true">
+                <span style="flex: 1; height: 4px; background: var(--bone)"></span
+                ><span style="flex: 1; height: 4px; background: var(--sig)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span>
+              </div>
+              <div
+                class="mono"
+                style="display: flex; margin-top: 7px; font-size: 9px; color: var(--mute)"
+              >
+                <span style="flex: 1">B 35</span><span style="flex: 1; color: var(--sig)">S 50</span
+                ><span style="flex: 1">G 65</span><span style="flex: 1">P 80</span
+                ><span style="flex: 1">D 100</span>
+              </div>
+              <p
+                class="mono"
+                style="margin: 8px 0 0; font-size: 10px; letter-spacing: 0.08em; color: var(--dim)"
+              >
+                GOLD AB 65 KG · NOCH 10 KG
+              </p>
+            </li>
+
+            <li style="list-style: none; border-top: 1px solid var(--line); padding: 16px 0">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: baseline;
+                  gap: 12px;
+                "
+              >
+                <h2 class="disp" style="margin: 0; font-weight: 400; font-size: 26px">Leg Press</h2>
+                <span class="disp" style="font-style: italic; font-size: 24px; color: var(--sig)"
+                  >Gold</span
+                >
+              </div>
+              <p class="mono" style="margin: 6px 0 12px; font-size: 11px; color: var(--dim)">
+                BESTE LAST 160 KG × 10
+              </p>
+              <div style="display: flex; gap: 3px" aria-hidden="true">
+                <span style="flex: 1; height: 4px; background: var(--bone)"></span
+                ><span style="flex: 1; height: 4px; background: var(--bone)"></span
+                ><span style="flex: 1; height: 4px; background: var(--sig)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span
+                ><span style="flex: 1; height: 4px; background: var(--line)"></span>
+              </div>
+              <div
+                class="mono"
+                style="display: flex; margin-top: 7px; font-size: 9px; color: var(--mute)"
+              >
+                <span style="flex: 1">B 80</span><span style="flex: 1">S 120</span
+                ><span style="flex: 1; color: var(--sig)">G 160</span
+                ><span style="flex: 1">P 220</span><span style="flex: 1">D 280</span>
+              </div>
+              <p
+                class="mono"
+                style="margin: 8px 0 0; font-size: 10px; letter-spacing: 0.08em; color: var(--dim)"
+              >
+                PLATIN AB 220 KG · NOCH 60 KG
+              </p>
+            </li>
+          </ol>
+        </main>
+        <nav class="nav" aria-label="Hauptnavigation">
+          <a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9"></path></svg
+            ><span>Heute</span></a
+          ><a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 9v6m3-9v12m0-6h12m0-6v12m3-9v6"></path></svg
+            ><span>Training</span></a
+          ><a href="Rang.dc.html" class="an"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 3 8 9-8 9-8-9 8-9Z"></path></svg
+            ><span>Rang</span></a
+          ><a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14"></path></svg
+            ><span>Scan</span></a
+          ><a href="Main.dc.html"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-2a8 8 0 0 1 16 0v2"></path></svg
+            ><span>Profil</span></a
+          >
+        </nav>
+      </div>
+    </x-dc>
+    <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+      class Component extends DCLogic {
+        renderVals() { return {}; }
+      }
+    </script>
+  </body>
+</html>

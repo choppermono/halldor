@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        />
+        <style>
+          body {
+            margin: 0;
+            background: #100f0d;
+          }
+        </style>
+      </helmet>
+      <div
+        style="
+          width: 390px;
+          height: 844px;
+          box-sizing: border-box;
+          position: relative;
+          overflow: hidden;
+          background: #100f0d;
+          color: #dcd8c0;
+          font-family: 'Barlow', system-ui, sans-serif;
+          font-variant-numeric: tabular-nums;
+        "
+      >
+        <div
+          style="
+            height: 64px;
+            box-sizing: border-box;
+            padding: 0 18px;
+            border-bottom: 1px solid #dcd8c033;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          <div
+            style="
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 11px;
+              letter-spacing: 0.18em;
+              font-weight: 500;
+            "
+          >
+            TRACKIFY
+          </div>
+          <div
+            style="
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 11px;
+              letter-spacing: 0.14em;
+              color: #8f8a73;
+            "
+          >
+            DO 17.09
+          </div>
+        </div>
+
+        <div style="padding: 24px 18px 0; display: flex; flex-direction: column; gap: 24px">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <div style="width: 16px; height: 1px; background: #bc3f3c"></div>
+            <div
+              style="
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.24em;
+                color: #8f8a73;
+              "
+            >
+              TAGESBILANZ
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 12px">
+              <div
+                style="
+                  font-family: 'Cormorant Garamond', Georgia, serif;
+                  font-weight: 300;
+                  font-size: 124px;
+                  line-height: 0.8;
+                  letter-spacing: -0.02em;
+                "
+              >
+                1780
+              </div>
+              <div
+                style="
+                  font-family: 'JetBrains Mono', monospace;
+                  font-size: 11px;
+                  letter-spacing: 0.18em;
+                  color: #8f8a73;
+                "
+              >
+                KCAL
+              </div>
+            </div>
+            <div style="position: relative; height: 2px; background: #dcd8c033; margin-top: 24px">
+              <div
+                style="
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  bottom: 0;
+                  width: 73%;
+                  background: #dcd8c0;
+                "
+              ></div>
+              <div
+                style="
+                  position: absolute;
+                  left: 73%;
+                  top: -5px;
+                  width: 1px;
+                  height: 12px;
+                  background: #e0574f;
+                "
+              ></div>
+            </div>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              border-top: 1px solid #dcd8c033;
+              border-bottom: 1px solid #dcd8c033;
+            "
+          >
+            <div style="flex-grow: 1; padding: 16px 0">
+              <div
+                style="
+                  font-family: 'JetBrains Mono', monospace;
+                  font-size: 9px;
+                  letter-spacing: 0.2em;
+                  color: #8f8a73;
+                "
+              >
+                ZIEL
+              </div>
+              <div
+                style="
+                  font-family: 'Cormorant Garamond', Georgia, serif;
+                  font-weight: 400;
+                  font-size: 30px;
+                  line-height: 1;
+                  margin-top: 8px;
+                "
+              >
+                2450
+              </div>
+            </div>
+            <div style="width: 1px; background: #dcd8c033"></div>
+            <div style="flex-grow: 1; padding: 16px 0 16px 16px">
+              <div
+                style="
+                  font-family: 'JetBrains Mono', monospace;
+                  font-size: 9px;
+                  letter-spacing: 0.2em;
+                  color: #8f8a73;
+                "
+              >
+                OFFEN
+              </div>
+              <div
+                style="
+                  font-family: 'Cormorant Garamond', Georgia, serif;
+                  font-weight: 400;
+                  font-size: 30px;
+                  line-height: 1;
+                  margin-top: 8px;
+                  color: #e0574f;
+                "
+              >
+                670
+              </div>
+            </div>
+            <div style="width: 1px; background: #dcd8c033"></div>
+            <div style="flex-grow: 1; padding: 16px 0 16px 16px">
+              <div
+                style="
+                  font-family: 'JetBrains Mono', monospace;
+                  font-size: 9px;
+                  letter-spacing: 0.2em;
+                  color: #8f8a73;
+                "
+              >
+                ANTEIL
+              </div>
+              <div
+                style="
+                  font-family: 'Cormorant Garamond', Georgia, serif;
+                  font-weight: 400;
+                  font-size: 30px;
+                  line-height: 1;
+                  margin-top: 8px;
+                "
+              >
+                73 %
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline">
+                <div
+                  style="
+                    font-family: 'Cormorant Garamond', Georgia, serif;
+                    font-size: 24px;
+                    font-weight: 400;
+                  "
+                >
+                  Eiweiss
+                </div>
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a9a48a"
+                >
+                  112 / 160 g
+                </div>
+              </div>
+              <div style="position: relative; height: 2px; background: #dcd8c033; margin-top: 8px">
+                <div
+                  style="
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 70%;
+                    background: #dcd8c0;
+                  "
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline">
+                <div
+                  style="
+                    font-family: 'Cormorant Garamond', Georgia, serif;
+                    font-size: 24px;
+                    font-weight: 400;
+                  "
+                >
+                  Kohlenhydrate
+                </div>
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a9a48a"
+                >
+                  190 / 245 g
+                </div>
+              </div>
+              <div style="position: relative; height: 2px; background: #dcd8c033; margin-top: 8px">
+                <div
+                  style="
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 78%;
+                    background: #dcd8c0;
+                  "
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline">
+                <div
+                  style="
+                    font-family: 'Cormorant Garamond', Georgia, serif;
+                    font-size: 24px;
+                    font-weight: 400;
+                  "
+                >
+                  Fett
+                </div>
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a9a48a"
+                >
+                  58 / 82 g
+                </div>
+              </div>
+              <div style="position: relative; height: 2px; background: #dcd8c033; margin-top: 8px">
+                <div
+                  style="
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 71%;
+                    background: #dcd8c0;
+                  "
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+              border-top: 1px solid #dcd8c033;
+              padding-top: 16px;
+              display: flex;
+              justify-content: space-between;
+              align-items: baseline;
+            "
+          >
+            <div
+              style="
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.18em;
+                color: #8f8a73;
+              "
+            >
+              ZULETZT
+            </div>
+            <div style="font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 400">
+              Nutella &middot; 15 g
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 64px;
+            border-top: 1px solid #dcd8c033;
+            background: #100f0d;
+            display: flex;
+            align-items: stretch;
+          "
+        >
+          <a
+            href="Main.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #dcd8c0;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+              border-top: 1px solid #e0574f;
+              margin-top: -1px;
+            "
+            >HEUTE</a
+          >
+          <a
+            href="Scanner.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #8f8a73;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+            "
+            >SCAN</a
+          >
+          <a
+            href="Training.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #8f8a73;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+            "
+            >TRAINING</a
+          >
+          <a
+            href="Rang.dc.html"
+            style="
+              flex-grow: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-decoration: none;
+              color: #8f8a73;
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 0.14em;
+            "
+            >RANG</a
+          >
+        </div>
+      </div>
+    </x-dc>
+    <script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+      class Component extends DCLogic {
+        renderVals() {
+          return {}
+        }
+      }
+    </script>
+  </body>
+</html>
