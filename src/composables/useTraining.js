@@ -4,7 +4,7 @@ import uebungen from '../daten/uebungen.json'
 import { dokumentLaden, dokumentSpeichern, Speicherstatus } from '../lib/speicher.js'
 import { speicherLesbar, speicherhinweis } from '../lib/speicherhinweis.js'
 
-const STANDARD_PROGRAMM = 'ganzkoerper-3'
+const STANDARD_PROGRAMM = 'ok-uk-3'
 const zustand = reactive({ einheiten: [], programmId: STANDARD_PROGRAMM, hinweis: '' })
 const lesbar = readonly(zustand)
 const programmeNachId = new Map(programme.map((programm) => [programm.id, programm]))

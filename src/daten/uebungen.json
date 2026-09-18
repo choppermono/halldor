@@ -1,272 +1,182 @@
 [
   {
-    "id": "kreuzheben",
-    "name": "Kreuzheben",
-    "bereich": "unterkoerper",
-    "muster": "Heben",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "kniebeuge",
-    "name": "Kniebeuge",
-    "bereich": "unterkoerper",
-    "muster": "Beugen",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "bankdruecken",
-    "name": "Bankdrücken",
-    "bereich": "oberkoerper",
-    "muster": "Drücken horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "schulterdruecken",
-    "name": "Schulterdrücken",
-    "bereich": "oberkoerper",
-    "muster": "Drücken vertikal",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "klimmzuege",
-    "name": "Klimmzüge",
-    "bereich": "oberkoerper",
-    "muster": "Ziehen vertikal",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Körpergewicht plus Zusatzgewicht als Gesamtlast"
-  },
-  {
-    "id": "frontkniebeuge",
-    "name": "Frontkniebeuge",
-    "bereich": "unterkoerper",
-    "muster": "Beugen",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "rumänisches-kreuzheben",
-    "name": "Rumänisches Kreuzheben",
-    "bereich": "unterkoerper",
-    "muster": "Heben",
-    "saetze": 3,
-    "wiederholungen": { "min": 6, "max": 10 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "schraegbankdruecken",
-    "name": "Schrägbankdrücken",
-    "bereich": "oberkoerper",
-    "muster": "Drücken horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 6, "max": 10 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "enges-bankdruecken",
-    "name": "Enges Bankdrücken",
-    "bereich": "oberkoerper",
-    "muster": "Drücken horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 6, "max": 10 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "t-bar-rudern",
-    "name": "T-Bar-Rudern",
-    "bereich": "oberkoerper",
-    "muster": "Ziehen horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Bewegte Last nach Geräteanzeige"
-  },
-  {
-    "id": "push-press",
-    "name": "Push Press",
-    "bereich": "oberkoerper",
-    "muster": "Drücken vertikal",
-    "saetze": 3,
-    "wiederholungen": { "min": 5, "max": 8 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
-    "id": "langhantelrudern",
-    "name": "Langhantelrudern",
-    "bereich": "oberkoerper",
-    "muster": "Ziehen horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 6, "max": 10 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
-  },
-  {
     "id": "latziehen",
-    "name": "Latziehen",
+    "name": "Latzug",
     "bereich": "oberkoerper",
     "muster": "Ziehen vertikal",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Last laut Gerät"
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige"
   },
   {
-    "id": "kabelrudern",
-    "name": "Kabelrudern",
+    "id": "preacher-curl",
+    "name": "Preacher Curl",
     "bereich": "oberkoerper",
-    "muster": "Ziehen horizontal",
+    "muster": "Bizeps isoliert",
     "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Last laut Gerät"
-  },
-  {
-    "id": "kurzhantel-bankdruecken",
-    "name": "Kurzhantel-Bankdrücken",
-    "bereich": "oberkoerper",
-    "muster": "Drücken horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Summe beider Kurzhanteln"
-  },
-  {
-    "id": "dips",
-    "name": "Dips",
-    "bereich": "oberkoerper",
-    "muster": "Drücken horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 6, "max": 10 },
-    "gewichtshinweis": "Körpergewicht plus Zusatzgewicht als Gesamtlast"
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Gerät, bei der SZ-Stange Gesamtgewicht"
   },
   {
     "id": "seitheben",
-    "name": "Seitheben",
+    "name": "Seitenheben",
     "bereich": "oberkoerper",
     "muster": "Schulter isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
     "gewichtshinweis": "Summe beider Kurzhanteln"
   },
   {
-    "id": "face-pulls",
-    "name": "Face Pulls",
+    "id": "schulterpresse",
+    "name": "Schulterpresse",
     "bereich": "oberkoerper",
-    "muster": "Ziehen horizontal",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Last laut Kabelzug"
+    "muster": "Drücken vertikal",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige"
   },
   {
-    "id": "bizepscurls",
-    "name": "Bizepscurls",
+    "id": "reverse-flys",
+    "name": "Rear Delt Fly",
     "bereich": "oberkoerper",
-    "muster": "Arm isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange oder Summe beider Hanteln"
+    "muster": "Schulter hinten",
+    "saetze": 1,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Summe beider Kurzhanteln oder Last laut Gerät"
   },
   {
-    "id": "trizepsdruecken",
-    "name": "Trizepsdrücken am Kabel",
+    "id": "trizeps-einarmig",
+    "name": "Single Arm Tricep Extension",
     "bereich": "oberkoerper",
-    "muster": "Arm isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Last laut Kabelzug"
+    "muster": "Trizeps isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last einer Seite"
   },
   {
-    "id": "hip-thrust",
-    "name": "Hip Thrust",
-    "bereich": "unterkoerper",
-    "muster": "Hüftstreckung",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
+    "id": "jm-press",
+    "name": "JM Press",
+    "bereich": "oberkoerper",
+    "muster": "Trizeps",
+    "saetze": 1,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
     "gewichtshinweis": "Gesamtgewicht inklusive Stange"
   },
   {
-    "id": "bulgarische-kniebeuge",
-    "name": "Bulgarische Kniebeuge",
-    "bereich": "unterkoerper",
-    "muster": "Einbeinig beugen",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Summe der Zusatzlast; Wiederholungen je Seite"
+    "id": "schraegbank-multipresse",
+    "name": "Incline Smith Press",
+    "bereich": "oberkoerper",
+    "muster": "Drücken schräg",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Aufgelegte Scheiben, ohne Stange"
   },
   {
-    "id": "ausfallschritte",
-    "name": "Ausfallschritte",
-    "bereich": "unterkoerper",
-    "muster": "Einbeinig beugen",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Summe der Zusatzlast; Wiederholungen je Seite"
+    "id": "pec-deck",
+    "name": "Pec Deck",
+    "bereich": "oberkoerper",
+    "muster": "Brust isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige"
   },
   {
-    "id": "beinpresse",
-    "name": "Beinpresse",
-    "bereich": "unterkoerper",
-    "muster": "Beugen Maschine",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
+    "id": "kabelrudern",
+    "name": "Low Row",
+    "bereich": "oberkoerper",
+    "muster": "Ziehen horizontal",
+    "saetze": 1,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
     "gewichtshinweis": "Last laut Gerät"
   },
   {
-    "id": "beinbeugen",
-    "name": "Beinbeugen",
-    "bereich": "unterkoerper",
-    "muster": "Kniebeugung isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Last laut Gerät"
+    "id": "t-bar-rudern",
+    "name": "T-Bar Row",
+    "bereich": "oberkoerper",
+    "muster": "Ziehen horizontal",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Bewegte Last nach Geräteanzeige"
   },
   {
     "id": "beinstrecken",
-    "name": "Beinstrecken",
+    "name": "Leg Extension",
     "bereich": "unterkoerper",
-    "muster": "Kniestreckung isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
+    "muster": "Quadrizeps isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige"
+  },
+  {
+    "id": "beinbeugen",
+    "name": "Leg Curl",
+    "bereich": "unterkoerper",
+    "muster": "Beinbeuger isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige"
+  },
+  {
+    "id": "beinpresse",
+    "name": "Leg Press",
+    "bereich": "unterkoerper",
+    "muster": "Drücken Beine",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
     "gewichtshinweis": "Last laut Gerät"
   },
   {
     "id": "wadenheben",
-    "name": "Wadenheben",
+    "name": "Calf Raise",
     "bereich": "unterkoerper",
-    "muster": "Wade isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
+    "muster": "Waden",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 10,
+      "max": 15
+    },
     "gewichtshinweis": "Zusatzlast laut Gerät oder Hantel"
-  },
-  {
-    "id": "rueckenstrecken",
-    "name": "Rückenstrecken",
-    "bereich": "unterkoerper",
-    "muster": "Hüftstreckung",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Körpergewicht plus Zusatzgewicht als Gesamtlast"
-  },
-  {
-    "id": "goblet-squat",
-    "name": "Goblet Squat",
-    "bereich": "unterkoerper",
-    "muster": "Beugen",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Gewicht der Kurzhantel oder Kettlebell"
-  },
-  {
-    "id": "reverse-flys",
-    "name": "Reverse Flys",
-    "bereich": "oberkoerper",
-    "muster": "Schulter isoliert",
-    "saetze": 3,
-    "wiederholungen": { "min": 8, "max": 12 },
-    "gewichtshinweis": "Summe beider Kurzhanteln oder Last laut Gerät"
   }
 ]

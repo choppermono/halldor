@@ -45,66 +45,97 @@
     "frontkniebeuge": {
       "typ": "abgeleitet",
       "anker": "kniebeuge",
-      "verhaeltnis": { "m": 0.8015, "w": 0.8289 },
-      "messpunkt": { "m": "105 / 131 kg", "w": "63 / 76 kg" },
+      "verhaeltnis": {
+        "m": 0.8015,
+        "w": 0.8289
+      },
+      "messpunkt": {
+        "m": "105 / 131 kg",
+        "w": "63 / 76 kg"
+      },
       "quelle": "https://strengthlevel.com/strength-standards/front-squat-vs-squat/kg"
     },
     "rumänisches-kreuzheben": {
       "typ": "abgeleitet",
       "anker": "kreuzheben",
-      "verhaeltnis": { "m": 0.7922, "w": 0.7473 },
-      "messpunkt": { "m": "122 / 154 kg", "w": "68 / 91 kg" },
+      "verhaeltnis": {
+        "m": 0.7922,
+        "w": 0.7473
+      },
+      "messpunkt": {
+        "m": "122 / 154 kg",
+        "w": "68 / 91 kg"
+      },
       "quelle": "https://strengthlevel.com/strength-standards/romanian-deadlift-vs-deadlift/kg"
     },
     "schraegbankdruecken": {
       "typ": "abgeleitet",
       "anker": "bankdruecken",
-      "verhaeltnis": { "m": 0.8962, "w": 0.8482 },
-      "messpunkt": { "m": "190 / 212 lb", "w": "95 / 112 lb" },
+      "verhaeltnis": {
+        "m": 0.8962,
+        "w": 0.8482
+      },
+      "messpunkt": {
+        "m": "190 / 212 lb",
+        "w": "95 / 112 lb"
+      },
       "quelle": "https://strengthlevel.com/strength-standards/incline-bench-press-vs-bench-press/lb"
     },
     "enges-bankdruecken": {
       "typ": "abgeleitet",
       "anker": "bankdruecken",
-      "verhaeltnis": { "m": 0.949, "w": 0.9608 },
-      "messpunkt": { "m": "93 / 98 kg", "w": "49 / 51 kg" },
+      "verhaeltnis": {
+        "m": 0.949,
+        "w": 0.9608
+      },
+      "messpunkt": {
+        "m": "93 / 98 kg",
+        "w": "49 / 51 kg"
+      },
       "quelle": "https://strengthlevel.com/strength-standards/close-grip-bench-press-vs-bench-press/kg"
     },
     "t-bar-rudern": {
       "typ": "abgeleitet",
       "anker": "bankdruecken",
-      "verhaeltnis": { "m": 0.9082, "w": 0.9216 },
-      "messpunkt": { "m": "89 / 98 kg", "w": "47 / 51 kg" },
+      "verhaeltnis": {
+        "m": 0.9082,
+        "w": 0.9216
+      },
+      "messpunkt": {
+        "m": "89 / 98 kg",
+        "w": "47 / 51 kg"
+      },
       "quelle": "https://strengthlevel.com/strength-standards/t-bar-row-vs-bench-press/kg"
     },
     "push-press": {
       "typ": "abgeleitet",
       "anker": "schulterdruecken",
-      "verhaeltnis": { "m": 1.3226, "w": 1.3939 },
-      "messpunkt": { "m": "82 / 62 kg", "w": "46 / 33 kg" },
+      "verhaeltnis": {
+        "m": 1.3226,
+        "w": 1.3939
+      },
+      "messpunkt": {
+        "m": "82 / 62 kg",
+        "w": "46 / 33 kg"
+      },
       "quelle": "https://strengthlevel.com/strength-standards/push-press-vs-shoulder-press/kg"
     }
   },
   "ohneStufe": [
-    "langhantelrudern",
     "latziehen",
-    "kabelrudern",
-    "kurzhantel-bankdruecken",
-    "dips",
+    "preacher-curl",
     "seitheben",
-    "face-pulls",
-    "bizepscurls",
-    "trizepsdruecken",
-    "hip-thrust",
-    "bulgarische-kniebeuge",
-    "ausfallschritte",
-    "beinpresse",
-    "beinbeugen",
+    "schulterpresse",
+    "reverse-flys",
+    "trizeps-einarmig",
+    "jm-press",
+    "schraegbank-multipresse",
+    "pec-deck",
+    "kabelrudern",
     "beinstrecken",
-    "wadenheben",
-    "rueckenstrecken",
-    "goblet-squat",
-    "reverse-flys"
+    "beinbeugen",
+    "beinpresse",
+    "wadenheben"
   ],
   "grundOhneStufe": "Kein ausreichend vergleichbarer, belastbarer Verhältniswert zu einer der fünf Ankerübungen belegt; Maschinen, einseitige Ausführung und unterschiedliche Lastdefinitionen werden nicht gleichgesetzt."
 }

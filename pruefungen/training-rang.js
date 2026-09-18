@@ -60,7 +60,9 @@ try {
     ]) === 700
   )
 
-  const uebung = uebungen.find((kandidat) => kandidat.id === 'bankdruecken')
+  // Feste Prüfübungen: die Progressionslogik wird unabhängig vom
+  // jeweiligen Katalog geprüft, der sich mit dem Programm ändert.
+  const uebung = { id: 'bankdruecken', bereich: 'oberkoerper' }
   const vorgabe = { uebungId: 'bankdruecken', saetze: 3, min: 5, max: 8 }
   const aufwaerts = progressionBerechnen({
     uebung,
@@ -74,7 +76,7 @@ try {
       aufwaerts.gewichtKg === 102.5 &&
       aufwaerts.wiederholungen === 5
   )
-  const unterkoerper = uebungen.find((kandidat) => kandidat.id === 'kniebeuge')
+  const unterkoerper = { id: 'kniebeuge', bereich: 'unterkoerper' }
   const unterVorgabe = { ...vorgabe, uebungId: 'kniebeuge' }
   pruefen(
     'Unterkörper steigt nach oberem Rand um 5 kg',
@@ -202,7 +204,17 @@ try {
       !leistungImDefizitBewerten('abnehmen', 100, 100).steigerungErforderlich
   )
 
-  pruefen('Katalog enthält 25 bis 40 Übungen', uebungen.length >= 25 && uebungen.length <= 40)
+  // Bis 18.09.2026: «Katalog enthält 25 bis 40 Übungen» (E-25). Der Katalog
+  // enthält jetzt genau die Übungen des einen Programms (R-11).
+  const programmIds = new Set(
+    programme.flatMap((programm) =>
+      programm.einheiten.flatMap((tag) => tag.uebungen.map((eintrag) => eintrag.uebungId))
+    )
+  )
+  pruefen(
+    'Katalog enthält genau die Übungen des Programms',
+    uebungen.length === programmIds.size && uebungen.every((eintrag) => programmIds.has(eintrag.id))
+  )
   const ids = new Set(uebungen.map((eintrag) => eintrag.id))
   pruefen('Übungskennungen sind eindeutig', ids.size === uebungen.length)
   pruefen(

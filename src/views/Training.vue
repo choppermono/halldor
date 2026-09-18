@@ -124,8 +124,8 @@ function abschliessen() {
     <template v-else>
       <section class="programmwahl" aria-labelledby="programm-titel">
         <p class="system-label">Programmvariante</p>
-        <h2 id="programm-titel">Fester Ablauf nach Trainingstagen</h2>
-        <label>
+        <h2 id="programm-titel">{{ training.aktuellesProgramm.value.name }}</h2>
+        <label v-if="training.programme.length > 1">
           Trainingstage pro Woche
           <select
             :value="training.zustand.programmId"

@@ -260,7 +260,13 @@
   --platzhalter-hoehe: 15rem;
   --platzhalter-symbol: 5rem;
   --nav-marker: 18px;
-  --navigation-spalte: 4.5rem; /* Bei 200% Schrift werden aus vier Zielen zwei Reihen. */
+  /* Fuenf Ziele muessen bei normaler Schrift in eine Reihe passen, auch auf
+     360 px (5 x 56 px + 4 x 8 px Abstand = 312 px). 4.5rem war fuer vier Ziele
+     gerechnet; seit dem Scan-Reiter brach die Leiste auf jedem Handy in zwei
+     Reihen um und nahm fast ein Fuenftel der Hoehe ein. Weil der Wert in rem
+     steht, waechst er mit der Schrift: bei 200 % entstehen weiterhin zwei
+     Reihen, und dort ist das gewollt. */
+  --navigation-spalte: 3.5rem;
   --barcode-eingabebreite: 9rem; /* Nur grosse Schrift darf die Zeile sinnvoll umbrechen. */
   --eintragsdaten-breite: 12rem;
   --aktion-breite: 24rem; /* Der rote Erfassungsknopf bleibt auf breiten Ansichten eine Aktion, keine Flaeche. */
