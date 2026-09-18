@@ -1,0 +1,112 @@
+[
+  {
+    "id": "ok-uk-3",
+    "name": "Oberkörper / Unterkörper · 3 Tage",
+    "trainingstage": 3,
+    "beschreibung": "Oberkörper und Unterkörper im Wechsel, dreimal pro Woche: O/U/O, dann U/O/U.",
+    "einheiten": [
+      {
+        "id": "ok",
+        "name": "Oberkörper",
+        "uebungen": [
+          {
+            "uebungId": "latziehen",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "preacher-curl",
+            "saetze": 3,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "seitheben",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "schulterpresse",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "reverse-flys",
+            "saetze": 1,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "trizeps-einarmig",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "jm-press",
+            "saetze": 1,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "schraegbank-multipresse",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "pec-deck",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "kabelrudern",
+            "saetze": 1,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "t-bar-rudern",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          }
+        ]
+      },
+      {
+        "id": "uk",
+        "name": "Unterkörper",
+        "uebungen": [
+          {
+            "uebungId": "beinstrecken",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "beinbeugen",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "beinpresse",
+            "saetze": 2,
+            "min": 6,
+            "max": 10
+          },
+          {
+            "uebungId": "wadenheben",
+            "saetze": 2,
+            "min": 10,
+            "max": 15
+          }
+        ]
+      }
+    ]
+  }
+]

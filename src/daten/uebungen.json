@@ -1,0 +1,197 @@
+[
+  {
+    "id": "latziehen",
+    "name": "Latzug",
+    "bereich": "oberkoerper",
+    "muster": "Ziehen vertikal",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "preacher-curl",
+    "name": "Preacher Curl",
+    "bereich": "oberkoerper",
+    "muster": "Bizeps isoliert",
+    "saetze": 3,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Gerät, bei der SZ-Stange Gesamtgewicht",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "seitheben",
+    "name": "Seitenheben",
+    "bereich": "oberkoerper",
+    "muster": "Schulter isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Summe beider Kurzhanteln",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "schulterpresse",
+    "name": "Schulterpresse",
+    "bereich": "oberkoerper",
+    "muster": "Drücken vertikal",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "reverse-flys",
+    "name": "Rear Delt Fly",
+    "bereich": "oberkoerper",
+    "muster": "Schulter hinten",
+    "saetze": 1,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Summe beider Kurzhanteln oder Last laut Gerät",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "trizeps-einarmig",
+    "name": "Single Arm Tricep Extension",
+    "bereich": "oberkoerper",
+    "muster": "Trizeps isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last einer Seite",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "jm-press",
+    "name": "JM Press",
+    "bereich": "oberkoerper",
+    "muster": "Trizeps",
+    "saetze": 1,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Gesamtgewicht inklusive Stange",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "schraegbank-multipresse",
+    "name": "Incline Smith Press",
+    "bereich": "oberkoerper",
+    "muster": "Drücken schräg",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Aufgelegte Scheiben, ohne Stange",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "pec-deck",
+    "name": "Pec Deck",
+    "bereich": "oberkoerper",
+    "muster": "Brust isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "kabelrudern",
+    "name": "Low Row",
+    "bereich": "oberkoerper",
+    "muster": "Ziehen horizontal",
+    "saetze": 1,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Gerät",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "t-bar-rudern",
+    "name": "T-Bar Row",
+    "bereich": "oberkoerper",
+    "muster": "Ziehen horizontal",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Bewegte Last nach Geräteanzeige",
+    "schrittKg": 2.5
+  },
+  {
+    "id": "beinstrecken",
+    "name": "Leg Extension",
+    "bereich": "unterkoerper",
+    "muster": "Quadrizeps isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 5
+  },
+  {
+    "id": "beinbeugen",
+    "name": "Leg Curl",
+    "bereich": "unterkoerper",
+    "muster": "Beinbeuger isoliert",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 5
+  },
+  {
+    "id": "beinpresse",
+    "name": "Leg Press",
+    "bereich": "unterkoerper",
+    "muster": "Drücken Beine",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 6,
+      "max": 10
+    },
+    "gewichtshinweis": "Last laut Gerät",
+    "schrittKg": 5
+  },
+  {
+    "id": "wadenheben",
+    "name": "Calf Raise",
+    "bereich": "unterkoerper",
+    "muster": "Waden",
+    "saetze": 2,
+    "wiederholungen": {
+      "min": 10,
+      "max": 15
+    },
+    "gewichtshinweis": "Zusatzlast laut Gerät oder Hantel",
+    "schrittKg": 5
+  }
+]

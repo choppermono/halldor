@@ -1,0 +1,23 @@
+{
+  "stufen": ["Bronze", "Silber", "Gold", "Platin", "Diamant"],
+  "einheit": "kg",
+  "grundlage": "Höchste Last in einem Satz, der die Untergrenze des Wiederholungsfensters erreicht hat. Absolute Kilogramm, nicht nach Körpergewicht oder Geschlecht normiert: der Rang misst den eigenen Fortschritt, keinen Vergleich mit anderen Menschen (E-128).",
+  "offen": "Die Schwellen sind noch nicht festgelegt. null heisst: für diese Übung sind noch keine Stufen gesetzt; die App zeigt dann die Last ohne Stufe. Je Übung fünf aufsteigende Werte in kg, einer pro Stufe.",
+  "uebungen": {
+    "latziehen": null,
+    "preacher-curl": null,
+    "seitheben": null,
+    "schulterpresse": null,
+    "reverse-flys": null,
+    "trizeps-einarmig": null,
+    "jm-press": null,
+    "schraegbank-multipresse": null,
+    "pec-deck": null,
+    "kabelrudern": null,
+    "t-bar-rudern": null,
+    "beinstrecken": null,
+    "beinbeugen": null,
+    "beinpresse": null,
+    "wadenheben": null
+  }
+}

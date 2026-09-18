@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trackify – 200 Prozent Schrift</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: #08080a;
+    }
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100vh;
+      border: 0;
+    }
+    output {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 999;
+      padding: 4px;
+      background: #100f0d;
+      color: #dcd8c0;
+      font: 12px monospace;
+    }
+  </style>
+  <output id="ergebnis">Prüfung läuft</output>
+  <iframe id="app" title="Trackify mit 200 Prozent Schrift" src="/rang"></iframe>
+  <script>
+    const rahmen = document.querySelector('#app')
+    rahmen.addEventListener('load', () => {
+      rahmen.contentDocument.documentElement.style.fontSize = '200%'
+      requestAnimationFrame(() => {
+        const wurzel = rahmen.contentDocument.documentElement
+        document.querySelector('#ergebnis').textContent =
+          wurzel.scrollWidth <= wurzel.clientWidth
+            ? `BESTANDEN: kein horizontaler Überlauf (${wurzel.scrollWidth}/${wurzel.clientWidth}px)`
+            : `FEHLER: horizontaler Überlauf (${wurzel.scrollWidth}/${wurzel.clientWidth}px)`
+      })
+    })
+  </script>
+</html>
