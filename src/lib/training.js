@@ -148,11 +148,10 @@ export function progressionBerechnen({ uebung, vorgabe, einheiten, ziel }) {
   const verlauf = (Array.isArray(einheiten) ? einheiten : [])
     .filter((einheit) => einheit?.abgeschlossenAm)
     .map((einheit) => ({ einheit, leistung: leistungBewerten(einheit, vorgabe) }))
-    .filter(
-      ({ einheit, leistung }) =>
-        leistung.saetze.length ||
-        einheit?.vorgaben?.some((eintrag) => eintrag.uebungId === vorgabe.uebungId)
-    )
+    // Nur Einheiten, in denen die Uebung tatsaechlich gemacht wurde. Wer eine
+    // Last nicht angefasst hat, ist an ihr nicht gescheitert; eine ausgelassene
+    // Uebung darf deshalb weder zaehlen noch einen Deload ausloesen.
+    .filter(({ leistung }) => leistung.saetze.length > 0)
     .sort((a, b) => zeitwert(a.einheit) - zeitwert(b.einheit))
   const letzte = verlauf.at(-1)?.leistung
   if (!letzte)
@@ -170,12 +169,39 @@ export function progressionBerechnen({ uebung, vorgabe, einheiten, ziel }) {
   const letzteMitLast = [...verlauf]
     .reverse()
     .find(({ leistung }) => positiveZahl(leistung.gewichtKg))?.leistung
-  if (
+  const dreiMalVerfehlt =
     letzteDrei.length === TRAININGSREGELN.deloadNachFehlversuchen &&
     letzteDrei.every(({ leistung }) => leistung.verfehlt) &&
     letzteMitLast
-  ) {
-    const gewichtKg = Math.round(letzteMitLast.gewichtKg * TRAININGSREGELN.deloadFaktor * 10) / 10
+
+  // F14 schuetzt die Unterseite. Im Defizit sinken die Wiederholungen oft,
+  // obwohl die Last gehalten wird; genau dort wuerde sonst der Deload greifen.
+  // Eine gehaltene Last ist dann ein Erfolg, kein dritter Fehlversuch.
+  if (dreiMalVerfehlt) {
+    const defizit = leistungImDefizitBewerten(
+      ziel,
+      letzteDrei[0].leistung.gewichtKg,
+      letzteMitLast.gewichtKg
+    )
+    if (defizit.aktiv && defizit.gehalten)
+      return {
+        status: 'halten_im_defizit',
+        gewichtKg: letzteMitLast.gewichtKg,
+        wiederholungen: vorgabe.min,
+        meldung: defizit.begruendung,
+        herleitung: { grund: 'f14_halten', fehlversucheInFolge: serie, defizit },
+      }
+  }
+
+  if (dreiMalVerfehlt) {
+    // Auf die Schrittweite der Uebung abrunden, nicht auf 0.1 kg: die
+    // Schritte sind 2.5 und 5 kg, weil es kleinere Scheiben meist nicht gibt.
+    // Ein Deload auf eine nicht ladbare Last widerspraeche dieser Begruendung.
+    const schrittKg = TRAININGSREGELN.schrittKg[uebung.bereich]
+    if (!positiveZahl(schrittKg))
+      return fehler('bereich_ungueltig', 'Für diese Übung ist keine Schrittgrösse hinterlegt.')
+    const gewichtKg =
+      Math.floor((letzteMitLast.gewichtKg * TRAININGSREGELN.deloadFaktor) / schrittKg) * schrittKg
     return {
       status: 'deload',
       gewichtKg,
@@ -190,16 +216,9 @@ export function progressionBerechnen({ uebung, vorgabe, einheiten, ziel }) {
     }
   }
 
+  // Eine verdiente Steigerung gilt auch im Defizit. F14 verlangt keine
+  // Steigerung, verbietet sie aber nicht.
   if (letzte.obergrenzeErreicht) {
-    const defizit = leistungImDefizitBewerten(ziel, letzte.gewichtKg, letzte.gewichtKg)
-    if (defizit.aktiv)
-      return {
-        status: 'halten_im_defizit',
-        gewichtKg: letzte.gewichtKg,
-        wiederholungen: vorgabe.max,
-        meldung: defizit.begruendung,
-        herleitung: { grund: 'f14_halten', fehlversucheInFolge: 0, defizit },
-      }
     const schrittKg = TRAININGSREGELN.schrittKg[uebung.bereich]
     if (!positiveZahl(schrittKg))
       return fehler('bereich_ungueltig', 'Für diese Übung ist keine Schrittgrösse hinterlegt.')

@@ -117,9 +117,12 @@ try {
     ],
     ziel: 'halten',
   })
+  // Bis 18.09.2026 umgekehrt: «Dreimal vollständig ausgelassen zählt als drei
+  // Fehlversuche». Eine ausgelassene Übung ist kein Fehlversuch — wer eine Last
+  // nicht angefasst hat, ist an ihr nicht gescheitert. Siehe E-123.
   pruefen(
-    'Dreimal vollständig ausgelassen zählt als drei Fehlversuche',
-    ausgelassen.status === 'deload' && ausgelassen.gewichtKg === 90
+    'Ausgelassene Übung ist kein Fehlversuch und löst keinen Deload aus',
+    ausgelassen.status === 'steigern' && ausgelassen.gewichtKg === 102.5
   )
   const defizit = progressionBerechnen({
     uebung,
@@ -127,9 +130,71 @@ try {
     einheiten: [einheit('bankdruecken', 8, 0)],
     ziel: 'abnehmen',
   })
+  // Bis 18.09.2026 umgekehrt: im Defizit wurde eine verdiente Steigerung
+  // verweigert. F14 verlangt keine Steigerung, verbietet sie aber nicht.
+  // Siehe E-124.
   pruefen(
-    'Abnehmen wertet Halten als Erfolg',
-    defizit.status === 'halten_im_defizit' && defizit.gewichtKg === 100
+    'Im Defizit bleibt eine verdiente Steigerung erlaubt',
+    defizit.status === 'steigern' && defizit.gewichtKg === 102.5
+  )
+  const defizitGehalten = progressionBerechnen({
+    uebung,
+    vorgabe,
+    einheiten: [
+      einheit('bankdruecken', 4, 0),
+      einheit('bankdruecken', 4, 1),
+      einheit('bankdruecken', 4, 2),
+    ],
+    ziel: 'abnehmen',
+  })
+  pruefen(
+    'Im Defizit schützt eine gehaltene Last vor dem Deload (F14)',
+    defizitGehalten.status === 'halten_im_defizit' && defizitGehalten.gewichtKg === 100
+  )
+  const defizitReduziert = progressionBerechnen({
+    uebung,
+    vorgabe,
+    einheiten: [
+      einheit('bankdruecken', 4, 0, 100),
+      einheit('bankdruecken', 4, 1, 95),
+      einheit('bankdruecken', 4, 2, 90),
+    ],
+    ziel: 'abnehmen',
+  })
+  pruefen(
+    'Im Defizit greift der Deload, wenn die Last nicht gehalten wurde',
+    defizitReduziert.status === 'deload'
+  )
+  const deloadKrumm = progressionBerechnen({
+    uebung,
+    vorgabe,
+    einheiten: [
+      einheit('bankdruecken', 4, 0, 72.5),
+      einheit('bankdruecken', 4, 1, 72.5),
+      einheit('bankdruecken', 4, 2, 72.5),
+    ],
+    ziel: 'halten',
+  })
+  // 72.5 × 0.9 = 65.25. Bis 18.09.2026 wurde auf 65.3 kg gerundet, eine Last,
+  // die sich mit üblichen Scheiben nicht auflegen lässt. Siehe E-125.
+  pruefen(
+    'Deload rundet auf die Schrittweite ab (Oberkörper 2.5 kg)',
+    deloadKrumm.status === 'deload' && deloadKrumm.gewichtKg === 65
+  )
+  const deloadUnten = progressionBerechnen({
+    uebung: unterkoerper,
+    vorgabe: unterVorgabe,
+    einheiten: [
+      einheit('kniebeuge', 4, 0, 107.5),
+      einheit('kniebeuge', 4, 1, 107.5),
+      einheit('kniebeuge', 4, 2, 107.5),
+    ],
+    ziel: 'halten',
+  })
+  // 107.5 × 0.9 = 96.75 -> abgerundet auf 5 kg = 95
+  pruefen(
+    'Deload rundet auf die Schrittweite ab (Unterkörper 5 kg)',
+    deloadUnten.status === 'deload' && deloadUnten.gewichtKg === 95
   )
   pruefen(
     'F14 ist als benannte Funktion prüfbar',

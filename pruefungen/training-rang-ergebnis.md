@@ -111,3 +111,85 @@ Browser-Zoom-Menüs.
   grösser als 500 kB. Der Kern-Chunk bleibt deutlich darunter; die Meldung ist
   trotzdem ein offener Punkt des Leistungsbudgets für einen späteren
   Gestaltungsdurchgang.
+
+---
+
+## Nachtrag 18.09.2026 — Review und Korrekturen
+
+Durchsicht durch Claude. Die Grundlage hielt jeder Prüfung stand: alle
+fünfzig Schwellen exakt gegen `Quellen-Fachlogik.md`, Epley und Brzycki
+korrekt, kein Gesamtrang, Schichtgrenze intakt, 19 Übungen ehrlich ohne Stufe.
+
+Drei Fehler lagen in der Progression. Alle drei wurden **gegen den echten
+Code ausgeführt**, nicht nur aus dem Lesen behauptet — und zwei davon waren
+durch Prüfpunkte festgeschrieben, weshalb 265 von 265 grün waren, obwohl das
+Verhalten falsch war.
+
+| Fall                                                               | vorher                                                 | nachher                       |
+| ------------------------------------------------------------------ | ------------------------------------------------------ | ----------------------------- |
+| 72.5 kg sauber, dann Übung dreimal ausgelassen                     | Deload auf 65.3 kg, Meldung «drei verfehlte Einheiten» | Last bleibt 72.5 kg           |
+| Ziel abnehmen, alle Sätze am oberen Rand                           | Steigerung verweigert                                  | Steigerung auf 62.5 kg        |
+| Ziel abnehmen, Last gehalten, Wiederholungen unter der Untergrenze | Deload auf 54 kg                                       | gehalten, als Erfolg gewertet |
+| 72.5 kg, dreimal verfehlt                                          | Deload auf 65.3 kg                                     | Deload auf 65.0 kg            |
+
+### A — Eine ausgelassene Übung ist kein Fehlversuch (E-123)
+
+Die Verlaufsauswertung behielt Einheiten, in denen eine Übung nur
+_vorgesehen_, aber nicht gemacht war. Null Sätze galten als unvollständig und
+damit als verfehlt; dreimal ausgelassen löste einen Deload auf eine Last aus,
+an der die Person nie gescheitert war — mit einer Meldung, die das Gegenteil
+behauptete. Jetzt zählen nur Einheiten, in denen die Übung gemacht wurde.
+
+### B — F14 war verkehrt herum umgesetzt (E-124)
+
+F14 soll verhindern, dass jemand im Defizit «an einer falschen Erwartung
+scheitert». Der Code tat das Gegenteil: er **verweigerte** eine verdiente
+Steigerung, die niemand verboten hatte, und **bestrafte** eine gehaltene Last
+mit einem Deload. Die Oberseite war blockiert, die Unterseite ungeschützt.
+
+Jetzt schützt F14 die Unterseite: im Defizit ist eine gehaltene Last ein
+Erfolg, auch wenn die Wiederholungen sinken, und löst keinen Deload aus. Eine
+verdiente Steigerung kommt auch im Defizit. Wird die Last nicht gehalten,
+greift der Deload wie sonst. `leistungImDefizitBewerten` bleibt die benannte
+Funktion; sie sitzt jetzt an der Stelle, an der sie wirkt.
+
+### C — Deload auf ladbare Lasten (E-125)
+
+Der Deload rundete auf 0.1 kg: 72.5 × 0.9 → 65.3 kg, mit üblichen Scheiben
+nicht auflegbar. Die Steigerung ist 2.5 / 5 kg gerade _weil_ es kleinere
+Scheiben meist nicht gibt; der Deload rundet jetzt auf dieselbe Schrittweite
+ab. 72.5 → 65.0 kg, 107.5 → 95 kg.
+
+### Prüfpunkte
+
+Zwei wurden **bewusst umgestellt**, jeweils mit Kommentar und Verweis ins
+Entscheidungslog — denn ein Prüfpunkt, der zusammen mit dem geprüften Verhalten
+kippt, sichert sonst nichts mehr ab:
+
+- «Dreimal vollständig ausgelassen zählt als drei Fehlversuche»
+  → «Ausgelassene Übung ist kein Fehlversuch und löst keinen Deload aus»
+- «Abnehmen wertet Halten als Erfolg» (prüfte die verweigerte Steigerung)
+  → «Im Defizit bleibt eine verdiente Steigerung erlaubt»
+
+Vier kamen dazu: gehaltene Last im Defizit schützt vor dem Deload; nicht
+gehaltene Last im Defizit löst ihn aus; Deload rundet auf 2.5 kg
+(Oberkörper) und auf 5 kg (Unterkörper).
+
+### Nach den Korrekturen
+
+| Prüfung                                                   | Ergebnis                                                             |
+| --------------------------------------------------------- | -------------------------------------------------------------------- |
+| `pruefungen/training-rang.html`                           | **269 bestanden**, Speicher danach leer, keine Konsolenfehler        |
+| `pruefungen/av-anzeigeebene.html`                         | 33 bestanden, Speicher danach leer                                   |
+| Alle fünf Routen bei 375 px, kopflos                      | rendern, Canvas auf jeder Route, kein Überlauf, keine Konsolenfehler |
+| `npm run lint`, `npm run build`, `npx prettier --check .` | bestanden                                                            |
+
+### Nicht korrigiert, aber zu wissen
+
+- **T-Bar-Rudern hängt an Bankdrücken.** Eine Zugübung an einer Druckübung
+  gemessen. Die Quelle trägt das Verhältnis; der Grund für die Wahl ist, dass
+  unter den fünf Ankern keine Langhantel-Zugübung ist und Klimmzüge mit
+  Gesamtlast rechnen. Im Gespräch parat haben.
+- Die Übungs-ID `rumänisches-kreuzheben` enthält als einzige von 30 einen
+  Umlaut; alle anderen schreiben `ae`, `oe`, `ue`. Gespeicherte Sätze
+  verweisen auf diese ID, deshalb nicht nebenbei umbenannt.
