@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="de">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Training und Rang – Reloadprüfung</title>
+  <h1>Training und Rang – Reloadprüfung</h1>
+  <pre id="ergebnis">Prüfung läuft</pre>
+  <script>
+    const pruefschluessel = 'trackify-training-rang-reload'
+    const rohwert = localStorage.getItem('trackify')
+    const vorher = sessionStorage.getItem(pruefschluessel)
+    if (rohwert === null) {
+      document.querySelector('#ergebnis').textContent = 'FEHLER: Kein trackify-Dokument vorhanden.'
+    } else if (vorher === null) {
+      sessionStorage.setItem(pruefschluessel, rohwert)
+      location.reload()
+    } else {
+      sessionStorage.removeItem(pruefschluessel)
+      const dokument = JSON.parse(rohwert)
+      document.querySelector('#ergebnis').textContent =
+        vorher === rohwert && dokument.version === 1 && dokument.trainingseinheiten.length > 0
+          ? `BESTANDEN: Rohwert nach echtem Reload bytegleich (${rohwert.length} Zeichen); Version 1; ${dokument.trainingseinheiten.length} Trainingseinheiten.`
+          : 'FEHLER: Rohwert oder Dokumentgrundform verändert.'
+    }
+  </script>
+</html>

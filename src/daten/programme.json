@@ -1,0 +1,127 @@
+[
+  {
+    "id": "ganzkoerper-2",
+    "name": "Ganzkörper · 2 Tage",
+    "trainingstage": 2,
+    "beschreibung": "Zwei wechselnde Ganzkörpereinheiten.",
+    "einheiten": [
+      {
+        "id": "gk2-a",
+        "name": "Einheit A",
+        "uebungen": [
+          { "uebungId": "kniebeuge", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "bankdruecken", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "langhantelrudern", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "rumänisches-kreuzheben", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "seitheben", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "trizepsdruecken", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      },
+      {
+        "id": "gk2-b",
+        "name": "Einheit B",
+        "uebungen": [
+          { "uebungId": "kreuzheben", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "schulterdruecken", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "klimmzuege", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "bulgarische-kniebeuge", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "enges-bankdruecken", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "face-pulls", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ganzkoerper-3",
+    "name": "Ganzkörper · 3 Tage",
+    "trainingstage": 3,
+    "beschreibung": "Drei Einheiten mit wechselndem Schwerpunkt.",
+    "einheiten": [
+      {
+        "id": "gk3-a",
+        "name": "Einheit A · Beugen",
+        "uebungen": [
+          { "uebungId": "kniebeuge", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "bankdruecken", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "kabelrudern", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "beinbeugen", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "seitheben", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      },
+      {
+        "id": "gk3-b",
+        "name": "Einheit B · Heben",
+        "uebungen": [
+          { "uebungId": "kreuzheben", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "schulterdruecken", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "klimmzuege", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "ausfallschritte", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "bizepscurls", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      },
+      {
+        "id": "gk3-c",
+        "name": "Einheit C · Volumen",
+        "uebungen": [
+          { "uebungId": "frontkniebeuge", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "schraegbankdruecken", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "t-bar-rudern", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "hip-thrust", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "face-pulls", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ober-unter-4",
+    "name": "Oberkörper / Unterkörper · 4 Tage",
+    "trainingstage": 4,
+    "beschreibung": "Zwei Oberkörper- und zwei Unterkörpereinheiten.",
+    "einheiten": [
+      {
+        "id": "ou4-ober-a",
+        "name": "Oberkörper A",
+        "uebungen": [
+          { "uebungId": "bankdruecken", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "langhantelrudern", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "schulterdruecken", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "latziehen", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "trizepsdruecken", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      },
+      {
+        "id": "ou4-unter-a",
+        "name": "Unterkörper A",
+        "uebungen": [
+          { "uebungId": "kniebeuge", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "rumänisches-kreuzheben", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "beinpresse", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "beinbeugen", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "wadenheben", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      },
+      {
+        "id": "ou4-ober-b",
+        "name": "Oberkörper B",
+        "uebungen": [
+          { "uebungId": "schraegbankdruecken", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "klimmzuege", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "enges-bankdruecken", "saetze": 3, "min": 6, "max": 10 },
+          { "uebungId": "kabelrudern", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "seitheben", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      },
+      {
+        "id": "ou4-unter-b",
+        "name": "Unterkörper B",
+        "uebungen": [
+          { "uebungId": "kreuzheben", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "frontkniebeuge", "saetze": 3, "min": 5, "max": 8 },
+          { "uebungId": "bulgarische-kniebeuge", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "beinstrecken", "saetze": 3, "min": 8, "max": 12 },
+          { "uebungId": "rueckenstrecken", "saetze": 3, "min": 8, "max": 12 }
+        ]
+      }
+    ]
+  }
+]
