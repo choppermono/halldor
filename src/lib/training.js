@@ -126,6 +126,15 @@ function leistungBewerten(einheit, vorgabe) {
   }
 }
 
+// Die Schrittweite gehoert zur Uebung, nicht zur Koerperregion: +2.5 kg sind
+// bei der Langhantel ein kleiner Schritt, beim Seitenheben mit 8-kg-Hanteln
+// ueber 30 %. Fehlt der Wert, gilt der bisherige Standard der Region.
+export function schrittFuer(uebung) {
+  return positiveZahl(uebung?.schrittKg)
+    ? uebung.schrittKg
+    : TRAININGSREGELN.schrittKg[uebung?.bereich]
+}
+
 function zeitwert(einheit) {
   const wert = Date.parse(einheit?.abgeschlossenAm ?? `${einheit?.datum ?? ''}T00:00:00`)
   return Number.isFinite(wert) ? wert : 0
@@ -197,7 +206,7 @@ export function progressionBerechnen({ uebung, vorgabe, einheiten, ziel }) {
     // Auf die Schrittweite der Uebung abrunden, nicht auf 0.1 kg: die
     // Schritte sind 2.5 und 5 kg, weil es kleinere Scheiben meist nicht gibt.
     // Ein Deload auf eine nicht ladbare Last widerspraeche dieser Begruendung.
-    const schrittKg = TRAININGSREGELN.schrittKg[uebung.bereich]
+    const schrittKg = schrittFuer(uebung)
     if (!positiveZahl(schrittKg))
       return fehler('bereich_ungueltig', 'Für diese Übung ist keine Schrittgrösse hinterlegt.')
     const gewichtKg =
@@ -219,7 +228,7 @@ export function progressionBerechnen({ uebung, vorgabe, einheiten, ziel }) {
   // Eine verdiente Steigerung gilt auch im Defizit. F14 verlangt keine
   // Steigerung, verbietet sie aber nicht.
   if (letzte.obergrenzeErreicht) {
-    const schrittKg = TRAININGSREGELN.schrittKg[uebung.bereich]
+    const schrittKg = schrittFuer(uebung)
     if (!positiveZahl(schrittKg))
       return fehler('bereich_ungueltig', 'Für diese Übung ist keine Schrittgrösse hinterlegt.')
     return {

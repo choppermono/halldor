@@ -5,8 +5,15 @@ import {
   leistungImDefizitBewerten,
   maximumSchaetzen,
   progressionBerechnen,
+  schrittFuer,
 } from '../src/lib/training.js'
-import { kraftstandards, rangFuerSatz, schwellenFuer, stufeBestimmen } from '../src/lib/rang.js'
+import {
+  rangdaten,
+  rangFuerSatz,
+  ranglisteBerechnen,
+  schwellenFuer,
+  stufeBestimmen,
+} from '../src/lib/rang.js'
 
 const ausgabe = document.querySelector('#ergebnis')
 const zeilen = []
@@ -223,58 +230,139 @@ try {
       programm.einheiten.every((tag) => tag.uebungen.every((eintrag) => ids.has(eintrag.uebungId)))
     )
   )
+  // ---- Schrittweite je Übung (E-129) ----
   pruefen(
-    'Jede Verhältniszahl hat Messpunkt und Quelle',
-    Object.values(kraftstandards.uebungen)
-      .filter((eintrag) => eintrag.typ === 'abgeleitet')
-      .every(
-        (eintrag) =>
-          eintrag.messpunkt?.m && eintrag.messpunkt?.w && /^https:\/\//.test(eintrag.quelle)
-      )
+    'Jede Katalogübung hat eine eigene Schrittweite',
+    uebungen.every((eintrag) => eintrag.schrittKg > 0)
   )
   pruefen(
-    'Jede Katalogübung hat Skala oder erklärte Lücke',
-    uebungen.every(
-      (eintrag) =>
-        kraftstandards.uebungen[eintrag.id] || kraftstandards.ohneStufe.includes(eintrag.id)
+    'Schrittweite der Übung geht vor der Region',
+    schrittFuer({ bereich: 'oberkoerper', schrittKg: 1 }) === 1
+  )
+  pruefen(
+    'Ohne eigene Schrittweite gilt die Region',
+    schrittFuer({ bereich: 'oberkoerper' }) === 2.5 &&
+      schrittFuer({ bereich: 'unterkoerper' }) === 5
+  )
+  const feinerSchritt = progressionBerechnen({
+    uebung: { id: 'seitheben', bereich: 'oberkoerper', schrittKg: 1 },
+    vorgabe: { uebungId: 'seitheben', saetze: 3, min: 6, max: 10 },
+    einheiten: [einheit('seitheben', 10, 0, 8)],
+    ziel: 'halten',
+  })
+  pruefen(
+    'Steigerung nutzt die Schrittweite der Übung (8 -> 9 kg)',
+    feinerSchritt.status === 'steigern' && feinerSchritt.gewichtKg === 9
+  )
+
+  // ---- Rang nach absoluter Last (E-128) ----
+  // Bis 18.09.2026 rankte die App nach dem Vielfachen des Körpergewichts, mit
+  // getrennten Tabellen je Geschlecht (E-122). Diese rund 220 Grenzprüfungen
+  // sind mit dem Konzept entfallen.
+  pruefen('Fünf Stufen', rangdaten.stufen.length === 5)
+  pruefen(
+    'Nicht festgelegte Schwellen liefern keine Skala',
+    uebungen.every((eintrag) =>
+      rangdaten.uebungen[eintrag.id] === null ? schwellenFuer(eintrag.id) === null : true
+    )
+  )
+  pruefen(
+    'Jede Katalogübung hat einen Eintrag in den Rangdaten',
+    uebungen.every((eintrag) => eintrag.id in rangdaten.uebungen)
+  )
+  pruefen(
+    'Gesetzte Schwellen sind positiv und aufsteigend',
+    Object.values(rangdaten.uebungen)
+      .filter(Array.isArray)
+      .every(
+        (werte) =>
+          werte.length === 5 &&
+          werte.every((wert, i) => wert > 0 && (i === 0 || wert > werte[i - 1]))
+      )
+  )
+
+  const probe = {
+    stufen: ['Bronze', 'Silber', 'Gold', 'Platin', 'Diamant'],
+    uebungen: { latziehen: [20, 40, 60, 80, 100] },
+  }
+  pruefen(
+    'Unter der ersten Schwelle keine Stufe',
+    stufeBestimmen(19.9, probe.uebungen.latziehen, probe.stufen) === null
+  )
+  pruefen(
+    'Genau an der Schwelle zählt die Stufe',
+    stufeBestimmen(40, probe.uebungen.latziehen, probe.stufen)?.name === 'Silber'
+  )
+  pruefen(
+    'Knapp darunter die Stufe davor',
+    stufeBestimmen(39.9, probe.uebungen.latziehen, probe.stufen)?.name === 'Bronze'
+  )
+  pruefen(
+    'Oberste Stufe',
+    stufeBestimmen(140, probe.uebungen.latziehen, probe.stufen)?.name === 'Diamant'
+  )
+
+  const mitte = rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 50, wiederholungen: 8 }, probe)
+  pruefen(
+    'Abstand zur nächsten Stufe in kg (50 kg -> Gold bei 60)',
+    mitte.wert.stufe.name === 'Silber' &&
+      mitte.wert.naechsteStufe === 'Gold' &&
+      mitte.wert.abstandKg === 10
+  )
+  const oben = rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 120, wiederholungen: 8 }, probe)
+  pruefen(
+    'Über der obersten Stufe keine nächste',
+    oben.wert.naechsteStufe === null && oben.wert.abstandKg === null
+  )
+  pruefen(
+    'Kein Körpergewicht und kein Geschlecht nötig',
+    rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 50, wiederholungen: 8 }, probe).status === 'ok'
+  )
+  const ohneStufen = rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 50, wiederholungen: 8 })
+  pruefen(
+    'Ohne festgelegte Schwellen: Last bleibt, Stufe leer, Grund benannt',
+    ohneStufen.status === 'ok' &&
+      ohneStufen.wert.lastKg === 50 &&
+      ohneStufen.wert.stufe === null &&
+      ohneStufen.wert.grund === 'stufen_fehlen'
+  )
+  pruefen(
+    'Epley steht zur Einordnung in der Herleitung',
+    nahe(
+      rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 60, wiederholungen: 8 }, probe).herleitung
+        .epleyKg,
+      76
     )
   )
 
-  let grenzpruefungen = 0
-  for (const [uebungId] of Object.entries(kraftstandards.uebungen)) {
-    for (const geschlecht of ['m', 'w']) {
-      const schwellen = schwellenFuer(uebungId, geschlecht)
-      pruefen(`${uebungId} hat Tabelle ${geschlecht}`, schwellen?.length === 5)
-      schwellen.forEach((schwelle, index) => {
-        pruefen(
-          `${uebungId} ${geschlecht} Schwelle ${index + 1} gilt an der Grenze`,
-          stufeBestimmen(schwelle, schwellen)?.index === index
-        )
-        const darunter = stufeBestimmen(schwelle - 1e-9, schwellen)
-        pruefen(
-          `${uebungId} ${geschlecht} Schwelle ${index + 1} gilt nicht darunter`,
-          index === 0 ? darunter === null : darunter?.index === index - 1
-        )
-        grenzpruefungen += 2
-      })
-    }
-  }
-  pruefen('Beide Geschlechtertabellen vollständig durchlaufen', grenzpruefungen > 0)
-
-  const ohneGeschlecht = rangFuerSatz({
-    uebungId: 'bankdruecken',
-    gewichtKg: 60,
-    wiederholungen: 5,
-    momentaufnahme: { koerpergewichtKg: 80, geschlecht: '' },
-  })
+  const katalogProbe = [
+    { id: 'latziehen', name: 'Latzug', wiederholungen: { min: 6, max: 10 } },
+    { id: 'seitheben', name: 'Seitenheben', wiederholungen: { min: 6, max: 10 } },
+  ]
+  const satz = (uebungId, gewichtKg, wiederholungen) => ({ uebungId, gewichtKg, wiederholungen })
+  const liste = ranglisteBerechnen(
+    [
+      { saetze: [satz('seitheben', 10, 8), satz('latziehen', 90, 3), satz('latziehen', 60, 8)] },
+      { saetze: [satz('latziehen', 60, 10), satz('bankdruecken', 100, 8)] },
+    ],
+    katalogProbe,
+    probe
+  )
+  const latzug = liste.find((eintrag) => eintrag.uebungId === 'latziehen')
+  pruefen('Satz unter der Untergrenze zählt nicht (90 kg × 3)', latzug.wert.lastKg === 60)
   pruefen(
-    'Ohne Geschlecht bleibt das Vielfache erhalten',
-    ohneGeschlecht.status === 'ok' && Number.isFinite(ohneGeschlecht.wert.vielfaches)
+    'Bei gleicher Last zählt der Satz mit mehr Wiederholungen',
+    latzug.satz.wiederholungen === 10
   )
   pruefen(
-    'Ohne Geschlecht gibt es keinen Rang',
-    ohneGeschlecht.wert.stufe === null && ohneGeschlecht.wert.grund === 'geschlecht_fehlt'
+    'Übungen ausserhalb des Katalogs werden ignoriert',
+    !liste.some((eintrag) => eintrag.uebungId === 'bankdruecken')
   )
+  pruefen(
+    'Reihenfolge folgt dem Programm, nicht dem Alphabet',
+    liste.map((eintrag) => eintrag.uebungId).join() === 'latziehen,seitheben'
+  )
+  pruefen('Es gibt keinen Gesamtrang', !('gesamtrang' in liste) && Array.isArray(liste))
 
   zeilen.push(`ABSCHLUSS: ${zeilen.length} Prüfpunkte bestanden.`)
 } catch (fehler) {

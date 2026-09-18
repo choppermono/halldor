@@ -30,20 +30,14 @@ function zeit(iso) {
     <p class="system-label seitenrubrik">Rang / Kraftstand</p>
     <h1 id="rang-titel">Rang.</h1>
     <p class="einleitung">
-      Jede Übung steht für sich. Eine Rangstufe ordnet ein geschätztes Ergebnis in die selbst
-      gesetzte Skala ein; sie ist kein Urteil über eine Person.
+      Jede Übung steht für sich. Die Stufe richtet sich nach der Last, die du in einem sauberen Satz
+      bewegt hast — ein Mass für deinen eigenen Fortschritt, kein Vergleich mit anderen.
     </p>
 
-    <aside class="normierung" aria-labelledby="normierung-titel">
-      <p id="normierung-titel" class="system-label">Grenze der Normierung</p>
-      <p>
-        Das Vielfache des Körpergewichts bevorzugt leichte Personen, weil Kraft nicht linear mit der
-        Körpermasse wächst.
-      </p>
-    </aside>
-
     <div v-if="!raenge.length" class="leerzustand">
-      <p>Noch keine auswertbaren Sätze bis 12 Wiederholungen gespeichert.</p>
+      <p>
+        Noch keine Sätze gespeichert, die die Untergrenze des Wiederholungsfensters erreicht haben.
+      </p>
       <RouterLink class="knopf primaer" to="/training">Training erfassen</RouterLink>
     </div>
 
@@ -59,12 +53,8 @@ function zeit(iso) {
 
         <dl class="rangwerte">
           <div>
-            <dt>Geschätztes Maximum</dt>
-            <dd>{{ zahl(rang.wert.geschaetztesMaximumKg) }} kg</dd>
-          </div>
-          <div>
-            <dt>Vielfaches</dt>
-            <dd>{{ zahl(rang.wert.vielfaches, 2) }} × KG</dd>
+            <dt>Beste Last</dt>
+            <dd>{{ zahl(rang.wert.lastKg) }} kg</dd>
           </div>
           <div>
             <dt>Nächste Stufe</dt>
@@ -72,17 +62,14 @@ function zeit(iso) {
               {{ rang.wert.naechsteStufe }} · {{ zahl(rang.wert.abstandKg) }} kg Abstand
             </dd>
             <dd v-else-if="rang.wert.stufe">Skala vollständig</dd>
+            <dd v-else-if="rang.wert.grund === 'stufen_fehlen'">noch offen</dd>
             <dd v-else>nicht berechenbar</dd>
           </div>
         </dl>
 
-        <p v-if="rang.wert.grund === 'geschlecht_fehlt'" class="meldung">
-          Ohne im Satz gespeicherte Formelvariante gibt es keinen Rang. Das Vielfache bleibt
-          sichtbar, weil es keine Geschlechtstabelle benötigt.
-        </p>
-        <p v-else-if="rang.wert.grund === 'standard_fehlt'" class="klein">
-          Für diese Übung ist kein belegbares Verhältnis zu einer Ankerübung hinterlegt. Deshalb
-          bleibt die Stufe leer.
+        <p v-if="rang.wert.grund === 'stufen_fehlen'" class="klein">
+          Für diese Übung sind die Stufen noch nicht festgelegt. Die beste Last wird trotzdem
+          festgehalten.
         </p>
 
         <details class="rang-herleitung">
@@ -96,38 +83,21 @@ function zeit(iso) {
               </dd>
             </div>
             <div>
-              <dt>Epley · verwendet</dt>
+              <dt>Gezählt, weil</dt>
+              <dd>mindestens {{ rang.mindestWiederholungen }} Wiederholungen</dd>
+            </div>
+            <div v-if="rang.herleitung.epleyKg">
+              <dt>Geschätztes Maximum · Epley</dt>
               <dd>
                 {{ zahl(rang.satz.gewichtKg) }} × (1 + {{ rang.satz.wiederholungen }} / 30) =
                 {{ zahl(rang.herleitung.epleyKg) }} kg
               </dd>
             </div>
-            <div>
+            <div v-if="rang.herleitung.brzyckiKg">
               <dt>Brzycki · Vergleich</dt>
               <dd>
                 {{ zahl(rang.satz.gewichtKg) }} × 36 / (37 − {{ rang.satz.wiederholungen }}) =
                 {{ zahl(rang.herleitung.brzyckiKg) }} kg
-              </dd>
-            </div>
-            <div>
-              <dt>Momentaufnahme</dt>
-              <dd>
-                {{ zahl(rang.herleitung.koerpergewichtKg) }} kg Körpergewicht ·
-                {{ rang.herleitung.geschlecht || 'keine Formelvariante' }}
-              </dd>
-            </div>
-            <div>
-              <dt>Normierung</dt>
-              <dd>
-                {{ zahl(rang.herleitung.epleyKg) }} / {{ zahl(rang.herleitung.koerpergewichtKg) }} =
-                {{ zahl(rang.herleitung.vielfaches, 2) }} × Körpergewicht
-              </dd>
-            </div>
-            <div v-if="rang.herleitung.verhaeltnis">
-              <dt>Abgeleitete Skala</dt>
-              <dd>
-                Anker {{ rang.herleitung.anker }} × Verhältnis
-                {{ zahl(rang.herleitung.verhaeltnis, 4) }}. Quelle steht in der Datendatei.
               </dd>
             </div>
           </dl>
@@ -136,9 +106,9 @@ function zeit(iso) {
     </ol>
 
     <p class="klein methodenhinweis">
-      Es gibt bewusst keinen Gesamtrang. Epley wird gerechnet, Brzycki nur verglichen. Sätze über 12
-      Wiederholungen werden nicht geschätzt. Die Schwellen sind gesetzt und an frei veröffentlichten
-      Nutzererhebungen kalibriert, nicht in Studien gemessen.
+      Es gibt bewusst keinen Gesamtrang. Gezählt wird die höchste Last in einem Satz, der die
+      Untergrenze des Wiederholungsfensters erreicht hat. Das geschätzte Maximum steht nur zur
+      Einordnung in der Herleitung.
     </p>
   </section>
 </template>

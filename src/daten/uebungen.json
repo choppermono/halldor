@@ -9,7 +9,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Geräteanzeige"
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 2.5
   },
   {
     "id": "preacher-curl",
@@ -21,7 +22,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Gerät, bei der SZ-Stange Gesamtgewicht"
+    "gewichtshinweis": "Last laut Gerät, bei der SZ-Stange Gesamtgewicht",
+    "schrittKg": 2.5
   },
   {
     "id": "seitheben",
@@ -33,7 +35,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Summe beider Kurzhanteln"
+    "gewichtshinweis": "Summe beider Kurzhanteln",
+    "schrittKg": 2.5
   },
   {
     "id": "schulterpresse",
@@ -45,7 +48,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Geräteanzeige"
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 2.5
   },
   {
     "id": "reverse-flys",
@@ -57,7 +61,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Summe beider Kurzhanteln oder Last laut Gerät"
+    "gewichtshinweis": "Summe beider Kurzhanteln oder Last laut Gerät",
+    "schrittKg": 2.5
   },
   {
     "id": "trizeps-einarmig",
@@ -69,7 +74,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last einer Seite"
+    "gewichtshinweis": "Last einer Seite",
+    "schrittKg": 2.5
   },
   {
     "id": "jm-press",
@@ -81,7 +87,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Gesamtgewicht inklusive Stange"
+    "gewichtshinweis": "Gesamtgewicht inklusive Stange",
+    "schrittKg": 2.5
   },
   {
     "id": "schraegbank-multipresse",
@@ -93,7 +100,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Aufgelegte Scheiben, ohne Stange"
+    "gewichtshinweis": "Aufgelegte Scheiben, ohne Stange",
+    "schrittKg": 2.5
   },
   {
     "id": "pec-deck",
@@ -105,7 +113,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Geräteanzeige"
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 2.5
   },
   {
     "id": "kabelrudern",
@@ -117,7 +126,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Gerät"
+    "gewichtshinweis": "Last laut Gerät",
+    "schrittKg": 2.5
   },
   {
     "id": "t-bar-rudern",
@@ -129,7 +139,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Bewegte Last nach Geräteanzeige"
+    "gewichtshinweis": "Bewegte Last nach Geräteanzeige",
+    "schrittKg": 2.5
   },
   {
     "id": "beinstrecken",
@@ -141,7 +152,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Geräteanzeige"
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 5
   },
   {
     "id": "beinbeugen",
@@ -153,7 +165,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Geräteanzeige"
+    "gewichtshinweis": "Last laut Geräteanzeige",
+    "schrittKg": 5
   },
   {
     "id": "beinpresse",
@@ -165,7 +178,8 @@
       "min": 6,
       "max": 10
     },
-    "gewichtshinweis": "Last laut Gerät"
+    "gewichtshinweis": "Last laut Gerät",
+    "schrittKg": 5
   },
   {
     "id": "wadenheben",
@@ -177,6 +191,7 @@
       "min": 10,
       "max": 15
     },
-    "gewichtshinweis": "Zusatzlast laut Gerät oder Hantel"
+    "gewichtshinweis": "Zusatzlast laut Gerät oder Hantel",
+    "schrittKg": 5
   }
 ]
