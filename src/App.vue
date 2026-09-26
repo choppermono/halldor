@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import { RouterView } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import Navigationsleiste from './components/Navigationsleiste.vue'
 import KinoHintergrund from './components/KinoHintergrund.vue'
 import KinoAuflage from './components/KinoAuflage.vue'
@@ -12,6 +12,16 @@ import {
 } from './composables/useAnzeigeebene.js'
 
 const { zustand } = useAnzeigeebene()
+
+// Die Kopfzeile sagt, wo man ist. Auf Heute ist das der Tag selbst.
+const route = useRoute()
+const kopfRegister = computed(() =>
+  route.path === '/'
+    ? new Intl.DateTimeFormat('de-CH', { weekday: 'short', day: '2-digit', month: '2-digit' })
+        .format(new Date())
+        .replace(',', '')
+    : (route.meta.titel ?? '')
+)
 onMounted(anzeigeebeneStarten)
 onUnmounted(anzeigeebeneBeenden)
 
@@ -64,7 +74,7 @@ function zumInhalt() {
     <a class="sprunglink" href="#inhalt" @click.prevent="zumInhalt">Zum Inhalt</a>
     <header class="app-kopf">
       <span class="wortmarke">Trackify<span aria-hidden="true">.</span></span>
-      <span class="system-label kopf-register">Ernährung &amp; Training</span>
+      <span class="system-label kopf-register">{{ kopfRegister }}</span>
     </header>
     <main id="inhalt" ref="inhalt" class="seiteninhalt" tabindex="-1">
       <div role="status" aria-live="polite" aria-atomic="true">

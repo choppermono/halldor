@@ -175,7 +175,9 @@ onUnmounted(() => {
 <template>
   <section class="kamera-scanner" aria-labelledby="scanner-titel">
     <div class="scanner-kopf">
-      <span class="scanner-zustand"><i aria-hidden="true"></i>{{ kameraAktiv ? 'Kamera aktiv' : 'Kamera bereit' }}</span>
+      <span class="scanner-zustand"
+        ><i aria-hidden="true"></i>{{ kameraAktiv ? 'Kamera aktiv' : 'Kamera bereit' }}</span
+      >
       <span class="system-label">EAN-13 / EAN-8</span>
       <h2 id="scanner-titel" class="nur-vorlesbar">Barcode scannen</h2>
     </div>

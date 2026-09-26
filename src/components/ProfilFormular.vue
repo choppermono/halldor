@@ -74,10 +74,6 @@ const vollstaendig = computed(
     eingabe.gewichtKg !== ''
 )
 
-function auswaehlen(feld, wert) {
-  eingabe[feld] = wert
-  meldung.value = ''
-}
 function schrittPruefen() {
   const name = aktuellerSchritt.value
   if (name === 'formel' && !['m', 'w'].includes(eingabe.geschlecht))
@@ -148,15 +144,29 @@ function speichern() {
     <template v-if="props.onboarding">
       <div class="onboarding-stand">
         <span>Schritt {{ schritt + 1 }} / {{ schritte.length }}</span>
-        <div aria-hidden="true"><span :style="{ transform: `scaleX(${(schritt + 1) / schritte.length})` }"></span></div>
+        <div aria-hidden="true">
+          <span :style="{ transform: `scaleX(${(schritt + 1) / schritte.length})` }"></span>
+        </div>
       </div>
 
       <fieldset v-if="aktuellerSchritt === 'formel'" class="onboarding-frage">
         <legend>Welche Formelvariante passt?</legend>
         <p>Die Auswahl setzt nur den Konstantenwert in Mifflin-St Jeor.</p>
         <div class="auswahlkarten">
-          <label v-for="option in [{ wert: 'm', text: 'Männlich' }, { wert: 'w', text: 'Weiblich' }]" :key="option.wert" :class="{ gewaehlt: eingabe.geschlecht === option.wert }">
-            <input v-model="eingabe.geschlecht" type="radio" name="geschlecht" :value="option.wert" />
+          <label
+            v-for="option in [
+              { wert: 'm', text: 'Männlich' },
+              { wert: 'w', text: 'Weiblich' },
+            ]"
+            :key="option.wert"
+            :class="{ gewaehlt: eingabe.geschlecht === option.wert }"
+          >
+            <input
+              v-model="eingabe.geschlecht"
+              type="radio"
+              name="geschlecht"
+              :value="option.wert"
+            />
             <span>{{ option.text }}</span>
           </label>
         </div>
@@ -165,24 +175,53 @@ function speichern() {
       <fieldset v-else-if="aktuellerSchritt === 'geburtsdatum'" class="onboarding-frage">
         <legend>Wann bist du geboren?</legend>
         <p>Unter 18 Jahren ist ein Abnehmziel nicht verfügbar.</p>
-        <label>Geburtsdatum<DatumFeld v-model="eingabe.geburtsdatum" min="1900-01-01" :max="heute" required /></label>
+        <label
+          >Geburtsdatum<DatumFeld
+            v-model="eingabe.geburtsdatum"
+            min="1900-01-01"
+            :max="heute"
+            required
+        /></label>
       </fieldset>
 
       <fieldset v-else-if="aktuellerSchritt === 'groesse'" class="onboarding-frage">
         <legend>Wie gross bist du?</legend>
-        <Zahlenschritt v-model="eingabe.groesseCm" name="Körpergrösse" einheit="cm" :schritt="0.1" :min="grenzen.cmMin" :max="grenzen.cmMax" />
+        <Zahlenschritt
+          v-model="eingabe.groesseCm"
+          name="Körpergrösse"
+          einheit="cm"
+          :schritt="0.1"
+          :min="grenzen.cmMin"
+          :max="grenzen.cmMax"
+        />
       </fieldset>
 
       <fieldset v-else-if="aktuellerSchritt === 'gewicht'" class="onboarding-frage">
         <legend>Was wiegst du heute?</legend>
-        <Zahlenschritt v-model="eingabe.gewichtKg" name="Gewicht" einheit="kg" :schritt="0.1" :min="grenzen.kgMin" :max="grenzen.kgMax" />
+        <Zahlenschritt
+          v-model="eingabe.gewichtKg"
+          name="Gewicht"
+          einheit="kg"
+          :schritt="0.1"
+          :min="grenzen.kgMin"
+          :max="grenzen.kgMax"
+        />
       </fieldset>
 
       <fieldset v-else-if="aktuellerSchritt === 'aktivitaet'" class="onboarding-frage">
         <legend>Wie aktiv ist dein Alltag?</legend>
         <div class="auswahlkarten">
-          <label v-for="(wert, index) in REGELN.aktivitaeten" :key="wert" :class="{ gewaehlt: eingabe.aktivitaet === wert }">
-            <input v-model.number="eingabe.aktivitaet" type="radio" name="aktivitaet" :value="wert" />
+          <label
+            v-for="(wert, index) in REGELN.aktivitaeten"
+            :key="wert"
+            :class="{ gewaehlt: eingabe.aktivitaet === wert }"
+          >
+            <input
+              v-model.number="eingabe.aktivitaet"
+              type="radio"
+              name="aktivitaet"
+              :value="wert"
+            />
             <span>{{ aktivitaetTexte[index] }}</span>
           </label>
         </div>
@@ -192,8 +231,25 @@ function speichern() {
         <legend>Was ist dein Ziel?</legend>
         <p>Halten und Aufbauen bleiben in jedem unterstützten Alter verfügbar.</p>
         <div class="auswahlkarten">
-          <label v-for="option in [{ wert: 'halten', text: 'Halten' }, { wert: 'aufbauen', text: 'Aufbauen' }, { wert: 'abnehmen', text: 'Abnehmen' }]" :key="option.wert" :class="{ gewaehlt: eingabe.ziel === option.wert, gesperrt: option.wert === 'abnehmen' && alter.wert < REGELN.abnehmenAb }">
-            <input v-model="eingabe.ziel" type="radio" name="ziel" :value="option.wert" :disabled="option.wert === 'abnehmen' && alter.wert < REGELN.abnehmenAb" />
+          <label
+            v-for="option in [
+              { wert: 'halten', text: 'Halten' },
+              { wert: 'aufbauen', text: 'Aufbauen' },
+              { wert: 'abnehmen', text: 'Abnehmen' },
+            ]"
+            :key="option.wert"
+            :class="{
+              gewaehlt: eingabe.ziel === option.wert,
+              gesperrt: option.wert === 'abnehmen' && alter.wert < REGELN.abnehmenAb,
+            }"
+          >
+            <input
+              v-model="eingabe.ziel"
+              type="radio"
+              name="ziel"
+              :value="option.wert"
+              :disabled="option.wert === 'abnehmen' && alter.wert < REGELN.abnehmenAb"
+            />
             <span>{{ option.text }}</span>
           </label>
         </div>
@@ -202,14 +258,24 @@ function speichern() {
       <fieldset v-else-if="aktuellerSchritt === 'rate'" class="onboarding-frage">
         <legend>Wie schnell soll sich das Gewicht ändern?</legend>
         <p>Prozent des Körpergewichts pro Woche.</p>
-        <Zahlenschritt v-model="eingabe.aenderungsrateProzent" name="Änderungsrate" einheit="%" :schritt="0.1" :min="REGELN.rateMin" :max="REGELN.rateMax" />
+        <Zahlenschritt
+          v-model="eingabe.aenderungsrateProzent"
+          name="Änderungsrate"
+          einheit="%"
+          :schritt="0.1"
+          :min="REGELN.rateMin"
+          :max="REGELN.rateMax"
+        />
       </fieldset>
 
       <fieldset v-else-if="aktuellerSchritt === 'hinweis'" class="onboarding-frage">
         <legend>Schätzung verstanden?</legend>
         <label class="bestaetigung hinweis-karte">
           <input v-model="eingabe.hinweisBestaetigt" type="checkbox" required />
-          <span>Trackify ersetzt keine medizinische oder Ernährungsberatung. Die berechneten Ziele sind Schätzungen.</span>
+          <span
+            >Trackify ersetzt keine medizinische oder Ernährungsberatung. Die berechneten Ziele sind
+            Schätzungen.</span
+          >
         </label>
       </fieldset>
 
@@ -219,10 +285,21 @@ function speichern() {
         <ZielHerleitung :ergebnis="vorschau" />
       </section>
 
-      <p v-if="meldung" :class="erfolgreich ? 'statuszeile' : 'meldung'" role="status">{{ meldung }}</p>
+      <p v-if="meldung" :class="erfolgreich ? 'statuszeile' : 'meldung'" role="status">
+        {{ meldung }}
+      </p>
       <div class="onboarding-aktionen">
-        <button v-if="schritt > 0" type="button" class="leiser-knopf" @click="zurueck">Zurück</button>
-        <button v-if="aktuellerSchritt !== 'ergebnis'" type="button" class="primaer" @click="weiter">Weiter</button>
+        <button v-if="schritt > 0" type="button" class="leiser-knopf" @click="zurueck">
+          Zurück
+        </button>
+        <button
+          v-if="aktuellerSchritt !== 'ergebnis'"
+          type="button"
+          class="primaer"
+          @click="weiter"
+        >
+          Weiter
+        </button>
         <button v-else class="primaer" type="submit">Profil speichern und beginnen</button>
       </div>
     </template>
@@ -233,41 +310,105 @@ function speichern() {
         <div class="profil-auswahl">
           <span>Formelvariante</span>
           <div class="auswahlkarten kompakt">
-            <label v-for="option in [{ wert: 'm', text: 'Männlich' }, { wert: 'w', text: 'Weiblich' }]" :key="option.wert" :class="{ gewaehlt: eingabe.geschlecht === option.wert }">
-              <input v-model="eingabe.geschlecht" type="radio" name="profil-geschlecht" :value="option.wert" />
+            <label
+              v-for="option in [
+                { wert: 'm', text: 'Männlich' },
+                { wert: 'w', text: 'Weiblich' },
+              ]"
+              :key="option.wert"
+              :class="{ gewaehlt: eingabe.geschlecht === option.wert }"
+            >
+              <input
+                v-model="eingabe.geschlecht"
+                type="radio"
+                name="profil-geschlecht"
+                :value="option.wert"
+              />
               <span>{{ option.text }}</span>
             </label>
           </div>
         </div>
-        <label>Geburtsdatum<DatumFeld v-model="eingabe.geburtsdatum" min="1900-01-01" :max="heute" required /></label>
-        <label>Körpergrösse<Zahlenschritt v-model="eingabe.groesseCm" name="Körpergrösse" einheit="cm" :schritt="0.1" :min="grenzen.cmMin" :max="grenzen.cmMax" /></label>
-        <label>Gewicht heute<Zahlenschritt v-model="eingabe.gewichtKg" name="Gewicht" einheit="kg" :schritt="0.1" :min="grenzen.kgMin" :max="grenzen.kgMax" /></label>
+        <label
+          >Geburtsdatum<DatumFeld
+            v-model="eingabe.geburtsdatum"
+            min="1900-01-01"
+            :max="heute"
+            required
+        /></label>
+        <label
+          >Körpergrösse<Zahlenschritt
+            v-model="eingabe.groesseCm"
+            name="Körpergrösse"
+            einheit="cm"
+            :schritt="0.1"
+            :min="grenzen.cmMin"
+            :max="grenzen.cmMax"
+        /></label>
+        <label
+          >Gewicht heute<Zahlenschritt
+            v-model="eingabe.gewichtKg"
+            name="Gewicht"
+            einheit="kg"
+            :schritt="0.1"
+            :min="grenzen.kgMin"
+            :max="grenzen.kgMax"
+        /></label>
       </fieldset>
 
       <fieldset class="formulargruppe">
         <legend>Aktivität und Ziel</legend>
         <div class="auswahlkarten">
-          <label v-for="(wert, index) in REGELN.aktivitaeten" :key="wert" :class="{ gewaehlt: eingabe.aktivitaet === wert }">
-            <input v-model.number="eingabe.aktivitaet" type="radio" name="profil-aktivitaet" :value="wert" />
+          <label
+            v-for="(wert, index) in REGELN.aktivitaeten"
+            :key="wert"
+            :class="{ gewaehlt: eingabe.aktivitaet === wert }"
+          >
+            <input
+              v-model.number="eingabe.aktivitaet"
+              type="radio"
+              name="profil-aktivitaet"
+              :value="wert"
+            />
             <span>{{ aktivitaetTexte[index] }}</span>
           </label>
         </div>
         <div class="auswahlkarten kompakt">
-          <label v-for="option in [{ wert: 'halten', text: 'Halten' }, { wert: 'aufbauen', text: 'Aufbauen' }, { wert: 'abnehmen', text: 'Abnehmen' }]" :key="option.wert" :class="{ gewaehlt: eingabe.ziel === option.wert }">
+          <label
+            v-for="option in [
+              { wert: 'halten', text: 'Halten' },
+              { wert: 'aufbauen', text: 'Aufbauen' },
+              { wert: 'abnehmen', text: 'Abnehmen' },
+            ]"
+            :key="option.wert"
+            :class="{ gewaehlt: eingabe.ziel === option.wert }"
+          >
             <input v-model="eingabe.ziel" type="radio" name="profil-ziel" :value="option.wert" />
             <span>{{ option.text }}</span>
           </label>
         </div>
-        <label v-if="eingabe.ziel !== 'halten'">Änderungsrate<Zahlenschritt v-model="eingabe.aenderungsrateProzent" name="Änderungsrate" einheit="%" :schritt="0.1" :min="REGELN.rateMin" :max="REGELN.rateMax" /></label>
+        <label v-if="eingabe.ziel !== 'halten'"
+          >Änderungsrate<Zahlenschritt
+            v-model="eingabe.aenderungsrateProzent"
+            name="Änderungsrate"
+            einheit="%"
+            :schritt="0.1"
+            :min="REGELN.rateMin"
+            :max="REGELN.rateMax"
+        /></label>
       </fieldset>
       <ZielHerleitung v-if="vollstaendig" :ergebnis="vorschau" />
       <p v-else class="klein">Nach Eingabe der Körperdaten erscheint hier die Zielberechnung.</p>
       <label class="bestaetigung hinweis-karte">
         <input v-model="eingabe.hinweisBestaetigt" type="checkbox" required />
-        <span>Ich habe verstanden: Trackify ersetzt keine medizinische oder Ernährungsberatung. Die berechneten Ziele sind Schätzungen.</span>
+        <span
+          >Ich habe verstanden: Trackify ersetzt keine medizinische oder Ernährungsberatung. Die
+          berechneten Ziele sind Schätzungen.</span
+        >
       </label>
       <p v-if="zustand.hinweis" class="meldung" role="status">{{ zustand.hinweis }}</p>
-      <p v-if="meldung" :class="erfolgreich ? 'statuszeile' : 'meldung'" role="status">{{ meldung }}</p>
+      <p v-if="meldung" :class="erfolgreich ? 'statuszeile' : 'meldung'" role="status">
+        {{ meldung }}
+      </p>
       <button class="primaer" type="submit">Profil speichern</button>
     </template>
   </form>

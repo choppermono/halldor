@@ -11,7 +11,10 @@ Obsidian-Vault unter `Projekt/Projekt-1_Webapp/`.
 ## Arbeitsweise
 
 Selbständiges Projekt. Werkzeuge, Bibliotheken und KI-Einsatz sind frei.
-Anwendungscode schreibt ChatGPT (Astra), Claude prüft.
+**Claude schreibt den Anwendungscode** (seit 26.09.2026, E-132) und prüft ihn
+selbst im Browser bei 375 und 1280 px. Vor sichtbaren Änderungen die Skills
+`ui-ux-pro-max` und `frontend-design` laden; Vorgabe sind die Bilder in
+`entwuerfe/p-c/`.
 
 Was bleibt, weil es technisch trägt — nicht als Erlaubnisfrage:
 
@@ -176,9 +179,9 @@ Die Reihenfolge steht fest. Was in einer späteren Stufe liegt, wird nicht
 
 - `main` bleibt jederzeit lauffähig
 - Ein Zweig pro Arbeitspaket: `feature/<paket>`
-- Merge nur über Pull Request, den der jeweils andere liest
-- Beide arbeiten auf **eigenen Zweigen**, auch mit Claude Code — sonst laufen
-  zwei Sitzungen in dieselbe Datei
+- Fertige, geprüfte Zweige direkt nach `main` mergen; auf ein Review des
+  Partners wird nicht gewartet
+- Commits in deutscher Prosa, keine `feat:`-Präfixe
 
 ## Befehle
 

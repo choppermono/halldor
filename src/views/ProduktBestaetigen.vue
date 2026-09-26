@@ -27,6 +27,11 @@ const datum = computed(() =>
     ? route.query.datum
     : lokalesDatum()
 )
+const datumAnzeige = computed(() =>
+  new Intl.DateTimeFormat('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
+    new Date(`${datum.value}T12:00:00`)
+  )
+)
 const barcode = ref('')
 const laden = ref(false)
 const suchmeldung = ref('')
@@ -37,6 +42,9 @@ const quelle = ref(false)
 const mengeG = ref('')
 const meldung = ref('')
 const schritt = ref('produkt')
+// Die Nährwertfelder erscheinen erst, wenn es etwas zu prüfen oder
+// einzutragen gibt. Vorher ist die Seite eine Wahl zwischen drei Wegen.
+const angabenOffen = ref(false)
 const titel = ref(null)
 function titelFokussieren() {
   nextTick(() => titel.value?.focus({ preventScroll: true }))
@@ -74,6 +82,7 @@ async function suchen() {
   const antwort = await produktLaden(gesucht)
   if (nummer !== anfrageNummer) return null
   laden.value = false
+  if (antwort.status === 'gefunden' || antwort.status === 'unbekannt') angabenOffen.value = true
   if (antwort.status !== 'gefunden') {
     produkt.name = ''
     produkt.marke = ''
@@ -113,6 +122,7 @@ function manuell() {
   quelle.value = false
   suchmeldung.value = ''
   scannerAbfrageStatus.value = 'manuell'
+  angabenOffen.value = true
   produkt.name = ''
   produkt.marke = ''
   for (const feld of NAEHRWERTE) produkt.pro100g[feld.key] = ''
@@ -141,13 +151,20 @@ onUnmounted(() => {
 </script>
 <template>
   <section class="ansicht produkt" :class="{ scanner: props.scanner }">
-    <RouterLink v-if="!props.scanner || schritt === 'menge'" class="zurueck" :to="{ path: '/', query: { datum } }"
+    <RouterLink
+      v-if="!props.scanner || schritt === 'menge'"
+      class="zurueck"
+      :to="{ path: '/', query: { datum } }"
       ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
     >
     <p v-if="!props.scanner || schritt === 'menge'" class="system-label seitenrubrik">
-      {{ props.scanner ? 'Scanner' : 'Ernährung' }} / {{ datum }}
+      {{ props.scanner ? 'Scanner' : 'Ernährung' }} / {{ datumAnzeige }}
     </p>
-    <h1 ref="titel" tabindex="-1" :class="{ 'nur-vorlesbar': props.scanner && schritt === 'produkt' }">
+    <h1
+      ref="titel"
+      tabindex="-1"
+      :class="{ 'nur-vorlesbar': props.scanner && schritt === 'produkt' }"
+    >
       {{ schritt === 'produkt' ? (props.scanner ? 'Scan.' : 'Produkt.') : 'Menge.' }}
     </h1>
     <ol v-if="!props.scanner || schritt === 'menge'" class="schrittanzeige" aria-label="Erfassung">
@@ -163,6 +180,12 @@ onUnmounted(() => {
         :pruefcode="props.scannerPruefcode"
         @erkannt="scannerErkannt"
       />
+      <RouterLink
+        v-if="!props.scanner"
+        class="knopf primaer scan-einstieg"
+        :to="{ path: '/scan', query: { datum } }"
+        ><SystemSymbol name="barcode" />Barcode scannen</RouterLink
+      >
       <form class="barcode-formular" @submit.prevent="eingabeSuchen">
         <label
           >Barcode eintippen<input
@@ -197,13 +220,15 @@ onUnmounted(() => {
       >
         {{ suchmeldung }}
       </p>
-      <button class="textknopf" type="button" @click="manuell">Von Hand eintragen</button>
+      <button v-if="!angabenOffen" class="textknopf" type="button" @click="manuell">
+        Ohne Barcode von Hand eintragen
+      </button>
       <div v-if="quelle" class="produkt-treffer">
         <span class="system-label">Datensatz / {{ ergebnisBarcode }}</span>
         <h2><GlyphenText :wert="produkt.name" :aktiv="!props.scanner" /></h2>
         <p v-if="produkt.marke" class="klein">{{ produkt.marke }}</p>
       </div>
-      <form class="abschnitt" @submit.prevent="weiter">
+      <form v-if="angabenOffen" class="abschnitt angaben" @submit.prevent="weiter">
         <h2>Angaben pro 100 g</h2>
         <p class="klein">
           Leere Nährwertfelder bleiben unbekannt. Eine eingetragene 0 bedeutet tatsächlich null.

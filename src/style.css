@@ -1322,16 +1322,6 @@ textarea {
   background: var(--ash);
   animation: lineIn var(--base) var(--ease) both;
 }
-.uebungsfokus::after,
-.satz-anpassung::after {
-  content: '';
-  display: block;
-  height: 1px;
-  margin-top: var(--s-4);
-  background: var(--line);
-  transform-origin: center;
-  animation: split var(--base) var(--ease) both;
-}
 .uebungsfokus h2,
 .satz-anpassung h2 {
   font-size: clamp(2.5rem, 12vw, 4.5rem);
@@ -1367,6 +1357,37 @@ textarea {
 }
 .erfasster-satz.gerade-erfasst {
   animation: glitchFlash var(--fast) var(--ease) both;
+}
+.erfasster-satz .satz-haken {
+  justify-self: end;
+  color: var(--bone-dim);
+}
+.naechster-satz .satz-marke {
+  color: var(--sig-text);
+}
+.erfasster-satz strong small,
+.naechster-satz strong small {
+  font-size: 0.72em;
+}
+.naechster-satz strong {
+  font-size: clamp(2.25rem, 11vw, 3.25rem);
+}
+.startlast {
+  padding-block: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.startlast .satz-marke {
+  color: var(--sig-text);
+}
+.startlast .zahlenschritt {
+  max-width: 32rem;
+}
+/* Ein gesperrter Hauptknopf ist keine rote Fläche: Rot heisst «das hier tun». */
+.ansicht .primaer:disabled {
+  border-color: var(--line-strong);
+  background: transparent;
+  color: var(--bone-mute);
+  opacity: 1;
 }
 .ansicht .anpassen-link,
 .ansicht .leiser-knopf,
@@ -1429,37 +1450,72 @@ textarea {
   list-style: none;
   border-bottom: 1px solid var(--line);
 }
-.rangkarte {
-  padding-block: var(--s-4);
-  border-top: 1px solid var(--line);
+.rang-vermerk {
+  margin: var(--s-3) 0 var(--s-4);
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--sig-text);
+  color: var(--bone-dim);
 }
-.rangkopf {
+.rangzeile {
+  padding-block: var(--s-3);
+  border-top: 1px solid var(--line);
+  animation: lineIn var(--base) var(--ease) both;
+}
+.rangzeile-kopf {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--s-3);
 }
-.rangkopf h2,
-.stufe {
+.ansicht .rangzeile-kopf h2 {
+  min-width: 0;
   margin: 0;
-  font: 400 clamp(1.75rem, 8vw, 2.5rem) / 1 var(--display);
+  font: 400 1.75rem/1.05 var(--display);
+}
+.rang-last {
+  display: flex;
+  flex-shrink: 0;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: 0;
+}
+.rang-last strong {
+  font: 300 2.5rem/1 var(--display);
+}
+.rang-last span {
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 .stufe {
-  color: var(--sig-text);
-  font-style: italic;
-}
-.beste-last {
   margin: var(--s-2) 0 var(--s-3);
+  color: var(--sig-text);
+  font: italic 400 1.75rem/1 var(--display);
 }
-.beste-last span {
-  display: block;
-  color: var(--bone-dim);
-  font-size: var(--t-label);
+.rang-offen {
+  margin-top: var(--s-5);
 }
-.beste-last strong {
-  display: block;
-  margin-top: var(--s-1);
-  font: 400 2rem/1 var(--display);
+.ansicht .rang-offen h2 {
+  margin: 0;
+  font: 500 var(--t-label) / 1 var(--mono);
+}
+.rang-offen ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-3);
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--bone-mute);
+}
+.rang-offen li + li::before {
+  content: '·';
+  margin-right: var(--s-3);
+}
+.methodenhinweis {
+  margin-top: var(--s-5);
+  color: var(--bone-mute);
 }
 .rang-leiter,
 .rang-schwellen {
@@ -1582,13 +1638,84 @@ textarea {
 .skala > span {
   background: var(--bone);
 }
-.zuletzt-zeile {
+.heute .erfassen {
+  width: 100%;
+  margin-top: var(--s-4);
+}
+.tagesprotokoll {
+  margin-top: var(--s-5);
+}
+.protokollkopf {
   display: flex;
   justify-content: space-between;
   gap: var(--s-3);
-  margin-block: var(--s-5);
-  padding-top: var(--s-4);
+  padding-bottom: var(--s-2);
+}
+.protokollkopf h2.system-label {
+  margin: 0;
+  font: 500 var(--t-label) / 1 var(--mono);
+}
+.protokoll-liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+.protokoll-liste li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto 44px;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 56px;
   border-top: 1px solid var(--line);
+  animation: lineIn var(--base) var(--ease) both;
+}
+.protokoll-name {
+  display: grid;
+  min-width: 0;
+  color: var(--bone);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.protokoll-name small {
+  color: var(--bone-mute);
+  font-weight: 400;
+  font-size: var(--t-klein);
+}
+.protokoll-menge,
+.protokoll-kcal {
+  color: var(--bone-dim);
+  font: 400 var(--t-label) / 1 var(--mono);
+  text-align: right;
+}
+.protokoll-kcal {
+  min-width: 4.5rem;
+  color: var(--bone);
+}
+.protokoll-kcal small {
+  margin-left: var(--s-1);
+  color: var(--bone-mute);
+}
+.ansicht .protokoll-loeschen {
+  display: grid;
+  width: 44px;
+  min-height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bone-mute);
+  transition: color var(--fast) var(--ease);
+}
+.ansicht .protokoll-loeschen:hover {
+  color: var(--sig-text);
+}
+.protokoll-loeschen svg {
+  width: 18px;
+  height: 18px;
+}
+.tagesherleitung {
+  margin-top: var(--s-4);
 }
 
 /* Onboarding und Profil: Auswahlflächen und ein klarer Schritt. */
@@ -1670,6 +1797,35 @@ textarea {
 }
 .onboarding-aktionen .primaer {
   min-width: min(100%, 14rem);
+}
+/* Weiter und Zurück stehen immer über der Navigation, auch bei langen
+   Auswahllisten. */
+.onboarding-formular .onboarding-aktionen {
+  position: sticky;
+  bottom: var(--navigation-hoehe, var(--nav-h));
+  z-index: var(--z-inhalt);
+  margin-inline: calc(-1 * var(--gutter));
+  padding: var(--s-4) var(--gutter) var(--s-3);
+  background: linear-gradient(to bottom, transparent, var(--void) var(--s-4));
+}
+.onboarding .seitenrubrik {
+  margin-bottom: var(--s-4);
+}
+.scan-einstieg {
+  width: 100%;
+  gap: var(--s-2);
+  margin-block: var(--s-3) var(--s-4);
+}
+.scan-einstieg svg {
+  width: 22px;
+  height: 22px;
+}
+.ansicht .angaben > h2 {
+  margin: 0 0 var(--s-2);
+  color: var(--bone-dim);
+  font: 500 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 .profil-auswahl > span,
 .formulargruppe > label,
@@ -1800,7 +1956,9 @@ textarea {
 
 @media (max-width: 63.999rem) {
   .training-ablauf li.aktiv,
-  .training-ablauf li.zukuenftig {
+  .training-ablauf li.zukuenftig,
+  .training-ablauf:not(.hat-erledigte),
+  .training-ablauf > .system-label {
     display: none;
   }
 }
@@ -1873,8 +2031,8 @@ textarea {
   .einheit-abschluss {
     max-width: 44rem;
     margin-top: 0;
-    padding: var(--s-4) 0;
-    border-inline: 0;
+    padding: 0;
+    border: 0;
     background: transparent;
   }
   .uebungsfokus h2,

@@ -22,8 +22,13 @@ function begrenzen(wert) {
 }
 function aendern(richtung) {
   const basis = Number(props.modelValue)
-  const wert = Number.isFinite(basis) && props.modelValue !== '' ? basis : props.min
-  emit('update:modelValue', begrenzen(wert + richtung * props.schritt))
+  // Ein leeres Feld beginnt beim ersten Druck an der Untergrenze, nicht einen
+  // Schritt darüber.
+  if (!Number.isFinite(basis) || props.modelValue === '') {
+    emit('update:modelValue', begrenzen(props.min))
+    return
+  }
+  emit('update:modelValue', begrenzen(basis + richtung * props.schritt))
 }
 function direktBearbeiten() {
   bearbeiten.value = true
@@ -68,7 +73,8 @@ function formatieren(wert) {
       :aria-label="`${name}: ${formatieren(modelValue)} ${einheit}. Wert eintippen`"
       @click="direktBearbeiten"
     >
-      <span>{{ formatieren(modelValue) }}</span><small>{{ einheit }}</small>
+      <span>{{ formatieren(modelValue) }}</span
+      ><small>{{ einheit }}</small>
     </button>
     <button type="button" :aria-label="`${name} erhöhen`" @click="aendern(1)">+</button>
   </div>

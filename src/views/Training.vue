@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import Zahlenschritt from '../components/Zahlenschritt.vue'
 import { useProfil } from '../composables/useProfil.js'
@@ -65,6 +65,37 @@ const vorgabeHeute = computed(() => {
     ziel: profil.zustand.profil?.ziel,
   })
 })
+// Innerhalb der Einheit gilt die Last des vorherigen Satzes als Vorgabe: wer
+// Satz 1 auf 42.5 kg angepasst hat, will Satz 2 nicht wieder zurückstellen.
+// Die Wiederholungen bleiben das Ziel aus der Progression.
+const satzVorgabe = computed(() => {
+  const aktiv = aktiveVorgabe.value
+  if (!aktiv || !vorgabeHeute.value) return null
+  const vorsatz = erfassteSaetze(aktiv.uebungId).at(-1)
+  return {
+    gewichtKg: vorsatz?.gewichtKg ?? vorgabeHeute.value.gewichtKg,
+    wiederholungen: vorgabeHeute.value.wiederholungen,
+  }
+})
+const lastBekannt = computed(() => Number.isFinite(satzVorgabe.value?.gewichtKg))
+// Nur beim allerersten Satz einer Übung fehlt jede Last. Dann steht die
+// Startlast direkt als Bedienelement da, statt hinter «Anpassen».
+const startlast = ref('')
+watch(
+  () => aktiveVorgabe.value?.uebungId,
+  () => {
+    startlast.value = ''
+  }
+)
+const startlastGueltig = computed(
+  () => Number.isFinite(Number(startlast.value)) && Number(startlast.value) > 0
+)
+const erledigteUebungen = computed(
+  () =>
+    planUebungen.value.filter(
+      (vorgabe) => erfassteSaetze(vorgabe.uebungId).length >= vorgabe.saetze
+    ).length
+)
 const vorherigeSaetze = computed(() => {
   const id = aktiveVorgabe.value?.uebungId
   if (!id) return []
@@ -124,14 +155,14 @@ function erfassen(gewichtKg, wiederholungen) {
   fokusZurueckgeben()
 }
 function vorgabeBestaetigen() {
-  if (!Number.isFinite(vorgabeHeute.value?.gewichtKg)) {
-    anpassenOeffnen()
+  if (!lastBekannt.value) {
+    if (startlastGueltig.value) erfassen(startlast.value, satzVorgabe.value.wiederholungen)
     return
   }
-  erfassen(vorgabeHeute.value.gewichtKg, vorgabeHeute.value.wiederholungen)
+  erfassen(satzVorgabe.value.gewichtKg, satzVorgabe.value.wiederholungen)
 }
 function anpassenOeffnen(satz = null, vorgabe = aktiveVorgabe.value, satzIndex = null) {
-  const basis = satz ?? (vorgabe === aktiveVorgabe.value ? vorgabeHeute.value : null)
+  const basis = satz ?? (vorgabe === aktiveVorgabe.value ? satzVorgabe.value : null)
   anpassung.value = {
     satz,
     vorgabe,
@@ -189,7 +220,8 @@ function abschliessen() {
       </div>
       <ol class="planliste">
         <li v-for="vorgabe in planUebungen" :key="vorgabe.uebungId">
-          <span>{{ vorgabe.uebung.name }}</span><span>{{ planText(vorgabe) }}</span>
+          <span>{{ vorgabe.uebung.name }}</span
+          ><span>{{ planText(vorgabe) }}</span>
         </li>
       </ol>
       <button ref="hauptknopf" class="primaer trainings-hauptknopf" @click="starten">
@@ -199,7 +231,10 @@ function abschliessen() {
 
     <template v-else>
       <header class="trainingsstatus">
-        <span>{{ planEinheit?.name }} · Übung {{ Math.min(aktiveNummer + 1, planUebungen.length) }} / {{ planUebungen.length }}</span>
+        <span
+          >{{ planEinheit?.name }} · Übung {{ Math.min(aktiveNummer + 1, planUebungen.length) }} /
+          {{ planUebungen.length }}</span
+        >
         <span>Satz {{ fortschritt.erfasst }} / {{ fortschritt.gesamt }}</span>
       </header>
       <div
@@ -210,11 +245,19 @@ function abschliessen() {
         :aria-valuemax="planUebungen.length"
         :aria-label="`Übung ${Math.min(aktiveNummer + 1, planUebungen.length)} von ${planUebungen.length}`"
       >
-        <span :style="{ transform: `scaleX(${planUebungen.length ? aktiveNummer / planUebungen.length : 0})` }"></span>
+        <span
+          :style="{
+            transform: `scaleX(${planUebungen.length ? aktiveNummer / planUebungen.length : 0})`,
+          }"
+        ></span>
       </div>
 
       <div class="training-arbeitsflaeche">
-        <section class="training-ablauf" aria-label="Ablauf der Einheit">
+        <section
+          class="training-ablauf"
+          :class="{ 'hat-erledigte': erledigteUebungen > 0 }"
+          aria-label="Ablauf der Einheit"
+        >
           <p class="system-label">Ablauf</p>
           <ol>
             <li
@@ -222,12 +265,19 @@ function abschliessen() {
               :key="vorgabe.uebungId"
               :class="statusFuer(index, vorgabe)"
             >
-              <svg v-if="statusFuer(index, vorgabe) === 'erledigt'" class="satz-haken" viewBox="0 0 24 24" aria-hidden="true">
+              <svg
+                v-if="statusFuer(index, vorgabe) === 'erledigt'"
+                class="satz-haken"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path d="M4 12.5 9.5 18 20 6" />
               </svg>
               <span v-else class="ablauf-marker" aria-hidden="true"></span>
               <span class="ablauf-name">{{ vorgabe.uebung.name }}</span>
-              <span v-if="statusFuer(index, vorgabe) !== 'erledigt'" class="ablauf-plan">{{ planText(vorgabe) }}</span>
+              <span v-if="statusFuer(index, vorgabe) !== 'erledigt'" class="ablauf-plan">{{
+                planText(vorgabe)
+              }}</span>
               <span v-else class="ablauf-saetze">
                 <button
                   v-for="(satz, satzIndex) in erfassteSaetze(vorgabe.uebungId)"
@@ -235,7 +285,9 @@ function abschliessen() {
                   type="button"
                   :aria-label="`${vorgabe.uebung.name}, Satz ${satzIndex + 1}, ${satzText(satz, true)} anpassen`"
                   @click="anpassenOeffnen(satz, vorgabe, satzIndex + 1)"
-                >{{ satzText(satz) }}</button>
+                >
+                  {{ satzText(satz) }}
+                </button>
               </span>
             </li>
           </ol>
@@ -245,12 +297,20 @@ function abschliessen() {
           <p class="system-label">Satz {{ anpassung.satzNummer }} anpassen</p>
           <h2 id="anpassung-titel">{{ anpassung.vorgabe.uebung.name }}</h2>
           <p class="anpassung-hinweis">
-            {{ anpassung.satz ? 'Erfassten Satz rückgängig machen.' : 'Nur wenn du vom Plan abweichst. Zahl antippen, um sie direkt einzugeben.' }}
+            {{
+              anpassung.satz
+                ? 'Erfassten Satz rückgängig machen.'
+                : 'Nur wenn du vom Plan abweichst. Zahl antippen, um sie direkt einzugeben.'
+            }}
           </p>
           <template v-if="!anpassung.satz">
             <div class="anpassung-block">
               <div class="anpassung-kopf">
-                <span class="system-label">Gewicht</span><span>Schritt {{ schrittFuer(anpassung.vorgabe.uebung).toLocaleString('de-CH') }} kg</span>
+                <span class="system-label">Gewicht</span
+                ><span
+                  >Schritt
+                  {{ schrittFuer(anpassung.vorgabe.uebung).toLocaleString('de-CH') }} kg</span
+                >
               </div>
               <Zahlenschritt
                 v-model="anpassung.gewichtKg"
@@ -263,7 +323,8 @@ function abschliessen() {
             </div>
             <div class="anpassung-block">
               <div class="anpassung-kopf">
-                <span class="system-label">Wiederholungen</span><span>Fenster {{ anpassung.vorgabe.min }}–{{ anpassung.vorgabe.max }}</span>
+                <span class="system-label">Wiederholungen</span
+                ><span>Fenster {{ anpassung.vorgabe.min }}–{{ anpassung.vorgabe.max }}</span>
               </div>
               <Zahlenschritt
                 v-model="anpassung.wiederholungen"
@@ -275,21 +336,43 @@ function abschliessen() {
                 inputmode="numeric"
               />
             </div>
-            <button class="primaer trainings-hauptknopf" :disabled="!Number.isFinite(Number(anpassung.gewichtKg)) || Number(anpassung.gewichtKg) <= 0" @click="anpassungBestaetigen">
-              {{ Number(anpassung.gewichtKg).toLocaleString('de-CH') }} kg × {{ anpassung.wiederholungen }} erfassen
+            <button
+              class="primaer trainings-hauptknopf"
+              :disabled="
+                !Number.isFinite(Number(anpassung.gewichtKg)) || Number(anpassung.gewichtKg) <= 0
+              "
+              @click="anpassungBestaetigen"
+            >
+              {{ Number(anpassung.gewichtKg).toLocaleString('de-CH') }} kg ×
+              {{ anpassung.wiederholungen }} erfassen
             </button>
           </template>
-          <button v-else class="satz-loeschen" type="button" @click="satzEntfernen">Satz löschen</button>
+          <button v-else class="satz-loeschen" type="button" @click="satzEntfernen">
+            Satz löschen
+          </button>
           <button class="leiser-knopf" type="button" @click="anpassungAbbrechen">Abbrechen</button>
         </section>
 
-        <section v-else-if="aktiveVorgabe" :key="aktiveVorgabe.uebungId" class="uebungsfokus" aria-labelledby="fokus-titel">
-          <p class="system-label">Übung {{ aktiveNummer + 1 }} · {{ planText(aktiveVorgabe) }} Wdh</p>
+        <section
+          v-else-if="aktiveVorgabe"
+          :key="aktiveVorgabe.uebungId"
+          class="uebungsfokus"
+          aria-labelledby="fokus-titel"
+        >
+          <p class="system-label">
+            Übung {{ aktiveNummer + 1 }} · {{ planText(aktiveVorgabe) }} Wdh
+          </p>
           <h2 id="fokus-titel">{{ aktiveVorgabe.uebung.name }}</h2>
           <p class="letztes-mal">
-            <template v-if="vorherigeSaetze.length">Letztes Mal {{ vorherigeSaetze.map((satz) => satzText(satz)).join(' · ') }} → </template>
-            <template v-else>Erste Erfassung → </template>
-            heute {{ Number.isFinite(vorgabeHeute?.gewichtKg) ? `${vorgabeHeute.gewichtKg.toLocaleString('de-CH')} kg` : 'Last festlegen' }}
+            <template v-if="vorherigeSaetze.length"
+              >Letztes Mal {{ vorherigeSaetze.map((satz) => satzText(satz)).join(' · ') }} → heute
+              {{ satzVorgabe.gewichtKg.toLocaleString('de-CH') }} kg</template
+            >
+            <template v-else-if="lastBekannt"
+              >Erste Einheit · weiter mit
+              {{ satzVorgabe.gewichtKg.toLocaleString('de-CH') }} kg</template
+            >
+            <template v-else>Erste Einheit · Startlast wählen</template>
           </p>
 
           <div class="fokus-saetze">
@@ -304,39 +387,80 @@ function abschliessen() {
             >
               <span class="system-label">Satz {{ satzIndex + 1 }}</span>
               <strong>{{ satzText(satz, true) }}</strong>
-              <svg class="satz-haken" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6" /></svg>
+              <svg class="satz-haken" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 12.5 9.5 18 20 6" />
+              </svg>
             </button>
-            <div class="naechster-satz">
-              <span class="system-label">Satz {{ aktuellerSatz }}</span>
-              <strong>{{ Number.isFinite(vorgabeHeute?.gewichtKg) ? `${vorgabeHeute.gewichtKg.toLocaleString('de-CH')} kg × ${vorgabeHeute.wiederholungen}` : `Last offen × ${vorgabeHeute?.wiederholungen}` }}</strong>
-              <button class="anpassen-link" type="button" @click="anpassenOeffnen()">Anpassen</button>
+            <div v-if="lastBekannt" class="naechster-satz">
+              <span class="system-label satz-marke">Satz {{ aktuellerSatz }}</span>
+              <strong
+                >{{ satzVorgabe.gewichtKg.toLocaleString('de-CH') }} <small>kg</small> ×
+                {{ satzVorgabe.wiederholungen }}</strong
+              >
+              <button class="anpassen-link" type="button" @click="anpassenOeffnen()">
+                Anpassen
+              </button>
+            </div>
+            <div v-else class="startlast">
+              <div class="anpassung-kopf">
+                <span class="system-label satz-marke">Satz {{ aktuellerSatz }} · Startlast</span>
+                <span>Ziel {{ satzVorgabe?.wiederholungen }} Wdh</span>
+              </div>
+              <Zahlenschritt
+                v-model="startlast"
+                name="Startlast"
+                einheit="kg"
+                :schritt="schrittFuer(aktiveVorgabe.uebung)"
+                :min="schrittFuer(aktiveVorgabe.uebung)"
+                :max="1000"
+              />
             </div>
           </div>
-          <button ref="hauptknopf" class="primaer trainings-hauptknopf" @click="vorgabeBestaetigen">
-            {{ Number.isFinite(vorgabeHeute?.gewichtKg) ? `Satz ${aktuellerSatz} erledigt` : `Last für Satz ${aktuellerSatz} festlegen` }}
+          <button
+            ref="hauptknopf"
+            class="primaer trainings-hauptknopf"
+            :disabled="!lastBekannt && !startlastGueltig"
+            @click="vorgabeBestaetigen"
+          >
+            Satz {{ aktuellerSatz }} erledigt
           </button>
 
           <div v-if="aktiveNummer + 1 < planUebungen.length" class="als-naechstes">
             <p class="system-label">Als Nächstes</p>
             <ul>
-              <li v-for="vorgabe in planUebungen.slice(aktiveNummer + 1, aktiveNummer + 4)" :key="vorgabe.uebungId">
-                <span>{{ vorgabe.uebung.name }}</span><span>{{ planText(vorgabe) }}</span>
+              <li
+                v-for="vorgabe in planUebungen.slice(aktiveNummer + 1, aktiveNummer + 4)"
+                :key="vorgabe.uebungId"
+              >
+                <span>{{ vorgabe.uebung.name }}</span
+                ><span>{{ planText(vorgabe) }}</span>
               </li>
             </ul>
-            <p v-if="planUebungen.length - aktiveNummer - 4 > 0" class="weitere">+ {{ planUebungen.length - aktiveNummer - 4 }} weitere</p>
+            <p v-if="planUebungen.length - aktiveNummer - 4 > 0" class="weitere">
+              + {{ planUebungen.length - aktiveNummer - 4 }} weitere
+            </p>
           </div>
         </section>
 
         <section v-else class="einheit-abschluss" aria-labelledby="abschluss-titel">
           <p class="system-label">Einheit vollständig erfasst</p>
           <h2 id="abschluss-titel">{{ planEinheit?.name }}.</h2>
-          <p>{{ fortschritt.erfasst }} Sätze sind gespeichert. Schliesse die Einheit jetzt bewusst ab.</p>
-          <button ref="hauptknopf" class="primaer trainings-hauptknopf" @click="abschliessen">Einheit abschliessen</button>
+          <p>
+            {{ fortschritt.erfasst }} Sätze sind gespeichert. Schliesse die Einheit jetzt bewusst
+            ab.
+          </p>
+          <button ref="hauptknopf" class="primaer trainings-hauptknopf" @click="abschliessen">
+            Einheit abschliessen
+          </button>
         </section>
       </div>
     </template>
 
-    <div class="nur-vorlesbar" role="status" aria-live="polite" aria-atomic="true">{{ meldung }}</div>
-    <p v-if="training.zustand.hinweis || profil.zustand.hinweis" class="meldung" role="status">{{ training.zustand.hinweis || profil.zustand.hinweis }}</p>
+    <div class="nur-vorlesbar" role="status" aria-live="polite" aria-atomic="true">
+      {{ meldung }}
+    </div>
+    <p v-if="training.zustand.hinweis || profil.zustand.hinweis" class="meldung" role="status">
+      {{ training.zustand.hinweis || profil.zustand.hinweis }}
+    </p>
   </section>
 </template>

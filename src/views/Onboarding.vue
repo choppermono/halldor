@@ -8,10 +8,9 @@ const { profilLaden } = useProfil()
 profilLaden()
 </script>
 <template>
-  <section class="ansicht">
-    <p class="system-label seitenrubrik">Ernährung / Einrichtung</p>
-    <h1>Deine Basis.</h1>
-    <p class="einleitung">Körperdaten eingeben. Schätzung prüfen. Tagesziel festhalten.</p>
+  <section class="ansicht onboarding">
+    <!-- Die grosse Schrift gehört der Frage im Schritt, nicht dem Seitentitel. -->
+    <h1 class="system-label seitenrubrik">Deine Basis</h1>
     <ProfilFormular onboarding @gespeichert="router.push('/')" />
   </section>
 </template>
