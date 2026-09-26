@@ -1512,6 +1512,45 @@ textarea {
 .rangzeichen-5 .rz-umriss {
   stroke: var(--rang-diamant-schimmer);
 }
+/* Olymp: glühende Krone, goldener Umriss, ein Schein, der atmet. */
+.rz-krone polygon {
+  fill: var(--rang-olymp-glut);
+}
+.rangzeichen-6 .rz-umriss {
+  stroke: var(--rang-olymp-glut);
+}
+.rangzeichen-6 .rz-schein {
+  transform-origin: 32px 32px;
+  animation: olympPuls calc(var(--slow) * 3.5) var(--ease) infinite alternate;
+}
+.rangzeichen-6 .rz-krone {
+  transform-origin: 32px 32px;
+  animation: kroneDrehen calc(var(--slow) * 30) linear infinite;
+}
+@keyframes olympPuls {
+  from {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+@keyframes kroneDrehen {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ansicht .vitrine .vitrinen-kachel:has(.rangzeichen-6) {
+  border-color: color-mix(in srgb, var(--rang-olymp) 70%, transparent);
+  box-shadow:
+    0 0 24px -8px var(--rang-olymp),
+    inset 0 0 18px -10px var(--rang-olymp-glut);
+}
+.gesamtrang:has(.rangzeichen-6) .gesamtrang-name {
+  text-shadow: 0 0 24px color-mix(in srgb, var(--rang-olymp) 70%, transparent);
+}
 .rangzeichen .rz-bahnen,
 .rangzeichen .rz-strahlen {
   transform-origin: 32px 32px;
@@ -1767,6 +1806,225 @@ textarea {
   letter-spacing: 0.1em;
   white-space: nowrap;
 }
+/* Seitenwechsel: eine Scanlinie fährt einmal über den Schirm. */
+.wechsel-linie {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: var(--z-hinweis);
+  height: 2px;
+  background: var(--sig-text);
+  box-shadow:
+    0 0 12px var(--sig-text),
+    0 0 40px color-mix(in srgb, var(--sig-fill) 60%, transparent);
+  pointer-events: none;
+  animation: wechselLinie calc(var(--slow) * 1.1) var(--ease) both;
+}
+@keyframes wechselLinie {
+  from {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wechsel-linie,
+  .vollbild-scanner[data-zustand='erkannt']::after,
+  .rang-aufstieg.olymp::after {
+    display: none;
+  }
+}
+
+/* Scan-Treffer: der Sucher schlägt einen Ring nach aussen, der Schirm blitzt. */
+.vollbild-scanner[data-zustand='erkannt'] .sucher::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--sig-text);
+  box-shadow: 0 0 24px var(--sig-text);
+  animation: trefferRing var(--slow) var(--ease) both;
+}
+.vollbild-scanner[data-zustand='erkannt']::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--bone);
+  pointer-events: none;
+  animation: trefferBlitz var(--slow) var(--ease) both;
+}
+@keyframes trefferRing {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@keyframes trefferBlitz {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Olymp-Aufstieg: roter Blitz im Moment des Bruchs, glühender Name. */
+.rang-aufstieg.olymp::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 38%,
+    var(--rang-olymp-glut),
+    var(--rang-olymp) 45%,
+    transparent 80%
+  );
+  pointer-events: none;
+  opacity: 0;
+  animation: olympBlitz calc(var(--slow) * 1.6) var(--ease) 1.8s both;
+}
+.rang-aufstieg.olymp .aufstieg-inhalt h2 {
+  text-shadow:
+    0 0 30px var(--rang-olymp),
+    0 0 80px color-mix(in srgb, var(--rang-olymp-glut) 60%, transparent);
+}
+/* Beginnt bei 0: mit Verzögerung und Füllmodus both gilt das erste
+   Schlüsselbild schon während des Wartens. */
+@keyframes olympBlitz {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.rang-aufstieg.olymp .aufstieg-inhalt h2 {
+  animation-delay: 1.9s;
+}
+.rang-aufstieg.olymp .aufstieg-uebung {
+  animation-delay: 2.2s;
+}
+.rang-aufstieg.olymp .aufstieg-last {
+  animation-delay: 2.4s;
+}
+
+/* Einheit abgeschlossen: Feuerwerk dahinter, Zahlen zählen hoch. */
+.einheit-fertig {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 20%,
+      color-mix(in srgb, var(--sig-fill) 28%, transparent),
+      transparent 60%
+    ),
+    var(--void);
+  color: var(--bone);
+}
+.einheit-fertig::backdrop {
+  background: var(--void);
+}
+.fertig-inhalt {
+  position: relative;
+  display: grid;
+  min-height: 100%;
+  align-content: center;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + var(--s-5));
+}
+.fertig-inhalt > .system-label {
+  color: var(--sig-text);
+  letter-spacing: 0.28em;
+  animation: typeIn var(--base) var(--ease) both;
+}
+.einheit-fertig .fertig-inhalt h2 {
+  margin: 0;
+  font: 300 clamp(3.5rem, 18vw, 6rem) / 0.9 var(--display);
+  animation: hudIn var(--slow) var(--ease) var(--fast) both;
+}
+.fertig-werte {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4) var(--s-3);
+  margin: var(--s-4) 0 0;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+.fertig-werte > div {
+  animation: hudIn var(--slow) var(--ease) calc(var(--fast) * 3) both;
+}
+.fertig-werte .fertig-gross {
+  grid-column: 1 / -1;
+}
+.fertig-werte dt {
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fertig-werte dd {
+  margin: var(--s-2) 0 0;
+  font: 300 2.5rem/1 var(--display);
+}
+.fertig-gross dd {
+  font-size: clamp(4rem, 22vw, 6.5rem);
+}
+.fertig-werte dd small {
+  margin-left: var(--s-2);
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  text-transform: uppercase;
+}
+.fertig-bestwerte {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+.fertig-bestwerte li {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  border-top: 1px solid var(--line);
+  animation: lineIn var(--base) var(--ease) calc(var(--slow) * 1.5 + var(--i) * var(--fast)) both;
+}
+.fertig-bestwerte strong {
+  color: var(--rang-gold);
+  font: 500 var(--t-label) / 1 var(--mono);
+}
+.einheit-fertig .primaer {
+  min-height: 56px;
+  margin-top: var(--s-4);
+  border: 0;
+  background: var(--sig-fill);
+  box-shadow: var(--sig-glow);
+  color: var(--farbe-auf-akzent);
+  font: 600 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2) both;
+}
+
 /* Hinter einem offenen Dialog scrollt die Seite nicht mit. */
 html:has(dialog[open]) {
   overflow: hidden;
@@ -2015,7 +2273,9 @@ html:has(dialog[open]) {
 .rang-leiter,
 .rang-schwellen {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  /* So viele Spalten wie Stufen, ohne die Zahl hier festzuschreiben. */
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
   gap: var(--s-1);
 }
 .rang-leiter {

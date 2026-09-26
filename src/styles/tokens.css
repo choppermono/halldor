@@ -7,7 +7,7 @@
    oder ein Abstand direkt. Immer eine Variable von hier.
    ============================================================ */
 
-@import url('/fonts/fonts.css');
+/* Die Schriften bindet index.html ein (vorgeladen, ohne @import-Kette). */
 
 :root {
   /* ---------- Farbe seit 26.09.2026 (E-137) ----------
@@ -35,6 +35,9 @@
   --rang-platin: #5cf0dd;
   --rang-diamant: #a9b6ff;
   --rang-diamant-schimmer: #e08cff;
+  /* Olymp (E-143): die Höchststufe, glühend rot mit goldener Glut. */
+  --rang-olymp: #ff2e3f;
+  --rang-olymp-glut: #ffb13b;
   /* Alle drei liegen als woff2 in public/fonts/ und werden selbst ausgeliefert. */
   --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --body: 'Barlow', system-ui, 'Segoe UI', sans-serif;

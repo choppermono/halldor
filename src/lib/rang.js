@@ -94,9 +94,10 @@ export function ranglisteBerechnen(einheiten, uebungen, daten = rangdaten, gesch
   )
 }
 
-// Punkte einer Uebung, fliessend von 0 bis 6: unter Bronze 0 bis 1, jede
-// Stufe ein ganzer Punkt, Diamant 5 bis 6 je nachdem, wie weit die Last ueber
-// der Diamant-Schwelle liegt (eine Stufenbreite darueber ergibt 6).
+// Punkte einer Uebung, fliessend von 0 bis Stufenzahl + 1 (heute 7): unter
+// Bronze 0 bis 1, jede Stufe ein ganzer Punkt, die hoechste Stufe (Olymp)
+// bis zu einem Punkt mehr, je nachdem, wie weit die Last darueber liegt
+// (eine Stufenbreite darueber ergibt das Maximum).
 export function uebungsPunkte(lastKg, schwellen) {
   if (!positiveZahl(lastKg) || !Array.isArray(schwellen)) return 0
   if (lastKg < schwellen[0]) return lastKg / schwellen[0]

@@ -16,7 +16,7 @@ const props = defineProps({
   vorher: { type: Number, default: null },
 })
 
-// Stufenprofile, von -1 (ohne) bis 4 (Diamant). Jede Stufe legt sichtbar zu.
+// Stufenprofile, von -1 (ohne) bis 5 (Olymp). Jede Stufe legt sichtbar zu.
 const PROFILE = {
   '-1': {
     groesse: 0.45,
@@ -94,8 +94,27 @@ const PROFILE = {
     kern: true,
     prisma: true,
   },
+  // Olymp: alles auf einmal. Sechs Schalen, vier Ringe, eine Krone aus
+  // Dornen, aufsteigende Glut, eine Energiekugel und ein Puls, der von
+  // selbst immer wieder durch den Raum geht.
+  5: {
+    groesse: 1.24,
+    schalen: 6,
+    glanz: 1.6,
+    kanten: 1,
+    staub: 520,
+    ringe: 4,
+    splitter: 16,
+    strahlen: 16,
+    hof: 0.75,
+    tempo: 0.95,
+    facetten: true,
+    kern: true,
+    prisma: true,
+    olymp: true,
+  },
 }
-const RADIEN = [1.5, 1.2, 0.9, 0.6, 0.3]
+const RADIEN = [1.5, 1.25, 1, 0.75, 0.5, 0.26]
 
 const flaeche = ref(null)
 const ziehen = { aktiv: false, x: 0, y: 0, tempoX: 0, tempoY: 0 }
@@ -140,7 +159,7 @@ function modellBauen(THREE, stufe, textur) {
   const profil = PROFILE[stufe] ?? PROFILE[-1]
   const farbe = tokenFarbe(THREE, `--rang-${rangFarbName(stufe)}`)
   const weiss = tokenFarbe(THREE, '--bone')
-  const schimmer = tokenFarbe(THREE, '--rang-diamant-schimmer')
+  const schimmer = tokenFarbe(THREE, profil.olymp ? '--rang-olymp-glut' : '--rang-diamant-schimmer')
   const plus = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }
   const wurzel = new THREE.Group()
   const koerper = new THREE.Group()
@@ -206,14 +225,22 @@ function modellBauen(THREE, stufe, textur) {
     koerper.add(kern)
   }
 
-  // Ringe umkreisen den Kristall in eigenen Neigungen.
+  // Ringe umkreisen den Kristall in eigenen Neigungen. Jede Neigung laesst
+  // den Ring sichtbar schraeg liegen; hochkant zur Kamera waere er nur ein
+  // Strich (cos x * cos y bleibt ueber 0.4).
+  const NEIGUNGEN = [
+    [1.15, 0, 0],
+    [0.5, 0.9, 0.4],
+    [-0.9, 0.6, 0.8],
+    [0.3, -1.1, 0.5],
+  ]
   const ringe = []
   for (let i = 0; i < profil.ringe; i++) {
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(1.85 + i * 0.14, 0.008 + i * 0.002, 6, 160),
       new THREE.MeshBasicMaterial({ color: i === 1 ? weiss : farbe, opacity: 0, ...plus })
     )
-    ring.rotation.set(1.1 + i * 0.5, i * 0.9, i * 0.4)
+    ring.rotation.set(...NEIGUNGEN[i])
     wurzel.add(ring)
     ringe.push({ ring, tempo: (i % 2 ? -1 : 1) * (0.3 + i * 0.15) })
   }
@@ -235,17 +262,19 @@ function modellBauen(THREE, stufe, textur) {
     })
   }
 
-  // Strahlen: gestreckte Lichtflecken, die sich langsam drehen.
+  // Strahlen: weiche Lichtflaechen in einem Faecher hinter dem Kristall.
+  // Flaechen statt Sprites: ein gestrecktes Sprite wurde zu einem harten Stab.
+  const strahlenFaecher = new THREE.Group()
+  strahlenFaecher.position.z = -0.8
+  wurzel.add(strahlenFaecher)
   const strahlen = []
   for (let i = 0; i < profil.strahlen; i++) {
-    const strahl = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: textur, color: farbe, opacity: 0, ...plus })
+    const strahl = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 5.6),
+      new THREE.MeshBasicMaterial({ map: textur, color: farbe, opacity: 0, ...plus })
     )
-    // Breite, weiche Lichtbahnen statt duenner Staebe.
-    strahl.scale.set(0.42, 5, 1)
-    strahl.position.z = -0.6
-    strahl.material.rotation = (i / profil.strahlen) * Math.PI
-    wurzel.add(strahl)
+    strahl.rotation.z = (i / profil.strahlen) * Math.PI
+    strahlenFaecher.add(strahl)
     strahlen.push(strahl)
   }
 
@@ -282,6 +311,80 @@ function modellBauen(THREE, stufe, textur) {
   hof.scale.setScalar(4.2)
   hof.position.z = -1
   wurzel.add(hof)
+
+  // ---- Nur Olymp ----
+  let krone = null
+  let glut = null
+  let energie = null
+  const pulse = []
+  if (profil.olymp) {
+    // Krone: zwoelf Dornen, nach aussen gerichtet, um den Kristall kreisend.
+    krone = new THREE.Group()
+    for (let i = 0; i < 12; i++) {
+      const dorn = new THREE.Mesh(
+        new THREE.ConeGeometry(0.05, i % 2 ? 0.34 : 0.56, 4),
+        new THREE.MeshBasicMaterial({ color: i % 2 ? schimmer : farbe, opacity: 0, ...plus })
+      )
+      const winkel = (i / 12) * Math.PI * 2
+      dorn.position.set(Math.cos(winkel) * 2.05, Math.sin(winkel) * 2.05, 0)
+      dorn.rotation.z = winkel - Math.PI / 2
+      krone.add(dorn)
+    }
+    wurzel.add(krone)
+
+    // Glut: Funken, die vom Boden aufsteigen und oben verglimmen.
+    const anzahl = 240
+    const lage = new Float32Array(anzahl * 3)
+    const farben = new Float32Array(anzahl * 3)
+    const funken = []
+    for (let i = 0; i < anzahl; i++) {
+      funken.push({
+        x: (Math.random() - 0.5) * 3.4,
+        y: -2.4 + Math.random() * 4.8,
+        z: (Math.random() - 0.5) * 2,
+        tempo: 0.35 + Math.random() * 0.9,
+        phase: Math.random() * 6.28,
+      })
+      const f = (Math.random() < 0.6 ? schimmer : farbe).clone()
+      farben.set([f.r, f.g, f.b], i * 3)
+    }
+    const form = new THREE.BufferGeometry()
+    form.setAttribute('position', new THREE.BufferAttribute(lage, 3))
+    form.setAttribute('color', new THREE.BufferAttribute(farben, 3))
+    glut = {
+      funken,
+      lage,
+      punkte: new THREE.Points(
+        form,
+        new THREE.PointsMaterial({
+          size: 0.07,
+          vertexColors: true,
+          map: textur,
+          opacity: 0,
+          ...plus,
+        })
+      ),
+    }
+    glut.punkte.frustumCulled = false
+    wurzel.add(glut.punkte)
+
+    // Energiekugel: ein feines Gitter, das atmet.
+    energie = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.3, 2)),
+      new THREE.LineBasicMaterial({ color: farbe, opacity: 0, ...plus })
+    )
+    wurzel.add(energie)
+
+    // Puls: zwei Wellen, die im Wechsel durch den Raum laufen.
+    for (let i = 0; i < 2; i++) {
+      const welle = new THREE.Mesh(
+        new THREE.RingGeometry(0.985, 1, 128),
+        new THREE.MeshBasicMaterial({ color: i ? schimmer : farbe, opacity: 0, ...plus })
+      )
+      wurzel.add(welle)
+      pulse.push({ welle, versatz: i * 1.2 })
+    }
+  }
 
   wurzel.scale.setScalar(profil.groesse)
   let drehung = 0
@@ -338,9 +441,9 @@ function modellBauen(THREE, stufe, textur) {
         s.stueck.rotation.y += sek * 1.5
         s.stueck.material.opacity = zusatz
       })
+      strahlenFaecher.rotation.z += sek * 0.05
       strahlen.forEach((strahl, i) => {
-        strahl.material.rotation += sek * 0.05
-        strahl.material.opacity = zusatz * (0.13 + Math.sin(zeit * 1.2 + i * 1.7) * 0.06)
+        strahl.material.opacity = zusatz * (0.1 + Math.sin(zeit * 1.2 + i * 1.7) * 0.05)
       })
       if (staub) {
         staub.material.opacity = 0.75 * sanft((t - 0.3) / 1.2)
@@ -348,6 +451,34 @@ function modellBauen(THREE, stufe, textur) {
       }
       hof.material.opacity = profil.hof * sanft(t / 0.9)
       wurzel.position.y = Math.sin(zeit * 0.9) * 0.05
+
+      if (profil.olymp) {
+        // Der Hof atmet mit dem Puls.
+        hof.material.opacity *= 0.8 + Math.sin(zeit * 2.6) * 0.2
+        krone.rotation.z -= sek * 0.35
+        krone.scale.setScalar(Math.max(0.0001, federnd((t - aufbauEnde - 0.2) / 0.6)))
+        krone.children.forEach((dorn, i) => {
+          dorn.material.opacity = zusatz * (0.65 + Math.sin(zeit * 4 + i) * 0.35)
+        })
+        glut.funken.forEach((f, i) => {
+          f.y += sek * f.tempo
+          if (f.y > 2.4) f.y = -2.4
+          glut.lage[i * 3] = f.x + Math.sin(zeit * 1.3 + f.phase) * 0.18
+          glut.lage[i * 3 + 1] = f.y
+          glut.lage[i * 3 + 2] = f.z
+        })
+        glut.punkte.geometry.attributes.position.needsUpdate = true
+        glut.punkte.material.opacity = 0.95 * sanft((t - 0.4) / 1)
+        energie.material.opacity = 0.14 * zusatz
+        energie.rotation.y += sek * 0.12
+        energie.rotation.x -= sek * 0.07
+        energie.scale.setScalar(1 + Math.sin(zeit * 1.4) * 0.03)
+        pulse.forEach(({ welle, versatz }) => {
+          const p = ((zeit + versatz) % 2.4) / 2.4
+          welle.scale.setScalar(0.4 + p * 2.6)
+          welle.material.opacity = zusatz * (1 - p) * 0.6
+        })
+      }
     },
     zerspringen() {
       wurzel.visible = false
@@ -357,8 +488,8 @@ function modellBauen(THREE, stufe, textur) {
 
 const { bereit } = useDreiBuehne(flaeche, (THREE, szene) => {
   const kamera = new THREE.PerspectiveCamera(30, 1, 0.1, 60)
-  // Weit genug weg, dass auch die geneigten Diamant-Ringe ganz im Bild bleiben.
-  kamera.position.set(0, 0, 10.8)
+  // Weit genug weg, dass auch Krone und Ringe von Olymp ganz im Bild bleiben.
+  kamera.position.set(0, 0, props.stufe >= 5 || props.vorher >= 5 ? 12.4 : 10.8)
   const textur = lichtTextur(THREE)
   const buehne = new THREE.Group()
   szene.add(buehne)
@@ -371,11 +502,15 @@ const { bereit } = useDreiBuehne(flaeche, (THREE, szene) => {
 
   // Verwandlung: das alte Modell dreht immer schneller, bricht in einem
   // Lichtblitz auseinander, und das neue baut sich aus der Mitte auf.
-  const BRUCH = verwandlung ? 1.3 : 0
+  // Olymp bekommt mehr von allem: laengerer Anlauf, roter Blitz, doppelt so
+  // viele Truemmer, zwei Wellen und ein Beben der Kamera.
+  const gipfel = props.aufstieg && props.stufe >= 5
+  const BRUCH = verwandlung ? (gipfel ? 1.8 : 1.3) : 0
+  const kameraZ = kamera.position.z
   const blitz = new THREE.Sprite(
     new THREE.SpriteMaterial({
       map: textur,
-      color: tokenFarbe(THREE, '--bone'),
+      color: gipfel ? neu.farbe : tokenFarbe(THREE, '--bone'),
       transparent: true,
       opacity: 0,
       depthWrite: false,
@@ -385,7 +520,7 @@ const { bereit } = useDreiBuehne(flaeche, (THREE, szene) => {
   szene.add(blitz)
   const truemmer = []
   if (alt) {
-    for (let i = 0; i < 36; i++) {
+    for (let i = 0; i < (gipfel ? 80 : 36); i++) {
       const stueck = new THREE.Mesh(
         new THREE.TetrahedronGeometry(0.05 + Math.random() * 0.1, 0),
         new THREE.MeshBasicMaterial({
@@ -407,20 +542,22 @@ const { bereit } = useDreiBuehne(flaeche, (THREE, szene) => {
       truemmer.push({ stueck, richtung })
     }
   }
-  let welle = null
-  if (props.aufstieg) {
-    welle = new THREE.Mesh(
-      new THREE.RingGeometry(0.98, 1, 128),
-      new THREE.MeshBasicMaterial({
-        color: neu.farbe,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      })
-    )
-    szene.add(welle)
-  }
+  const wellen = []
+  if (props.aufstieg)
+    for (let i = 0; i < (gipfel ? 3 : 1); i++) {
+      const welle = new THREE.Mesh(
+        new THREE.RingGeometry(0.98, 1, 128),
+        new THREE.MeshBasicMaterial({
+          color: i === 1 ? tokenFarbe(THREE, '--rang-olymp-glut') : neu.farbe,
+          transparent: true,
+          opacity: 0,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })
+      )
+      szene.add(welle)
+      wellen.push({ welle, versatz: 0.15 + i * 0.28 })
+    }
 
   const takt = props.aufstieg ? 0.16 : 0.1
   return {
@@ -451,10 +588,18 @@ const { bereit } = useDreiBuehne(flaeche, (THREE, szene) => {
           stueck.material.opacity = Math.max(0, 1 - b * 0.8)
         })
       }
-      if (welle) {
-        const w = zeit - BRUCH - 0.15
+      wellen.forEach(({ welle, versatz }) => {
+        const w = zeit - BRUCH - versatz
         welle.scale.setScalar(0.5 + Math.max(0, w) * 5)
         welle.material.opacity = w > 0 ? Math.max(0, 0.85 - w * 0.8) : 0
+      })
+      if (gipfel) {
+        // Beben: im Anlauf wachsend, nach dem Bruch schnell abklingend.
+        const b = zeit - BRUCH
+        const staerke = b < 0 ? Math.max(0, zeit / BRUCH) * 0.06 : Math.max(0, 0.18 - b * 0.25)
+        kamera.position.x = (Math.random() - 0.5) * staerke
+        kamera.position.y = (Math.random() - 0.5) * staerke
+        kamera.position.z = kameraZ - (b >= 0 ? Math.max(0, 1.2 - b * 1.5) : 0)
       }
 
       if (!ziehen.aktiv) {

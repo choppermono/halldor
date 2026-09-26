@@ -96,7 +96,10 @@ export function useDreiBuehne(flaeche, aufbauen, { pixelMax = 2 } = {}) {
     if (laedt) return
     laedt = true
     try {
-      const THREE = await import('three')
+      // Erst wenn der Browser Luft hat: das erste Bild und die Bedienung
+      // gehen vor, 3D kommt einen Augenblick spaeter.
+      await leerlauf()
+      const THREE = await import('./drei.js')
       if (!montiert || !webglAktiv.value || !flaeche.value) return
       renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -139,6 +142,13 @@ export function useDreiBuehne(flaeche, aufbauen, { pixelMax = 2 } = {}) {
   })
 
   return { bereit }
+}
+
+function leerlauf() {
+  return new Promise((fertig) => {
+    if ('requestIdleCallback' in window) requestIdleCallback(() => fertig(), { timeout: 900 })
+    else setTimeout(fertig, 120)
+  })
 }
 
 // Farben kommen aus den Tokens, damit die Szenen der Palette folgen.

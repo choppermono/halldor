@@ -70,6 +70,8 @@ function zumInhalt() {
     :style="{ '--navigation-hoehe': navigationHoehe }"
   >
     <KinoHintergrund />
+    <!-- Bei jedem Seitenwechsel faehrt einmal eine Scanlinie ueber den Schirm. -->
+    <i :key="route.path" class="wechsel-linie" aria-hidden="true"></i>
     <KinoAuflage v-if="startZeigen" name="StartSequenz" :beginn="startBeginn" />
     <a class="sprunglink" href="#inhalt" @click.prevent="zumInhalt">Zum Inhalt</a>
     <header class="app-kopf">

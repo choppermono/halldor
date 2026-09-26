@@ -1,12 +1,14 @@
 import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import Heute from '../views/Heute.vue'
-import Training from '../views/Training.vue'
-import Rang from '../views/Rang.vue'
-import Profil from '../views/Profil.vue'
-import Onboarding from '../views/Onboarding.vue'
-import ProduktBestaetigen from '../views/ProduktBestaetigen.vue'
 
+// Nur Heute ist im Startpaket; die anderen Seiten laden beim ersten Besuch
+// und werden danach im Leerlauf vorgeholt (siehe unten).
+const Training = () => import('../views/Training.vue')
+const Rang = () => import('../views/Rang.vue')
+const Profil = () => import('../views/Profil.vue')
+const Onboarding = () => import('../views/Onboarding.vue')
+const ProduktBestaetigen = () => import('../views/ProduktBestaetigen.vue')
 const Scan = () => import('../views/Scan.vue')
 
 const router = createRouter({
@@ -58,6 +60,13 @@ router.afterEach((ziel, ursprung, fehler) => {
       titel?.setAttribute('tabindex', '-1')
       titel?.focus({ preventScroll: true })
     })
+})
+
+// Nach dem ersten Bild die Hauptreiter vorholen, damit der Wechsel sofort geht.
+router.isReady().then(() => {
+  const vorholen = () => [Training, Rang, Profil].forEach((laden) => laden().catch(() => {}))
+  if ('requestIdleCallback' in window) requestIdleCallback(vorholen, { timeout: 2500 })
+  else setTimeout(vorholen, 1500)
 })
 
 export default router

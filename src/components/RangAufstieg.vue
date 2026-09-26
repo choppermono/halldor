@@ -29,6 +29,7 @@ onMounted(() => {
   <dialog
     ref="dialog"
     class="rang-aufstieg"
+    :class="{ olymp: props.stufe.index >= 5 }"
     :style="{ '--rang-farbe': rangFarbe(props.stufe.index) }"
     aria-labelledby="aufstieg-titel"
     @cancel.prevent="melden('weiter')"

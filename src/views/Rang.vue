@@ -56,6 +56,7 @@ const hauptName = computed(() =>
   gesamt.value.stufe ? `${gesamt.value.stufe.name} ${gesamt.value.division}` : 'Ohne Rang'
 )
 const gesamtOffen = ref(false)
+const maxPunkte = rangdaten.stufen.length + 1
 
 const gewaehlt = ref(null)
 const detail = computed(() =>
@@ -73,7 +74,8 @@ function segmentAnteil(lastKg, schwellen, index) {
 function fortschrittIn(rang, schwellen) {
   if (!schwellen) return 0
   const punkte = uebungsPunkte(rang?.wert.lastKg, schwellen)
-  return punkte >= 5 ? Math.min(1, punkte - 5) : punkte % 1
+  const oben = rangdaten.stufen.length
+  return punkte >= oben ? Math.min(1, punkte - oben) : punkte % 1
 }
 function zahl(wert) {
   return Number(wert).toLocaleString('de-CH', { maximumFractionDigits: 2 })
@@ -111,7 +113,7 @@ function zahl(wert) {
         <span class="gesamtrang-spur" aria-hidden="true"
           ><i :style="{ transform: `scaleX(${gesamt.anteilInStufe ?? 0})` }"></i
         ></span>
-        <span class="gesamtrang-zahl">{{ zahl(gesamt.punkte ?? 0) }} / 6 Punkte</span>
+        <span class="gesamtrang-zahl">{{ zahl(gesamt.punkte ?? 0) }} / {{ maxPunkte }} Punkte</span>
       </span>
     </button>
 
@@ -242,7 +244,7 @@ function zahl(wert) {
           <div>
             <h2>{{ hauptName }}</h2>
             <p class="stufe" :class="{ ohne: !gesamt.stufe }">
-              {{ zahl(gesamt.punkte ?? 0) }} von 6 Punkten
+              {{ zahl(gesamt.punkte ?? 0) }} von {{ maxPunkte }} Punkten
             </p>
           </div>
         </div>
@@ -264,11 +266,11 @@ function zahl(wert) {
           >
         </div>
         <p class="klein methodenhinweis">
-          Jede der {{ gesamt.gesamt }} Übungen bekommt 0 bis 6 Punkte: unter Bronze anteilig bis 1,
-          jede Stufe einen Punkt, Diamant bis 6 je nachdem, wie weit du darüber liegst. Der
-          Gesamtrang ist der Durchschnitt über alle Übungen; nicht trainierte zählen 0. Jede Stufe
-          hat drei Divisionen, III ist die unterste. Gewertet: {{ gesamt.gewertet }} von
-          {{ gesamt.gesamt }}.
+          Jede der {{ gesamt.gesamt }} Übungen bekommt 0 bis {{ maxPunkte }} Punkte: unter Bronze
+          anteilig bis 1, jede Stufe einen Punkt, Olymp bis {{ maxPunkte }} je nachdem, wie weit du
+          darüber liegst. Der Gesamtrang ist der Durchschnitt über alle Übungen; nicht trainierte
+          zählen 0. Jede Stufe hat drei Divisionen, III ist die unterste. Gewertet:
+          {{ gesamt.gewertet }} von {{ gesamt.gesamt }}.
         </p>
       </article>
     </SchubladeBlatt>

@@ -4,7 +4,13 @@ import { RouterLink } from 'vue-router'
 import Zahlenschritt from '../components/Zahlenschritt.vue'
 import { useProfil } from '../composables/useProfil.js'
 import { naechsteProgrammEinheit, useTraining } from '../composables/useTraining.js'
-import { einheitFortschritt, progressionBerechnen, schrittFuer } from '../lib/training.js'
+import {
+  einheitFortschritt,
+  gesamtlastBerechnen,
+  progressionBerechnen,
+  schrittFuer,
+} from '../lib/training.js'
+import EinheitAbschluss from '../components/EinheitAbschluss.vue'
 import { gesamtrangBerechnen, rangdaten, ranglisteBerechnen } from '../lib/rang.js'
 import RangAufstieg from '../components/RangAufstieg.vue'
 
@@ -244,10 +250,42 @@ function satzEntfernen() {
   anpassung.value = null
   fokusZurueckgeben()
 }
+// Was die Einheit geschafft hat, fuer den Abschluss-Moment. Ein Bestwert ist
+// eine hoehere Last als in jeder frueheren abgeschlossenen Einheit.
+function einheitBilanz(einheit) {
+  const frueher = new Map()
+  training.zustand.einheiten
+    .filter((e) => e.abgeschlossenAm && e.id !== einheit.id)
+    .flatMap((e) => e.saetze ?? [])
+    .forEach((s) => frueher.set(s.uebungId, Math.max(frueher.get(s.uebungId) ?? 0, s.gewichtKg)))
+  const heute = new Map()
+  einheit.saetze.forEach((s) => {
+    const bisher = heute.get(s.uebungId)
+    if (!bisher || s.gewichtKg > bisher.gewichtKg) heute.set(s.uebungId, s)
+  })
+  const bestwerte = [...heute.values()]
+    .filter((s) => frueher.has(s.uebungId) && s.gewichtKg > frueher.get(s.uebungId))
+    .map((s) => ({
+      name: training.uebungen.find((u) => u.id === s.uebungId)?.name ?? s.uebungId,
+      text: satzText(s, true),
+    }))
+  const minuten = Math.round((Date.now() - Date.parse(einheit.gestartetAm)) / 60000)
+  return {
+    name: einheit.programmEinheit?.name ?? 'Einheit',
+    saetze: einheit.saetze.length,
+    gesamtlastKg: Math.round(gesamtlastBerechnen(einheit.saetze)),
+    minuten: Number.isFinite(minuten) && minuten > 0 && minuten < 600 ? minuten : null,
+    bestwerte,
+  }
+}
+const abschluss = ref(null)
 function abschliessen() {
-  const name = training.offeneEinheit.value?.programmEinheit?.name
-  const ergebnis = training.einheitAbschliessen(training.offeneEinheit.value?.id)
+  const einheit = training.offeneEinheit.value
+  const name = einheit?.programmEinheit?.name
+  const bilanz = einheit ? einheitBilanz(einheit) : null
+  const ergebnis = training.einheitAbschliessen(einheit?.id)
   meldung.value = ergebnis.status === 'ok' ? `${name} abgeschlossen.` : ergebnis.meldung
+  if (ergebnis.status === 'ok' && bilanz) abschluss.value = bilanz
 }
 </script>
 
@@ -527,6 +565,7 @@ function abschliessen() {
       {{ meldung }}
     </div>
     <RangAufstieg v-if="aufstieg" v-bind="aufstieg" @weiter="aufstiegSchliessen" />
+    <EinheitAbschluss v-if="abschluss" v-bind="abschluss" @weiter="abschluss = null" />
     <p v-if="training.zustand.hinweis || profil.zustand.hinweis" class="meldung" role="status">
       {{ training.zustand.hinweis || profil.zustand.hinweis }}
     </p>

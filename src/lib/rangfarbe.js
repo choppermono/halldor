@@ -1,5 +1,5 @@
 // Stufenindex zur Rangfarbe aus den Tokens. -1 heisst: noch keine Stufe.
-const SCHLUESSEL = ['bronze', 'silber', 'gold', 'platin', 'diamant']
+const SCHLUESSEL = ['bronze', 'silber', 'gold', 'platin', 'diamant', 'olymp']
 
 export function rangFarbe(index) {
   return `var(--rang-${SCHLUESSEL[index] ?? 'ohne'})`

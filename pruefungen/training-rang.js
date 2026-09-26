@@ -261,7 +261,11 @@ try {
   // Bis 18.09.2026 rankte die App nach dem Vielfachen des Körpergewichts, mit
   // getrennten Tabellen je Geschlecht (E-122). Diese rund 220 Grenzprüfungen
   // sind mit dem Konzept entfallen.
-  pruefen('Fünf Stufen', rangdaten.stufen.length === 5)
+  // Seit E-143 sechs Stufen: Olymp liegt über Diamant. Bewusst umgestellt.
+  pruefen(
+    'Sechs Stufen, Olymp als höchste',
+    rangdaten.stufen.length === 6 && rangdaten.stufen.at(-1) === 'Olymp'
+  )
   pruefen(
     'Nicht festgelegte Schwellen liefern keine Skala',
     uebungen.every((eintrag) =>
@@ -278,7 +282,7 @@ try {
       .filter(Array.isArray)
       .every(
         (werte) =>
-          werte.length === 5 &&
+          werte.length === rangdaten.stufen.length &&
           werte.every((wert, i) => wert > 0 && (i === 0 || wert > werte[i - 1]))
       )
   )
@@ -372,7 +376,7 @@ try {
   // wuerden die beiden Pruefungen zu gesetzten Schwellen leer bestehen.
   const aufsteigend = (werte) =>
     Array.isArray(werte) &&
-    werte.length === 5 &&
+    werte.length === rangdaten.stufen.length &&
     werte.every((wert, i) => wert > 0 && (i === 0 || wert > werte[i - 1]))
   pruefen(
     'Jede Katalogübung hat Schwellen für m und w, positiv und aufsteigend',
@@ -458,6 +462,28 @@ try {
   pruefen(
     'Ganz oben: Diamant I',
     beideSpitze.stufe?.name === 'Diamant' && beideSpitze.division === 'I'
+  )
+  // ---- Olymp (E-143) ----
+  const olympSkala = rangdaten.uebungen.latziehen.m
+  pruefen('Olymp-Schwelle über Diamant', olympSkala[5] > olympSkala[4])
+  pruefen('Punkte: genau Olymp 6', uebungsPunkte(olympSkala[5], olympSkala) === 6)
+  pruefen('Punkte: weit über Olymp 7, gedeckelt', uebungsPunkte(1000, olympSkala) === 7)
+  pruefen(
+    'Stufe Olymp an der Schwelle, Diamant knapp darunter',
+    rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 140, wiederholungen: 8 }, rangdaten, 'm').wert
+      .stufe?.name === 'Olymp' &&
+      rangFuerSatz({ uebungId: 'latziehen', gewichtKg: 137.5, wiederholungen: 8 }, rangdaten, 'm')
+        .wert.stufe?.name === 'Diamant'
+  )
+  const alleOlymp = gesamtrangBerechnen(
+    [{ saetze: uebungen.map((u) => satz(u.id, 1000, u.wiederholungen.min)) }],
+    uebungen,
+    rangdaten,
+    'm'
+  )
+  pruefen(
+    'Alle Übungen weit über Olymp: Gesamtrang Olymp I',
+    alleOlymp.stufe?.name === 'Olymp' && alleOlymp.division === 'I'
   )
   pruefen(
     'Ohne Geschlecht bei getrennten Tabellen kein Gesamtrang',

@@ -15,7 +15,7 @@ const props = defineProps({
 })
 
 const MITTE = 32
-const MASS = [0.5, 0.62, 0.72, 0.82, 0.92, 1]
+const MASS = [0.5, 0.62, 0.72, 0.82, 0.92, 1, 1.02]
 const BREITE = 0.74
 
 function raute(r, x = MITTE, y = MITTE) {
@@ -27,7 +27,7 @@ function polar(radius, winkel) {
   return [MITTE + Math.cos(bogen) * radius, MITTE + Math.sin(bogen) * radius]
 }
 
-const t = computed(() => Math.max(-1, Math.min(4, props.stufe)))
+const t = computed(() => Math.max(-1, Math.min(5, props.stufe)))
 const r = computed(() => 20 * MASS[t.value + 1])
 
 // Vier Facetten mit verschiedener Deckkraft geben dem Kristall Licht von
@@ -64,17 +64,34 @@ const bahnen = computed(
         { rx: 28.5, ry: 9, dreh: 60 },
         { rx: 28.5, ry: 9, dreh: 120 },
       ],
+      5: [
+        { rx: 29, ry: 8, dreh: 0 },
+        { rx: 29, ry: 8, dreh: 45 },
+        { rx: 29, ry: 8, dreh: 90 },
+        { rx: 29, ry: 8, dreh: 135 },
+      ],
     })[t.value] ?? []
 )
 const splitter = computed(() => {
-  const anzahl = { 2: 4, 3: 6, 4: 8 }[t.value] ?? 0
+  const anzahl = { 2: 4, 3: 6, 4: 8, 5: 12 }[t.value] ?? 0
   return Array.from({ length: anzahl }, (_, i) => {
     const [x, y] = polar(27.5, (i * 360) / anzahl + 22.5)
-    return raute(t.value === 4 ? 2.8 : 2.3, x, y)
+    return raute(t.value >= 4 ? 2.8 : 2.3, x, y)
+  })
+})
+// Olymp: eine Krone aus zwölf Dornen, abwechselnd lang und kurz.
+const krone = computed(() => {
+  if (t.value < 5) return []
+  return Array.from({ length: 12 }, (_, i) => {
+    const winkel = i * 30 - 90
+    const spitze = polar(i % 2 ? 29 : 31.5, winkel)
+    const links = polar(23.5, winkel - 5)
+    const rechts = polar(23.5, winkel + 5)
+    return `${links.join(',')} ${spitze.join(',')} ${rechts.join(',')}`
   })
 })
 const strahlen = computed(() => {
-  const anzahl = { 3: 8, 4: 12 }[t.value] ?? 0
+  const anzahl = { 3: 8, 4: 12, 5: 16 }[t.value] ?? 0
   return Array.from({ length: anzahl }, (_, i) => {
     const winkel = (i * 360) / anzahl
     const [x1, y1] = polar(23, winkel)
@@ -97,6 +114,9 @@ const strahlen = computed(() => {
   >
     <g class="rz-strahlen">
       <line v-for="(s, i) in strahlen" :key="`s${i}`" v-bind="s" />
+    </g>
+    <g class="rz-krone">
+      <polygon v-for="(p, i) in krone" :key="`k${i}`" :points="p" />
     </g>
     <g class="rz-bahnen">
       <ellipse
@@ -123,7 +143,7 @@ const strahlen = computed(() => {
     <g class="rz-splitter">
       <polygon v-for="(p, i) in splitter" :key="`p${i}`" :points="p" />
     </g>
-    <template v-if="t === 4">
+    <template v-if="t >= 4">
       <circle class="rz-schein" :cx="MITTE" :cy="MITTE" r="8" />
       <polygon class="rz-kern" :points="raute(3.6)" />
     </template>
