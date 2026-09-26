@@ -6,7 +6,13 @@ import SchubladeBlatt from '../components/SchubladeBlatt.vue'
 import KinoAuflage from '../components/KinoAuflage.vue'
 import { useProfil } from '../composables/useProfil.js'
 import { useTraining } from '../composables/useTraining.js'
-import { gesamtrangBerechnen, rangdaten, ranglisteBerechnen, schwellenFuer } from '../lib/rang.js'
+import {
+  gesamtrangBerechnen,
+  rangdaten,
+  ranglisteBerechnen,
+  schwellenFuer,
+  uebungsPunkte,
+} from '../lib/rang.js'
 import { rangFarbe } from '../lib/rangfarbe.js'
 
 defineOptions({ name: 'RangAnsicht' })
@@ -62,6 +68,12 @@ function segmentAnteil(lastKg, schwellen, index) {
   const untergrenze = index === 0 ? 0 : schwellen[index - 1]
   if (lastKg < untergrenze) return 0
   return (lastKg - untergrenze) / (schwellen[index] - untergrenze)
+}
+// Anteil bis zur nächsten Stufe, aus denselben Punkten wie der Gesamtrang.
+function fortschrittIn(rang, schwellen) {
+  if (!schwellen) return 0
+  const punkte = uebungsPunkte(rang?.wert.lastKg, schwellen)
+  return punkte >= 5 ? Math.min(1, punkte - 5) : punkte % 1
 }
 function zahl(wert) {
   return Number(wert).toLocaleString('de-CH', { maximumFractionDigits: 2 })
@@ -125,20 +137,25 @@ function zahl(wert) {
           :aria-label="`${uebung.name}, ${rang?.wert.stufe?.name ?? 'keine Stufe'}${rang ? `, ${zahl(rang.wert.lastKg)} kg` : ''}. Details öffnen`"
           @click="gewaehlt = uebung.id"
         >
-          <RangZeichen :stufe="rang?.wert.stufe?.index ?? -1" :groesse="30" />
+          <!-- Das Abzeichen ist die Hauptsache der Kachel; die Stufe liest man
+               an Form, Grösse und Farbe, den Rest darunter. -->
+          <span class="kachel-abzeichen">
+            <RangZeichen :stufe="rang?.wert.stufe?.index ?? -1" :groesse="48" />
+          </span>
           <span class="kachel-last">
             <template v-if="rang"
               ><strong>{{ zahl(rang.wert.lastKg) }}</strong
               ><small>kg</small></template
             >
+            <template v-else-if="schwellen"
+              ><small>ab</small><strong>{{ zahl(schwellen[0]) }}</strong></template
+            >
             <template v-else><strong>–</strong></template>
           </span>
-          <span class="kachel-stufe" :class="{ erreicht: rang?.wert.stufe }">
-            {{
-              rang?.wert.stufe?.name ?? (schwellen ? `B ab ${zahl(schwellen[0])}` : 'Ohne Skala')
-            }}
-          </span>
           <span class="kachel-name">{{ uebung.name }}</span>
+          <span class="kachel-fortschritt" aria-hidden="true"
+            ><i :style="{ transform: `scaleX(${fortschrittIn(rang, schwellen)})` }"></i
+          ></span>
         </button>
       </li>
     </ol>

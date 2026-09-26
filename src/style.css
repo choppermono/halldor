@@ -1455,34 +1455,67 @@ textarea {
   list-style: none;
   border-bottom: 1px solid var(--line);
 }
-/* Rangzeichen: Stufe über Geometrie, Akzent nur auf der erreichten Raute. */
+/* Rangabzeichen: wächst mit der Stufe wie das 3D-Modell (E-142). */
 .rangzeichen {
   flex-shrink: 0;
   overflow: visible;
+  color: var(--rang-farbe, var(--sig-text));
 }
-.rangzeichen polygon {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: 1.25;
+.rangzeichen :is(polygon, line, ellipse, circle) {
   vector-effect: non-scaling-stroke;
-  transform-box: fill-box;
-  transform-origin: center;
 }
-.rangzeichen polygon.erreicht {
-  stroke: var(--bone);
-  animation: trace var(--slow) var(--ease) both;
-  animation-delay: calc(var(--i) * var(--fast) / 2);
-}
-.rangzeichen polygon.aktuell {
-  stroke: var(--rang-farbe, var(--sig-text));
-  stroke-width: 2;
-}
-.rangzeichen .kern {
-  fill: var(--rang-farbe, var(--sig-text));
+.rz-facette {
+  fill: currentColor;
   stroke: none;
 }
-.rangzeichen-leer polygon {
-  stroke: var(--line);
+.rz-umriss {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: calc(var(--strich) * 1.5);
+  stroke-linejoin: round;
+}
+.rz-innen {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.7;
+  stroke-width: var(--strich);
+}
+.rz-bahnen ellipse {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.55;
+  stroke-width: var(--strich);
+}
+.rz-strahlen line {
+  stroke: currentColor;
+  stroke-opacity: 0.45;
+  stroke-width: var(--strich);
+  stroke-linecap: round;
+}
+.rz-splitter polygon {
+  fill: currentColor;
+  stroke: none;
+}
+.rz-schein {
+  fill: currentColor;
+  fill-opacity: 0.45;
+}
+.rz-kern {
+  fill: var(--bone);
+}
+/* Ohne Rang: nur ein gestrichelter Umriss, bewusst unscheinbar. */
+.rangzeichen-leer .rz-umriss {
+  stroke-dasharray: 3 3;
+  stroke-opacity: 0.8;
+}
+/* Diamant: die Kanten schimmern zwischen Blau und Violett. */
+.rangzeichen-5 .rz-umriss {
+  stroke: var(--rang-diamant-schimmer);
+}
+.rangzeichen .rz-bahnen,
+.rangzeichen .rz-strahlen {
+  transform-origin: 32px 32px;
+  transition: transform var(--slow) var(--ease);
 }
 
 .rang-kopf {
@@ -1600,14 +1633,63 @@ textarea {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--s-1);
 }
+/* Kachel: Abzeichen gross in der Mitte auf seinem Schein, darunter Last und
+   Name, unten der Fortschritt zur nächsten Stufe in der Stufenfarbe. */
 .ansicht .vitrine .vitrinen-kachel {
+  position: relative;
   grid-template-columns: 1fr;
-  justify-items: start;
+  justify-items: center;
+  align-content: start;
   gap: 2px;
-  padding: var(--s-2) 6px;
+  padding: var(--s-1) 4px calc(var(--s-2) + 3px);
+  border-color: color-mix(in srgb, var(--rang-farbe) 30%, var(--line));
+  text-align: center;
+  overflow: hidden;
 }
-.ansicht .vitrine .vitrinen-kachel .rangzeichen {
-  margin-bottom: 2px;
+.ansicht .vitrine .vitrinen-kachel.ohne {
+  border-color: var(--line);
+}
+.kachel-abzeichen {
+  display: grid;
+  width: 100%;
+  height: 56px;
+  place-items: center;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--rang-farbe) 30%, transparent),
+    transparent
+  );
+}
+.vitrinen-kachel.ohne .kachel-abzeichen {
+  background: none;
+}
+.ansicht .vitrine .kachel-last {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+}
+.vitrinen-kachel.ohne .kachel-last small {
+  margin: 0 2px 0 0;
+}
+.ansicht .vitrine .kachel-name {
+  width: 100%;
+  color: var(--bone-dim);
+}
+.kachel-fortschritt {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--line);
+}
+.kachel-fortschritt i {
+  position: absolute;
+  inset: 0;
+  background: var(--rang-farbe);
+  transform-origin: left;
+  animation: fuellen calc(var(--slow) * 1.6) var(--ease) calc(var(--i, 0) * var(--fast) / 3) both;
 }
 .ansicht .vitrine .kachel-last strong {
   font-size: 1.5rem;
@@ -2262,7 +2344,13 @@ html:has(dialog[open]) {
 }
 .ansicht .vitrinen-kachel:hover .rangzeichen,
 .ansicht .vitrinen-kachel:focus-visible .rangzeichen {
-  transform: rotate(90deg) scale(1.08);
+  transform: scale(1.08);
+}
+.ansicht .vitrinen-kachel:hover .rz-bahnen {
+  transform: rotate(40deg);
+}
+.ansicht .vitrinen-kachel:hover .rz-strahlen {
+  transform: rotate(15deg);
 }
 .ansicht .vitrinen-kachel:active {
   transform: scale(0.97);
