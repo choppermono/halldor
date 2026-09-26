@@ -171,7 +171,7 @@ Die Reihenfolge steht fest. Was in einer späteren Stufe liegt, wird nicht
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1** | Ernährung vollständig: Onboarding, Zielberechnung, Scan, manuelle Eingabe, Tageseinträge in Gramm, Bilanz gegen das Ziel, Rückblick auf vergangene Tage |
 | **2** | Training: Programmvarianten, Führung durch die Einheit, Satz-Logging, Progression, Deload                                                               |
-| **3** | Rang: feste Schwellen in kg je Übung, getrennt nach Geschlecht, Stufen Bronze bis Diamant (E-133). Später: Bestenliste mit Server (E-134)                |
+| **3** | Rang: feste Schwellen in kg je Übung, getrennt nach Geschlecht, Stufen Bronze bis Diamant (E-133). Später: Bestenliste mit Server (E-134)               |
 
 ---
 
