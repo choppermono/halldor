@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { rangFarbe } from '../lib/rangfarbe.js'
 
 defineOptions({ name: 'RangZeichen' })
 
@@ -25,6 +26,7 @@ const rauten = computed(() =>
   <svg
     class="rangzeichen"
     :class="{ 'rangzeichen-leer': stufe < 0 }"
+    :style="{ '--rang-farbe': rangFarbe(stufe) }"
     viewBox="0 0 48 48"
     :width="groesse"
     :height="groesse"

@@ -5,7 +5,7 @@ import Zahlenschritt from '../components/Zahlenschritt.vue'
 import { useProfil } from '../composables/useProfil.js'
 import { naechsteProgrammEinheit, useTraining } from '../composables/useTraining.js'
 import { einheitFortschritt, progressionBerechnen, schrittFuer } from '../lib/training.js'
-import { rangdaten, ranglisteBerechnen } from '../lib/rang.js'
+import { gesamtrangBerechnen, rangdaten, ranglisteBerechnen } from '../lib/rang.js'
 import RangAufstieg from '../components/RangAufstieg.vue'
 
 defineOptions({ name: 'TrainingAnsicht' })
@@ -149,12 +149,22 @@ function stufeVon(uebungId) {
     ).find((rang) => rang.uebungId === uebungId)?.wert.stufe ?? null
   )
 }
+function gesamtVon() {
+  const ergebnis = gesamtrangBerechnen(
+    training.zustand.einheiten,
+    training.uebungen,
+    rangdaten,
+    profil.zustand.profil?.geschlecht ?? ''
+  )
+  return ergebnis.status === 'ok' ? ergebnis : null
+}
 const aufstieg = ref(null)
 function erfassen(gewichtKg, wiederholungen) {
   const aktiv = aktiveVorgabe.value
   if (!aktiv) return
   const satzNummer = aktuellerSatz.value
   const stufeVorher = stufeVon(aktiv.uebungId)
+  const gesamtVorher = gesamtVon()
   const ergebnis = training.satzHinzufuegen(
     training.offeneEinheit.value?.id,
     aktiv.uebungId,
@@ -169,14 +179,28 @@ function erfassen(gewichtKg, wiederholungen) {
   meldung.value = `${aktiv.uebung.name}, Satz ${satzNummer} mit ${satzText(ergebnis.satz, true)} erfasst.`
   anpassung.value = null
   const stufeNachher = stufeVon(aktiv.uebungId)
-  if (stufeNachher && stufeNachher.index > (stufeVorher?.index ?? -1)) {
-    aufstieg.value = {
-      uebung: aktiv.uebung.name,
-      stufe: stufeNachher,
-      lastKg: ergebnis.satz.gewichtKg,
-      wiederholungen: ergebnis.satz.wiederholungen,
-    }
-    meldung.value += ` Rang-Aufstieg: ${stufeNachher.name}.`
+  const gesamtNachher = gesamtVon()
+  const gesamtStieg =
+    gesamtNachher?.stufe && gesamtNachher.stufe.index > (gesamtVorher?.stufe?.index ?? -1)
+  const uebungStieg = stufeNachher && stufeNachher.index > (stufeVorher?.index ?? -1)
+  // Ein neuer Gesamtrang ist der groessere Moment; er hat Vorrang.
+  if (gesamtStieg || uebungStieg) {
+    aufstieg.value = gesamtStieg
+      ? {
+          titel: 'Gesamtrang-Aufstieg',
+          untertitel: `${gesamtNachher.stufe.name} ${gesamtNachher.division}`,
+          stufe: gesamtNachher.stufe,
+          vorher: gesamtVorher?.stufe?.index ?? -1,
+          zeile: `durch ${aktiv.uebung.name} · ${satzText(ergebnis.satz, true)}`,
+        }
+      : {
+          titel: 'Rang-Aufstieg',
+          untertitel: aktiv.uebung.name,
+          stufe: stufeNachher,
+          vorher: stufeVorher?.index ?? -1,
+          zeile: satzText(ergebnis.satz, true),
+        }
+    meldung.value += ` ${aufstieg.value.titel}: ${aufstieg.value.stufe.name}.`
     return
   }
   fokusZurueckgeben()
@@ -306,7 +330,7 @@ function abschliessen() {
             <li
               v-for="(vorgabe, index) in planUebungen"
               :key="vorgabe.uebungId"
-              :class="statusFuer(index, vorgabe)"
+              :class="[statusFuer(index, vorgabe), { juengste: index === aktiveNummer - 1 }]"
             >
               <svg
                 v-if="statusFuer(index, vorgabe) === 'erledigt'"

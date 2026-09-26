@@ -26,6 +26,15 @@
   --sig-text: #6b8bff; /* Akzent als Schrift und Linie: 6.4:1 auf Schwarz */
   --sig-fill: #2f5bff; /* Akzent als Flaeche: Weiss darauf 5.0:1 */
   --sig-glow: 0 10px 36px -10px #2f5bffcc, 0 0 0 1px #5b7cff;
+  /* Rangfarben (E-141): die einzige Ausnahme von «eine Akzentfarbe». Wie in
+     Spielen soll man die Stufe auf Anhieb erkennen. Nur im Rang verwendet. */
+  --rang-ohne: #6d6d78;
+  --rang-bronze: #d98f5f;
+  --rang-silber: #d5deea;
+  --rang-gold: #ffc94d;
+  --rang-platin: #5cf0dd;
+  --rang-diamant: #a9b6ff;
+  --rang-diamant-schimmer: #e08cff;
   /* Alle drei liegen als woff2 in public/fonts/ und werden selbst ausgeliefert. */
   --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --body: 'Barlow', system-ui, 'Segoe UI', sans-serif;

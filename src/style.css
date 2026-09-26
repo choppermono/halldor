@@ -1474,11 +1474,11 @@ textarea {
   animation-delay: calc(var(--i) * var(--fast) / 2);
 }
 .rangzeichen polygon.aktuell {
-  stroke: var(--sig-text);
+  stroke: var(--rang-farbe, var(--sig-text));
   stroke-width: 2;
 }
 .rangzeichen .kern {
-  fill: var(--sig-text);
+  fill: var(--rang-farbe, var(--sig-text));
   stroke: none;
 }
 .rangzeichen-leer polygon {
@@ -1516,6 +1516,111 @@ textarea {
 }
 .stufenverteilung li.leer strong {
   color: var(--bone-mute);
+}
+/* Gesamtrang: der Hauptrang, gross und in seiner Stufenfarbe. */
+.ansicht .gesamtrang {
+  display: grid;
+  grid-template-columns: min(40vw, 10.5rem) minmax(0, 1fr);
+  width: 100%;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bone);
+  text-align: left;
+  animation: hudIn var(--slow) var(--ease) both;
+}
+.gesamtrang-buehne {
+  position: relative;
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--rang-farbe) 26%, transparent),
+    transparent
+  );
+}
+.gesamtrang-buehne > .rangzeichen {
+  transition: opacity var(--base) var(--ease);
+}
+.gesamtrang-buehne:has(.rang-kristall.bereit) > .rangzeichen {
+  opacity: 0;
+}
+.gesamtrang-text {
+  display: grid;
+  min-width: 0;
+  gap: var(--s-2);
+}
+.gesamtrang-text .system-label {
+  color: var(--bone-mute);
+  font-size: 0.625rem;
+}
+.gesamtrang-name {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  color: var(--rang-farbe);
+  font: italic 400 clamp(2.25rem, 11vw, 3.25rem) / 0.95 var(--display);
+}
+.gesamtrang-division {
+  color: var(--bone);
+  font: 600 var(--t-klein) / 1 var(--mono);
+  font-style: normal;
+  letter-spacing: 0.12em;
+}
+.gesamtrang-spur {
+  position: relative;
+  height: 4px;
+  background: var(--panel-solid);
+  overflow: hidden;
+}
+.gesamtrang-spur i {
+  position: absolute;
+  inset: 0;
+  background: var(--rang-farbe);
+  transform-origin: left;
+  animation: fuellen calc(var(--slow) * 1.6) var(--ease) var(--fast) both;
+}
+.gesamtrang-zahl {
+  color: var(--bone-mute);
+  font: 400 0.625rem/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.stufe {
+  color: var(--rang-farbe, var(--sig-text));
+}
+.rang-detail .rang-leiter i {
+  background: var(--rang-farbe, var(--bone));
+}
+.ansicht .vitrine {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-1);
+}
+.ansicht .vitrine .vitrinen-kachel {
+  grid-template-columns: 1fr;
+  justify-items: start;
+  gap: 2px;
+  padding: var(--s-2) 6px;
+}
+.ansicht .vitrine .vitrinen-kachel .rangzeichen {
+  margin-bottom: 2px;
+}
+.ansicht .vitrine .kachel-last strong {
+  font-size: 1.5rem;
+}
+.ansicht .vitrine .kachel-stufe {
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+.ansicht .vitrine .kachel-stufe.erreicht {
+  color: var(--rang-farbe);
+}
+.ansicht .vitrine .kachel-name {
+  font-size: 0.75rem;
 }
 .bereichswahl {
   display: grid;
@@ -1580,7 +1685,22 @@ textarea {
   letter-spacing: 0.1em;
   white-space: nowrap;
 }
+/* Hinter einem offenen Dialog scrollt die Seite nicht mit. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+.naechster-satz strong {
+  white-space: nowrap;
+}
 @media (max-width: 63.999rem) {
+  /* Am Handy nur die zuletzt erledigte Übung; der ganze Ablauf steht am
+     Desktop links. So wächst die Seite nicht mit jeder Übung. */
+  .training-ablauf li.erledigt:not(.juengste) {
+    display: none;
+  }
+  .naechster-satz strong {
+    font-size: clamp(2rem, 10vw, 2.75rem);
+  }
   .uebungsfokus,
   .satz-anpassung,
   .einheit-abschluss {
@@ -1645,7 +1765,7 @@ textarea {
   margin: 0 calc(-1 * var(--gutter)) var(--s-2);
   background: radial-gradient(
     closest-side,
-    color-mix(in srgb, var(--sig-fill) 22%, transparent),
+    color-mix(in srgb, var(--rang-farbe, var(--sig-fill)) 22%, transparent),
     transparent
   );
 }
@@ -1675,11 +1795,15 @@ textarea {
   background:
     radial-gradient(
       ellipse at 50% 38%,
-      color-mix(in srgb, var(--sig-fill) 30%, transparent),
+      color-mix(in srgb, var(--rang-farbe, var(--sig-fill)) 26%, transparent),
       transparent 60%
     ),
     var(--void);
   color: var(--bone);
+}
+/* Der Text erscheint erst nach dem Bruch des alten Modells (1.3 s). */
+.rang-aufstieg .kristall-buehne {
+  background: none;
 }
 .rang-aufstieg::backdrop {
   background: var(--void);
@@ -1694,28 +1818,28 @@ textarea {
   text-align: center;
 }
 .aufstieg-inhalt > .system-label {
-  color: var(--sig-text);
+  color: var(--bone-dim);
   letter-spacing: 0.32em;
   animation: typeIn var(--base) var(--ease) both;
 }
 .rang-aufstieg .aufstieg-inhalt h2 {
   margin: 0;
-  color: var(--bone);
+  color: var(--rang-farbe, var(--bone));
   font: italic 300 clamp(4rem, 22vw, 7rem) / 0.9 var(--display);
-  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 1.6) both;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.4) both;
 }
 .aufstieg-uebung {
   margin: 0;
   color: var(--bone);
   font: 400 1.75rem/1.1 var(--display);
-  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 1.9) both;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.7) both;
 }
 .aufstieg-last {
   margin: 0;
   color: var(--bone-dim);
   font: 500 var(--t-label) / 1 var(--mono);
   letter-spacing: 0.14em;
-  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.1) both;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.9) both;
 }
 .aufstieg-inhalt .primaer {
   width: min(100%, 20rem);
@@ -1729,7 +1853,7 @@ textarea {
   min-height: 56px;
   text-transform: uppercase;
   cursor: pointer;
-  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.4) both;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 3.2) both;
 }
 .ansicht .rang-detail h2 {
   margin: 0;
@@ -1780,7 +1904,7 @@ textarea {
 }
 .stufe {
   margin: var(--s-1) 0 0;
-  color: var(--sig-text);
+  color: var(--rang-farbe, var(--sig-text));
   font: italic 400 1.5rem/1 var(--display);
 }
 .stufe.ohne {

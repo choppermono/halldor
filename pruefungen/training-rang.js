@@ -8,11 +8,13 @@ import {
   schrittFuer,
 } from '../src/lib/training.js'
 import {
+  gesamtrangBerechnen,
   rangdaten,
   rangFuerSatz,
   ranglisteBerechnen,
   schwellenFuer,
   stufeBestimmen,
+  uebungsPunkte,
 } from '../src/lib/rang.js'
 
 const ausgabe = document.querySelector('#ergebnis')
@@ -409,6 +411,57 @@ try {
     'Rangliste reicht das Geschlecht durch',
     ranglisteBerechnen([{ saetze: [satz('latziehen', 40, 8)] }], katalogProbe, rangdaten, 'w')[0]
       ?.wert.stufe?.name === 'Silber'
+  )
+
+  // ---- Gesamtrang (E-140) ----
+  const skala = [10, 20, 30, 40, 50]
+  pruefen('Punkte: ohne Last 0', uebungsPunkte(undefined, skala) === 0)
+  pruefen('Punkte: halbe Bronze-Schwelle 0.5', nahe(uebungsPunkte(5, skala), 0.5))
+  pruefen('Punkte: genau Bronze 1', uebungsPunkte(10, skala) === 1)
+  pruefen('Punkte: Mitte Silber bis Gold 2.5', nahe(uebungsPunkte(25, skala), 2.5))
+  pruefen('Punkte: genau Diamant 5', uebungsPunkte(50, skala) === 5)
+  pruefen('Punkte: eine Stufenbreite über Diamant 6, gedeckelt', uebungsPunkte(200, skala) === 6)
+
+  const zweiUebungen = [
+    { id: 'latziehen', name: 'Latzug', wiederholungen: { min: 6, max: 10 } },
+    { id: 'seitheben', name: 'Seitenheben', wiederholungen: { min: 6, max: 10 } },
+  ]
+  const tabelle = {
+    stufen: ['Bronze', 'Silber', 'Gold', 'Platin', 'Diamant'],
+    uebungen: { latziehen: skala, seitheben: skala },
+  }
+  const leer = gesamtrangBerechnen([], zweiUebungen, tabelle)
+  pruefen('Gesamtrang ohne Sätze: keine Stufe, 0 Punkte', leer.stufe === null && leer.punkte === 0)
+  const eineStark = gesamtrangBerechnen(
+    [{ saetze: [satz('latziehen', 50, 8)] }],
+    zweiUebungen,
+    tabelle
+  )
+  pruefen(
+    'Untrainierte Übungen zählen 0: eine Diamant-Übung von zwei ergibt 2.5 = Silber',
+    nahe(eineStark.punkte, 2.5) && eineStark.stufe?.name === 'Silber'
+  )
+  const beideSilber = gesamtrangBerechnen(
+    [{ saetze: [satz('latziehen', 20, 8), satz('seitheben', 20, 8)] }],
+    zweiUebungen,
+    tabelle
+  )
+  pruefen(
+    'Genau an der Stufengrenze: Silber III',
+    beideSilber.stufe?.name === 'Silber' && beideSilber.division === 'III'
+  )
+  const beideSpitze = gesamtrangBerechnen(
+    [{ saetze: [satz('latziehen', 90, 8), satz('seitheben', 90, 8)] }],
+    zweiUebungen,
+    tabelle
+  )
+  pruefen(
+    'Ganz oben: Diamant I',
+    beideSpitze.stufe?.name === 'Diamant' && beideSpitze.division === 'I'
+  )
+  pruefen(
+    'Ohne Geschlecht bei getrennten Tabellen kein Gesamtrang',
+    gesamtrangBerechnen([], uebungen, rangdaten, '').status === 'skala_fehlt'
   )
 
   zeilen.push(`ABSCHLUSS: ${zeilen.length} Prüfpunkte bestanden.`)

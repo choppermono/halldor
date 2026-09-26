@@ -94,4 +94,52 @@ export function ranglisteBerechnen(einheiten, uebungen, daten = rangdaten, gesch
   )
 }
 
+// Punkte einer Uebung, fliessend von 0 bis 6: unter Bronze 0 bis 1, jede
+// Stufe ein ganzer Punkt, Diamant 5 bis 6 je nachdem, wie weit die Last ueber
+// der Diamant-Schwelle liegt (eine Stufenbreite darueber ergibt 6).
+export function uebungsPunkte(lastKg, schwellen) {
+  if (!positiveZahl(lastKg) || !Array.isArray(schwellen)) return 0
+  if (lastKg < schwellen[0]) return lastKg / schwellen[0]
+  const oben = schwellen.length - 1
+  for (let i = 0; i < oben; i++)
+    if (lastKg < schwellen[i + 1])
+      return i + 1 + (lastKg - schwellen[i]) / (schwellen[i + 1] - schwellen[i])
+  const breite = schwellen[oben] - schwellen[oben - 1]
+  return oben + 1 + Math.min(1, (lastKg - schwellen[oben]) / breite)
+}
+
+const DIVISIONEN = ['III', 'II', 'I']
+
+// Gesamtrang (E-140): Durchschnitt der Uebungspunkte ueber ALLE Uebungen des
+// Plans. Nicht trainierte Uebungen zaehlen 0; sonst reichte eine einzige
+// starke Uebung fuer einen hohen Gesamtrang. Jede Stufe hat drei Divisionen
+// wie in Spielen, III ist die unterste.
+export function gesamtrangBerechnen(einheiten, uebungen, daten = rangdaten, geschlecht = null) {
+  const katalog = Array.isArray(uebungen) ? uebungen : []
+  if (!katalog.length) return { status: 'keine_uebungen' }
+  if (!katalog.every((uebung) => schwellenFuer(uebung.id, daten, geschlecht)))
+    return { status: 'skala_fehlt', meldung: 'Für den Gesamtrang fehlt die Rangskala.' }
+  const beste = new Map(
+    ranglisteBerechnen(einheiten, katalog, daten, geschlecht).map((rang) => [
+      rang.uebungId,
+      rang.wert.lastKg,
+    ])
+  )
+  const einzeln = katalog.map((uebung) =>
+    uebungsPunkte(beste.get(uebung.id), schwellenFuer(uebung.id, daten, geschlecht))
+  )
+  const punkte = einzeln.reduce((summe, wert) => summe + wert, 0) / katalog.length
+  const stufenIndex = Math.min(daten.stufen.length, Math.floor(punkte)) - 1
+  const inStufe = stufenIndex >= daten.stufen.length - 1 ? punkte - daten.stufen.length : punkte % 1
+  return {
+    status: 'ok',
+    punkte,
+    stufe: stufenIndex >= 0 ? { index: stufenIndex, name: daten.stufen[stufenIndex] } : null,
+    division: stufenIndex >= 0 ? DIVISIONEN[Math.min(2, Math.floor(inStufe * 3))] : null,
+    anteilInStufe: stufenIndex >= 0 ? Math.min(1, inStufe) : punkte,
+    gewertet: beste.size,
+    gesamt: katalog.length,
+  }
+}
+
 export { rangdaten }
