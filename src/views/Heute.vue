@@ -13,6 +13,9 @@ import SystemSymbol from '../components/SystemSymbol.vue'
 import ZielHerleitung from '../components/ZielHerleitung.vue'
 import SchubladeBlatt from '../components/SchubladeBlatt.vue'
 
+// Kamera und zxing werden erst geladen, wenn jemand scannt.
+const VollbildScanner = defineAsyncComponent(() => import('../components/VollbildScanner.vue'))
+
 // Die Erfassung mit Kamera und zxing wird erst geladen, wenn jemand scannt.
 const ProduktBestaetigen = defineAsyncComponent(() => import('./ProduktBestaetigen.vue'))
 
@@ -74,22 +77,46 @@ const makros = computed(() =>
   })
 )
 
+const letzterEintrag = computed(() => eintraege.value.at(-1) ?? null)
 const meldung = ref('')
 const protokollOffen = ref(false)
-const scannerOffen = ref(false)
+// Zwei Stufen: zuerst die Kamera im Vollbild, nach dem Treffer die Menge in
+// der Schublade. «Von Hand» und «Barcode eintippen» springen direkt dorthin.
+const kameraOffen = ref(false)
+const erfassungOffen = ref(false)
+const startBarcode = ref('')
 const scannerNummer = ref(0)
 const scanKnopf = ref(null)
 function scannerOeffnen() {
-  scannerNummer.value++
-  scannerOffen.value = true
   meldung.value = ''
+  kameraOffen.value = true
 }
-function scannerSchliessen() {
-  scannerOffen.value = false
+function kameraSchliessen() {
+  kameraOffen.value = false
   nextTick(() => scanKnopf.value?.focus({ preventScroll: true }))
 }
+function erfassungZeigen(code) {
+  startBarcode.value = code
+  scannerNummer.value++
+  erfassungOffen.value = true
+}
+function codeErkannt(code) {
+  kameraOffen.value = false
+  erfassungZeigen(code)
+}
+function eintippen() {
+  kameraOffen.value = false
+  erfassungZeigen('')
+}
+function handOeffnen() {
+  meldung.value = ''
+  erfassungZeigen('')
+}
+function erfassungSchliessen() {
+  erfassungOffen.value = false
+}
 function erfasst({ name, mengeG }) {
-  scannerSchliessen()
+  erfassungSchliessen()
   meldung.value = `${name} erfasst, ${zahl(mengeG, 1)} g.`
 }
 
@@ -209,41 +236,68 @@ function loeschen(id) {
           {{ vorschau.meldung }} <RouterLink to="/profil">Ziel im Profil prüfen.</RouterLink>
         </p>
 
-        <dl class="makrospalten">
-          <div v-for="makro in makros" :key="makro.key">
+        <!-- Jeder Makronährstoff hat eine eigene Leiste über die volle Breite. -->
+        <dl class="makroleisten">
+          <div v-for="makro in makros" :key="makro.key" class="makroleiste">
             <dt>{{ makro.name }}</dt>
             <dd>
               <strong>{{ zahl(makro.ist.bekannt) }}</strong
-              ><span>/ {{ makro.soll === null ? '–' : zahl(makro.soll) }} g</span>
+              ><span> / {{ makro.soll === null ? '–' : zahl(makro.soll) }} g</span>
             </dd>
-            <div class="skala" aria-hidden="true">
+            <div class="makro-spur" aria-hidden="true">
               <span :style="{ transform: `scaleX(${makro.anteil})` }"></span>
             </div>
           </div>
         </dl>
       </div>
 
-      <section class="erfassung" aria-label="Produkt erfassen">
-        <button ref="scanKnopf" type="button" class="scan-buehne" @click="scannerOeffnen">
-          <span class="scan-ecken" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span class="scan-start"><SystemSymbol name="barcode" />Barcode scannen</span>
-          <span class="scan-hinweis">Die Kamera startet erst nach dem Antippen</span>
+      <div class="heute-seitenfuss">
+        <button type="button" class="protokoll-oeffner" @click="protokollOffen = true">
+          <span class="system-label">Protokoll</span>
+          <span class="protokoll-vorschau">{{
+            letzterEintrag
+              ? `${letzterEintrag.name} · ${zahl(letzterEintrag.mengeG, 1)} g`
+              : 'Noch nichts erfasst'
+          }}</span>
+          <strong>{{ eintraege.length }}</strong>
+          <SystemSymbol name="rechts" />
         </button>
         <p class="statuszeile" role="status" aria-live="polite">{{ meldung }}</p>
-        <div class="erfassung-zeile">
-          <RouterLink class="erfassung-alternative" :to="{ path: '/produkt', query: { datum } }"
-            >Von Hand erfassen</RouterLink
-          >
-          <button type="button" class="protokoll-oeffner" @click="protokollOffen = true">
-            <span>Protokoll</span>
-            <strong>{{ eintraege.length }}</strong>
-            <SystemSymbol name="rechts" />
-          </button>
-        </div>
-      </section>
+      </div>
 
-      <SchubladeBlatt titel="Scanner" :offen="scannerOffen" @schliessen="scannerSchliessen">
-        <ProduktBestaetigen :key="scannerNummer" scanner eingebettet @erfasst="erfasst" />
+      <!-- Die Hauptaktion sitzt fest über den Reitern, wo der Daumen ist. -->
+      <div class="erfassungsleiste">
+        <button ref="scanKnopf" type="button" class="scan-knopf" @click="scannerOeffnen">
+          <SystemSymbol name="barcode" />Produkt scannen
+        </button>
+        <button
+          type="button"
+          class="hand-knopf"
+          aria-label="Produkt von Hand erfassen"
+          @click="handOeffnen"
+        >
+          <SystemSymbol name="stift" />
+        </button>
+      </div>
+
+      <VollbildScanner
+        v-if="kameraOffen"
+        @erkannt="codeErkannt"
+        @eintippen="eintippen"
+        @schliessen="kameraSchliessen"
+      />
+
+      <SchubladeBlatt
+        titel="Produkt erfassen"
+        :offen="erfassungOffen"
+        @schliessen="erfassungSchliessen"
+      >
+        <ProduktBestaetigen
+          :key="scannerNummer"
+          eingebettet
+          :start-barcode="startBarcode"
+          @erfasst="erfasst"
+        />
       </SchubladeBlatt>
 
       <SchubladeBlatt

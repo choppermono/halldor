@@ -1091,9 +1091,14 @@ textarea {
   background: var(--sig-fill);
   color: var(--farbe-auf-akzent);
   font-family: var(--mono);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+/* Der Hauptknopf leuchtet leicht nach unten: auf OLED wirkt er dadurch tief
+   statt aufgeklebt. */
+.ansicht .primaer:not(:disabled) {
+  box-shadow: var(--sig-glow);
 }
 .system-label,
 .plan-meta,
@@ -1901,7 +1906,7 @@ textarea {
   transform-origin: center;
 }
 .ring-skala line.erreicht {
-  stroke: var(--bone);
+  stroke: var(--sig-text);
   stroke-width: 2;
   animation: trace var(--base) var(--ease) both;
   animation-delay: calc(var(--i) * var(--fast) / 16);
@@ -1931,213 +1936,70 @@ textarea {
   text-align: center;
 }
 
-.makrospalten {
+/* Makros: jede Leiste über die volle Breite, Name links, Wert rechts. */
+.makroleisten {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--s-3);
-  margin: var(--s-5) 0 0;
+  margin: var(--s-4) 0 0;
 }
-.makrospalten > div {
-  min-width: 0;
-}
-.makrospalten dt {
-  overflow: hidden;
-  color: var(--bone-mute);
-  font: 400 0.625rem/1 var(--mono);
-  letter-spacing: 0.1em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.makrospalten dd {
-  display: flex;
+.makroleiste {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: var(--s-1);
-  margin: var(--s-2) 0 var(--s-2);
+  row-gap: var(--s-2);
 }
-.makrospalten dd strong {
-  font: 300 1.75rem/1 var(--display);
-}
-.makrospalten dd span {
-  color: var(--bone-mute);
-  font: 400 0.625rem/1 var(--mono);
-  white-space: nowrap;
-}
-
-/* Scanner-Bühne: der Hauptweg zum Erfassen, direkt auf Heute. */
-.erfassung {
-  margin-top: var(--s-5);
-}
-.ansicht .scan-buehne {
-  position: relative;
-  display: grid;
-  width: 100%;
-  min-height: 13rem;
-  place-content: center;
-  justify-items: center;
-  gap: var(--s-3);
-  padding: var(--s-5) var(--s-3);
-  border: 1px solid var(--line);
-  background: var(--ash);
+.makroleiste dt {
   color: var(--bone);
+  font: 500 var(--t-klein) / 1 var(--body);
+}
+.makroleiste dd {
+  margin: 0;
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+}
+.makroleiste dd strong {
+  color: var(--bone);
+  font-weight: 500;
+}
+.makro-spur {
+  position: relative;
+  grid-column: 1 / -1;
+  height: 6px;
+  background: var(--panel-solid);
   overflow: hidden;
 }
-.scan-buehne::before {
-  content: '';
+.makro-spur span {
   position: absolute;
-  top: 50%;
-  right: var(--s-3);
-  left: var(--s-3);
-  height: 1px;
-  background: var(--sig-text);
-  opacity: 0.45;
+  inset: 0;
+  background: var(--bone);
   transform-origin: left;
-  animation: split var(--slow) var(--ease) both;
-}
-.scan-ecken i {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  border: 0 solid var(--bone-dim);
-  transition: transform var(--fast) var(--ease);
-}
-.scan-ecken i:nth-child(1) {
-  top: var(--s-3);
-  left: var(--s-3);
-  border-width: 2px 0 0 2px;
-}
-.scan-ecken i:nth-child(2) {
-  top: var(--s-3);
-  right: var(--s-3);
-  border-width: 2px 2px 0 0;
-}
-.scan-ecken i:nth-child(3) {
-  right: var(--s-3);
-  bottom: var(--s-3);
-  border-width: 0 2px 2px 0;
-}
-.scan-ecken i:nth-child(4) {
-  bottom: var(--s-3);
-  left: var(--s-3);
-  border-width: 0 0 2px 2px;
-}
-.scan-buehne:hover .scan-ecken i:nth-child(1) {
-  transform: translate(var(--s-1), var(--s-1));
-}
-.scan-buehne:hover .scan-ecken i:nth-child(2) {
-  transform: translate(calc(-1 * var(--s-1)), var(--s-1));
-}
-.scan-buehne:hover .scan-ecken i:nth-child(3) {
-  transform: translate(calc(-1 * var(--s-1)), calc(-1 * var(--s-1)));
-}
-.scan-buehne:hover .scan-ecken i:nth-child(4) {
-  transform: translate(var(--s-1), calc(-1 * var(--s-1)));
-}
-.scan-start {
-  position: relative;
-  display: inline-flex;
-  min-height: 56px;
-  align-items: center;
-  gap: var(--s-2);
-  padding: 0 var(--s-4);
-  background: var(--sig-fill);
-  color: var(--farbe-auf-akzent);
-  font: 500 var(--t-label) / 1 var(--mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.scan-start svg {
-  width: 22px;
-  height: 22px;
-}
-.scan-hinweis {
-  position: relative;
-  color: var(--bone-mute);
-  font-size: var(--t-klein);
-}
-.erfassung-alternative {
-  display: flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  gap: var(--s-2);
-  color: var(--bone-mute);
-  text-decoration: none;
-}
-.erfassung-alternative span {
-  color: var(--bone);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.erfassung-eingebettet {
-  padding: var(--s-3);
-  border: 1px solid var(--line-strong);
-  background: var(--ash);
-  animation: lineIn var(--base) var(--ease) both;
-}
-.erfassung-kopf {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-3);
-  margin-bottom: var(--s-2);
-}
-.erfassung-eingebettet .kamera-scanner {
-  margin-bottom: var(--s-3);
-}
-.heute .statuszeile:empty {
-  display: none;
+  transition: transform var(--base) var(--ease);
 }
 
-/* Heute auf einem Bildschirm: der Ring richtet sich nach der Höhe, damit
-   Ring, Makros und Scanner zusammen ohne Scrollen sichtbar sind. */
-.heute .heute-kopf {
-  margin-bottom: var(--s-2);
-}
-.heute .kalorienring {
-  width: min(100%, 20rem, 31svh);
-  margin-top: 0;
-}
-.heute .makrospalten {
+/* Protokoll als eine Zeile, die sich als Schublade öffnet. */
+.heute-seitenfuss {
   margin-top: var(--s-4);
-}
-.heute .erfassung {
-  margin-top: var(--s-4);
-}
-.heute .scan-buehne {
-  min-height: 8.5rem;
-  padding-block: var(--s-4);
-}
-.heute .statuszeile {
-  margin: var(--s-2) 0 0;
-  text-align: center;
-}
-.erfassung-zeile {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-bottom: 1px solid var(--line);
-}
-.ansicht .erfassung-zeile > * {
-  display: flex;
-  min-height: 52px;
-  align-items: center;
-  gap: var(--s-2);
-  border: 0;
-  background: transparent;
-  color: var(--bone-dim);
-  font: 400 var(--t-klein) / 1 var(--body);
-  text-decoration: none;
-}
-.ansicht .erfassung-zeile .erfassung-alternative {
-  justify-content: flex-start;
-  padding: 0;
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 .ansicht .protokoll-oeffner {
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  gap: var(--s-3);
   padding: 0;
-  border-left: 1px solid var(--line);
+  border: 0;
+  border-block: 1px solid var(--line);
+  background: transparent;
+  color: var(--bone);
+  text-align: left;
+}
+.protokoll-vorschau {
+  overflow: hidden;
+  color: var(--bone-dim);
+  font-size: var(--t-klein);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .protokoll-oeffner strong {
   color: var(--bone);
@@ -2146,6 +2008,271 @@ textarea {
 .protokoll-oeffner svg {
   width: 18px;
   height: 18px;
+}
+.heute .statuszeile {
+  margin: var(--s-2) 0 0;
+  text-align: center;
+}
+.heute .statuszeile:empty {
+  display: none;
+}
+
+/* Erfassungsleiste: fest über den Reitern, die eine Hauptaktion der App. */
+.heute {
+  padding-bottom: calc(64px + var(--s-4));
+}
+.erfassungsleiste {
+  position: fixed;
+  right: var(--gutter);
+  bottom: calc(var(--navigation-hoehe, var(--nav-h)) + var(--s-3));
+  left: var(--gutter);
+  z-index: var(--z-leiste);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: var(--s-2);
+}
+.ansicht .scan-knopf {
+  min-height: 64px;
+  gap: var(--s-3);
+  border: 0;
+  background: var(--sig-fill);
+  box-shadow: var(--sig-glow);
+  color: var(--farbe-auf-akzent);
+  font: 600 var(--t-klein) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: transform var(--fast) var(--ease);
+}
+.ansicht .scan-knopf:active,
+.ansicht .hand-knopf:active {
+  transform: scale(0.97);
+}
+.scan-knopf svg {
+  width: 26px;
+  height: 26px;
+}
+.ansicht .hand-knopf {
+  min-height: 64px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--bone);
+}
+.hand-knopf svg {
+  width: 22px;
+  height: 22px;
+}
+.erfassung-eingebettet {
+  animation: lineIn var(--base) var(--ease) both;
+}
+
+/* Heute auf einem Bildschirm: der Ring richtet sich nach der Höhe. */
+.heute .heute-kopf {
+  margin-bottom: var(--s-2);
+}
+.heute .kalorienring {
+  width: min(100%, 19rem, 30svh);
+  margin-top: 0;
+}
+
+/* Vollbild-Scanner: nur Kamera, Sucher und ein Ausgang. */
+.vollbild-scanner {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--void);
+  color: var(--bone);
+  overflow: hidden;
+}
+.vollbild-scanner::backdrop {
+  background: var(--void);
+}
+.vollbild-scanner video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.sucher {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: min(78vw, 22rem);
+  aspect-ratio: 16 / 10;
+  transform: translate(-50%, -50%);
+  /* Alles ausserhalb des Suchers wird abgedunkelt. */
+  box-shadow: 0 0 0 200vmax color-mix(in srgb, var(--void) 62%, transparent);
+}
+.sucher i {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border: 0 solid var(--bone);
+  transition:
+    transform var(--fast) var(--ease),
+    opacity var(--fast) var(--ease);
+}
+.sucher i:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-width: 3px 0 0 3px;
+}
+.sucher i:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-width: 3px 3px 0 0;
+}
+.sucher i:nth-child(3) {
+  right: 0;
+  bottom: 0;
+  border-width: 0 3px 3px 0;
+}
+.sucher i:nth-child(4) {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 3px 3px;
+}
+.sucher-linie {
+  position: absolute;
+  top: 0;
+  right: var(--s-3);
+  left: var(--s-3);
+  height: 2px;
+  background: var(--sig-text);
+  box-shadow: 0 0 16px var(--sig-text);
+  /* Die einzige Dauerbewegung ausser der Schreibmarke: sie zeigt, dass die
+     Kamera sucht, und endet mit dem Treffer. */
+  animation: sweep calc(var(--slow) * 3) var(--ease) infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sucher-linie {
+    animation: none;
+    top: 50%;
+  }
+}
+[data-zustand='erkannt'] .sucher i {
+  border-color: var(--sig-text);
+  animation: glitchFlash var(--fast) var(--ease) both;
+}
+[data-zustand='erkannt'] .sucher i:nth-child(1) {
+  transform: translate(var(--s-3), var(--s-3));
+}
+[data-zustand='erkannt'] .sucher i:nth-child(2) {
+  transform: translate(calc(-1 * var(--s-3)), var(--s-3));
+}
+[data-zustand='erkannt'] .sucher i:nth-child(3) {
+  transform: translate(calc(-1 * var(--s-3)), calc(-1 * var(--s-3)));
+}
+[data-zustand='erkannt'] .sucher i:nth-child(4) {
+  transform: translate(var(--s-3), calc(-1 * var(--s-3)));
+}
+.scanner-leiste {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: calc(env(safe-area-inset-top, 0px) + var(--s-3)) var(--s-3) var(--s-3);
+}
+.scanner-leiste .system-label {
+  color: var(--bone);
+}
+.vollbild-scanner .rund-knopf,
+.rund-platz {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  flex-shrink: 0;
+}
+.vollbild-scanner .rund-knopf {
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--void) 55%, transparent);
+  color: var(--bone);
+  cursor: pointer;
+}
+.vollbild-scanner .rund-knopf[aria-pressed='true'] {
+  border-color: var(--sig-text);
+  color: var(--sig-text);
+}
+.rund-knopf svg {
+  width: 22px;
+  height: 22px;
+}
+.scanner-fuss {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + var(--s-5));
+  text-align: center;
+}
+.scanner-anleitung,
+.scanner-fehler {
+  margin: 0;
+  color: var(--bone);
+  font-size: var(--t-basis);
+}
+.scanner-fehler {
+  max-width: 22rem;
+}
+.scanner-treffer {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+}
+.scanner-treffer strong {
+  font: 500 1.5rem/1 var(--mono);
+  letter-spacing: 0.12em;
+  animation: typeIn var(--base) var(--ease) both;
+}
+.scanner-aktionen-unten {
+  display: grid;
+  width: min(100%, 22rem);
+  gap: var(--s-2);
+}
+.vollbild-scanner .primaer {
+  min-height: 56px;
+  border: 0;
+  background: var(--sig-fill);
+  box-shadow: var(--sig-glow);
+  color: var(--farbe-auf-akzent);
+  font: 600 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.vollbild-scanner .glas-knopf {
+  min-height: 52px;
+  border: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--void) 55%, transparent);
+  color: var(--bone);
+  font: 500 var(--t-klein) / 1 var(--body);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+@keyframes sweep {
+  from {
+    transform: translateY(var(--s-2));
+  }
+  to {
+    transform: translateY(calc(min(78vw, 22rem) * 0.625 - var(--s-2)));
+  }
 }
 
 /* Schublade: öffnet sich über der Seite statt sie zu verlängern. */
@@ -2168,9 +2295,29 @@ textarea {
 .schublade::backdrop {
   background: color-mix(in srgb, var(--void) 80%, transparent);
 }
+.mengen-schnellwahl {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-1);
+  margin-top: var(--s-3);
+}
+.ansicht .mengen-schnellwahl button {
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--bone-dim);
+  font: 500 var(--t-label) / 1 var(--mono);
+}
+.ansicht .mengen-schnellwahl button[aria-pressed='true'] {
+  border-color: var(--sig-text);
+  color: var(--bone);
+}
 .schublade-inhalt {
   max-height: 92svh;
   overflow-y: auto;
+  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-width: thin;
   overscroll-behavior: contain;
   padding: 0 var(--gutter) calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
 }
@@ -2278,17 +2425,28 @@ textarea {
   .heute-raster {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-    gap: var(--s-6);
+    grid-template-rows: auto auto 1fr;
+    align-items: start;
+    gap: var(--s-4) var(--s-6);
+  }
+  .heute-instrument {
+    grid-row: 1 / span 3;
   }
   .heute .kalorienring {
     width: min(100%, 24rem);
   }
-  .heute .erfassung {
-    margin-top: 0;
+  .heute {
+    padding-bottom: 0;
   }
-  .heute .scan-buehne {
-    min-height: 16rem;
+  .erfassungsleiste {
+    position: static;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .heute-seitenfuss {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
   }
   .vitrine {
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));

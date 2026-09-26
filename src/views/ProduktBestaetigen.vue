@@ -27,6 +27,8 @@ const props = defineProps({
   // Auf Heute eingebettet: kein eigener Seitenkopf, nach dem Erfassen bleibt
   // man auf derselben Seite statt zu navigieren.
   eingebettet: { type: Boolean, default: false },
+  // Vom Vollbild-Scanner erkannter Code: wird beim Öffnen sofort abgefragt.
+  startBarcode: { type: String, default: '' },
 })
 const melden = defineEmits(['erfasst'])
 const route = useRoute()
@@ -52,6 +54,7 @@ const scannerAbfrageStatus = ref('bereit')
 const ergebnisBarcode = ref(null)
 const quelle = ref(false)
 const mengeG = ref('')
+const portionVorbelegt = ref(false)
 const meldung = ref('')
 const schritt = ref('produkt')
 // Die Nährwertfelder erscheinen erst, wenn es etwas zu prüfen oder
@@ -110,6 +113,7 @@ async function suchen() {
   ergebnisBarcode.value = antwort.produkt.barcode
   quelle.value = true
   mengeG.value = antwort.produkt.portionG ?? ''
+  portionVorbelegt.value = Number.isFinite(antwort.produkt.portionG)
   suchmeldung.value = antwort.produkt.volumenbasis
     ? 'Produkt gefunden. Angaben pro 100 ml sind ohne Dichte nicht in Gramm umrechenbar; Nährwerte bleiben unbekannt.'
     : 'Produkt gefunden. Nährwerte prüfen und Menge bestätigen.'
@@ -123,9 +127,15 @@ async function scannerErkannt(code) {
   else if (status === 'unbekannt') scannerAbfrageStatus.value = 'unbekannt'
   else if (status) scannerAbfrageStatus.value = 'abfragefehler'
 }
+// Eingebettet führt ein Treffer direkt zur Menge: die Nährwerte kommen von
+// Open Food Facts und bleiben über «Produktangaben ändern» erreichbar.
+async function abfragenUndWeiter() {
+  const status = await suchen()
+  if (status === 'gefunden' && props.eingebettet) weiter()
+}
 function eingabeSuchen() {
   scannerAbfrageStatus.value = 'manuell'
-  suchen()
+  abfragenUndWeiter()
 }
 function manuell() {
   ++anfrageNummer
@@ -165,6 +175,10 @@ function bestaetigen() {
 // Ohne neuen Fokus fiele er auf den Seitenanfang zurück.
 onMounted(() => {
   if (props.eingebettet) titelFokussieren()
+  if (/^\d{8,14}$/.test(props.startBarcode)) {
+    barcode.value = props.startBarcode
+    abfragenUndWeiter()
+  }
 })
 onUnmounted(() => {
   ++anfrageNummer
@@ -311,7 +325,7 @@ onUnmounted(() => {
       </form>
     </template>
     <form v-else class="mengenformular" @submit.prevent="bestaetigen">
-      <p class="system-label">Portion / {{ datum }}</p>
+      <p class="system-label">Portion / {{ datumAnzeige }}</p>
       <h2 class="produktname">{{ produkt.name }}</h2>
       <p v-if="produkt.marke" class="klein">{{ produkt.marke }}</p>
       <div class="mengenfeld">
@@ -324,10 +338,21 @@ onUnmounted(() => {
           :min="PRODUKT_GRENZEN.mengeMin"
           :max="PRODUKT_GRENZEN.mengeMax"
         />
+        <!-- Häufige Mengen mit einem Tipp; genaue Werte über die Zahl. -->
+        <div class="mengen-schnellwahl" role="group" aria-label="Schnellwahl Menge">
+          <button
+            v-for="gramm in [25, 50, 100, 150, 200]"
+            :key="gramm"
+            type="button"
+            :aria-pressed="mengeG === gramm"
+            @click="mengeG = gramm"
+          >
+            {{ gramm }} g
+          </button>
+        </div>
       </div>
-      <p class="klein">
-        Eine vorbelegte Menge stammt aus der Portionsangabe des Produkts. Prüfe die tatsächlich
-        erfasste Grammmenge.
+      <p v-if="portionVorbelegt" class="klein">
+        Vorbelegt aus der Portionsangabe des Produkts. Prüfe die tatsächlich gegessene Menge.
       </p>
       <dl class="messwerte staffel">
         <div v-for="feld in NAEHRWERTE.slice(0, 4)" :key="feld.key">

@@ -10,6 +10,9 @@ const pfade = {
   training: 'M3 9v6m3-9v12m0-6h12m0-6v12m3-9v6',
   rang: 'm12 3 8 9-8 9-8-9 8-9Zm-4 9 4-4 4 4-4 4-4-4Z',
   loeschen: 'M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6m4-6v6',
+  schliessen: 'M6 6l12 12M18 6 6 18',
+  licht: 'M9 3h6l-1 6h-4L9 3Zm1 6v4l-1 8h6l-1-8V9M12 13v3',
+  stift: 'M4 20h4L19 9l-4-4L4 16v4Zm9-13 4 4',
 }
 </script>
 
