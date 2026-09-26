@@ -2,18 +2,21 @@ import rangdaten from '../daten/rangstufen.json'
 import { maximumSchaetzen } from './training.js'
 
 // Der Rang misst die Last auf der Stange, nicht ein Vielfaches des
-// Koerpergewichts (E-128). Er ist eine Spielmechanik fuer den eigenen
-// Fortschritt und kein Vergleich mit anderen Menschen. Deshalb gibt es keine
-// Normierung nach Koerpergewicht oder Geschlecht, und Maschinenlasten sind
-// kein Problem: wer immer im selben Studio trainiert, vergleicht sich mit
-// sich selbst.
+// Koerpergewichts. Die Schwellen sind fest und fuer alle gleich, getrennt nur
+// nach Geschlecht (E-133): Gold bei der Beinpresse soll bei jeder Person
+// dasselbe bedeuten, sonst ist kein Vergleich untereinander moeglich.
 
 function positiveZahl(wert) {
   return Number.isFinite(wert) && wert > 0
 }
 
-export function schwellenFuer(uebungId, daten = rangdaten) {
-  const schwellen = daten?.uebungen?.[uebungId]
+// Ein Eintrag ist entweder eine einzelne Tabelle fuer alle oder ein Objekt
+// mit je einer Tabelle fuer m und w. Ohne Geschlecht gibt es bei getrennten
+// Tabellen keine Skala: raten hiesse, jemanden an der falschen Tabelle zu
+// messen.
+export function schwellenFuer(uebungId, daten = rangdaten, geschlecht = null) {
+  const eintrag = daten?.uebungen?.[uebungId]
+  const schwellen = Array.isArray(eintrag) ? eintrag : eintrag?.[geschlecht]
   return Array.isArray(schwellen) && schwellen.length === daten.stufen.length ? schwellen : null
 }
 
@@ -24,11 +27,11 @@ export function stufeBestimmen(lastKg, schwellen, stufen = rangdaten.stufen) {
   return index < 0 ? null : { index, name: stufen[index], schwelle: schwellen[index] }
 }
 
-export function rangFuerSatz(satz, daten = rangdaten) {
+export function rangFuerSatz(satz, daten = rangdaten, geschlecht = null) {
   if (!positiveZahl(satz?.gewichtKg))
     return { status: 'satz_ungueltig', meldung: 'Der Satz enthält keine gültige Last.' }
   const lastKg = satz.gewichtKg
-  const schwellen = schwellenFuer(satz.uebungId, daten)
+  const schwellen = schwellenFuer(satz.uebungId, daten, geschlecht)
   const stufe = stufeBestimmen(lastKg, schwellen, daten.stufen)
   const naechsteIndex = stufe ? stufe.index + 1 : 0
   const naechsteSchwelle = schwellen?.[naechsteIndex] ?? null
@@ -57,7 +60,7 @@ export function rangFuerSatz(satz, daten = rangdaten) {
 // Zaehlt nur Saetze, die die Untergrenze des Wiederholungsfensters erreicht
 // haben. Sonst liesse sich der Rang mit einem einzelnen schweren Versuch
 // erschleichen, der mit dem Training nichts zu tun hat.
-export function ranglisteBerechnen(einheiten, uebungen, daten = rangdaten) {
+export function ranglisteBerechnen(einheiten, uebungen, daten = rangdaten, geschlecht = null) {
   const katalog = new Map((Array.isArray(uebungen) ? uebungen : []).map((u) => [u.id, u]))
   const beste = new Map()
   for (const einheit of Array.isArray(einheiten) ? einheiten : []) {
@@ -65,7 +68,7 @@ export function ranglisteBerechnen(einheiten, uebungen, daten = rangdaten) {
       const uebung = katalog.get(satz?.uebungId)
       if (!uebung) continue
       if (!(satz.wiederholungen >= uebung.wiederholungen.min)) continue
-      const ergebnis = rangFuerSatz(satz, daten)
+      const ergebnis = rangFuerSatz(satz, daten, geschlecht)
       if (ergebnis.status !== 'ok') continue
       const bisher = beste.get(satz.uebungId)
       const besser =

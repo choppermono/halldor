@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RouterLink from '../components/SeitenLink.vue'
 import { useProfil } from '../composables/useProfil.js'
@@ -7,11 +7,13 @@ import { useTagebuch } from '../composables/useTagebuch.js'
 import { datumPruefen, zielBerechnen } from '../lib/ernaehrung.js'
 import { bilanzBerechnen } from '../lib/lebensmittel.js'
 import { kalorien, lokalesDatum, tagVerschieben, zahl } from '../lib/darstellung.js'
-import Makrobalken from '../components/Makrobalken.vue'
 import GlyphenText from '../components/GlyphenText.vue'
 import DatumFeld from '../components/DatumFeld.vue'
 import SystemSymbol from '../components/SystemSymbol.vue'
 import ZielHerleitung from '../components/ZielHerleitung.vue'
+
+// Die Erfassung mit Kamera und zxing wird erst geladen, wenn jemand scannt.
+const ProduktBestaetigen = defineAsyncComponent(() => import('./ProduktBestaetigen.vue'))
 
 defineOptions({ name: 'HeuteAnsicht' })
 
@@ -40,7 +42,55 @@ const anteil = computed(() =>
   ziel.value?.kcal > 0 ? Math.min(100, (bilanz.value.kcal.bekannt / ziel.value.kcal) * 100) : 0
 )
 const differenz = computed(() => (ziel.value ? ziel.value.kcal - bilanz.value.kcal.bekannt : null))
+const ueberZiel = computed(() => differenz.value !== null && differenz.value < 0)
+
+// Der Ring ist eine Skala aus 60 Strichen wie auf einem Instrument. Erreichte
+// Striche sind hell; so liest man den Anteil, ohne eine Fläche zu füllen.
+const STRICHE = 60
+const striche = computed(() =>
+  Array.from({ length: STRICHE }, (_, index) => ({
+    index,
+    winkel: (index * 360) / STRICHE,
+    lang: index % 5 === 0,
+    erreicht: index < Math.round((anteil.value / 100) * STRICHE),
+  }))
+)
+const makros = computed(() =>
+  [
+    ['proteinG', 'Eiweiss'],
+    ['kohlenhydrateG', 'Kohlenhydrate'],
+    ['fettG', 'Fett'],
+  ].map(([key, name]) => {
+    const soll = ziel.value?.[key] ?? null
+    const ist = bilanz.value[key]
+    return {
+      key,
+      name,
+      ist,
+      soll,
+      anteil: soll > 0 ? Math.min(1, ist.bekannt / soll) : 0,
+    }
+  })
+)
+
 const meldung = ref('')
+const scannerOffen = ref(false)
+const scannerNummer = ref(0)
+const scanKnopf = ref(null)
+function scannerOeffnen() {
+  scannerNummer.value++
+  scannerOffen.value = true
+  meldung.value = ''
+}
+function scannerSchliessen() {
+  scannerOffen.value = false
+  nextTick(() => scanKnopf.value?.focus({ preventScroll: true }))
+}
+function erfasst({ name, mengeG }) {
+  scannerSchliessen()
+  meldung.value = `${name} erfasst, ${zahl(mengeG, 1)} g.`
+}
+
 const datumRegister = ref(null)
 const datumEntwurf = ref(datum.value)
 const datumBeschriftung = computed(() =>
@@ -116,59 +166,86 @@ function loeschen(id) {
     </template>
 
     <template v-else>
-      <section class="bilanz-hero" aria-label="Kalorienbilanz">
-        <p class="bilanz-zahl">
-          <GlyphenText :wert="kalorien(bilanz.kcal.bekannt)" /><span>kcal</span>
-        </p>
-        <div class="bilanz-skala" aria-hidden="true">
-          <span :style="{ transform: `scaleX(${anteil / 100})` }"></span
-          ><i :style="{ left: `${anteil}%` }"></i>
+      <section class="kalorienring" :class="{ ueber: ueberZiel }" aria-label="Kalorienbilanz">
+        <svg class="ring-skala" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+          <circle class="ring-grund" cx="120" cy="120" r="96" />
+          <!-- Die Drehung sitzt an der Gruppe, damit die CSS-Animation am Strich
+               sie nicht überschreibt. -->
+          <g
+            v-for="strich in striche"
+            :key="strich.index"
+            :transform="`rotate(${strich.winkel} 120 120)`"
+          >
+            <line
+              x1="120"
+              :y1="strich.lang ? 6 : 10"
+              x2="120"
+              y2="20"
+              :class="{ erreicht: strich.erreicht }"
+              :style="{ '--i': strich.index }"
+            />
+          </g>
+          <line class="ring-ziel" x1="120" y1="0" x2="120" y2="24" />
+        </svg>
+        <div class="ring-inhalt">
+          <span class="system-label">{{ ueberZiel ? 'Über dem Ziel' : 'Noch offen' }}</span>
+          <strong class="ring-zahl"
+            ><GlyphenText :wert="differenz === null ? '–' : kalorien(Math.abs(differenz))"
+          /></strong>
+          <span class="ring-bezug"
+            >{{ kalorien(bilanz.kcal.bekannt) }} / {{ ziel ? kalorien(ziel.kcal) : '–' }} kcal</span
+          >
         </div>
-        <dl class="bilanz-werte">
-          <div>
-            <dt>Ziel</dt>
-            <dd>{{ ziel ? kalorien(ziel.kcal) : '–' }}</dd>
-          </div>
-          <div>
-            <dt>Offen</dt>
-            <dd>{{ differenz === null ? '–' : kalorien(Math.abs(differenz)) }}</dd>
-          </div>
-          <div>
-            <dt>Anteil</dt>
-            <dd>{{ Math.round(anteil) }} %</dd>
-          </div>
-        </dl>
-        <p v-if="!bilanz.kcal.vollstaendig" class="klein">
-          Bekannte Teilsumme. Bei {{ bilanz.kcal.unbekannt }} Eintrag/Einträgen ist die Energie
-          unbekannt.
-        </p>
-        <p v-else-if="differenz < 0" class="klein">
-          {{ kalorien(Math.abs(differenz)) }} kcal über dem Ziel.
-        </p>
       </section>
-
+      <p v-if="!bilanz.kcal.vollstaendig" class="klein ring-hinweis">
+        Bekannte Teilsumme. Bei {{ bilanz.kcal.unbekannt }} Eintrag/Einträgen ist die Energie
+        unbekannt.
+      </p>
       <p v-if="!ziel" class="meldung" role="status">
         {{ vorschau.meldung }} <RouterLink to="/profil">Ziel im Profil prüfen.</RouterLink>
       </p>
-      <div class="makro-protokoll">
-        <div class="makros">
-          <Makrobalken
-            v-for="[key, name] in [
-              ['proteinG', 'Eiweiss'],
-              ['kohlenhydrateG', 'Kohlenhydrate'],
-              ['fettG', 'Fett'],
-            ]"
-            :key="key"
-            :name="name"
-            :bilanz="bilanz[key]"
-            :ziel="ziel?.[key] ?? null"
-          />
-        </div>
-      </div>
 
-      <RouterLink class="knopf primaer erfassen" :to="{ path: '/produkt', query: { datum } }"
-        ><SystemSymbol name="plus" />Produkt erfassen</RouterLink
-      >
+      <dl class="makrospalten">
+        <div v-for="makro in makros" :key="makro.key">
+          <dt>{{ makro.name }}</dt>
+          <dd>
+            <strong>{{ zahl(makro.ist.bekannt) }}</strong
+            ><span>/ {{ makro.soll === null ? '–' : zahl(makro.soll) }} g</span>
+          </dd>
+          <div class="skala" aria-hidden="true">
+            <span :style="{ transform: `scaleX(${makro.anteil})` }"></span>
+          </div>
+        </div>
+      </dl>
+
+      <section class="erfassung" aria-label="Produkt erfassen">
+        <button
+          v-if="!scannerOffen"
+          ref="scanKnopf"
+          type="button"
+          class="scan-buehne"
+          @click="scannerOeffnen"
+        >
+          <span class="scan-ecken" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="scan-start"><SystemSymbol name="barcode" />Barcode scannen</span>
+          <span class="scan-hinweis">Die Kamera startet erst nach dem Antippen</span>
+        </button>
+        <ProduktBestaetigen
+          v-else
+          :key="scannerNummer"
+          scanner
+          eingebettet
+          @erfasst="erfasst"
+          @schliessen="scannerSchliessen"
+        />
+        <RouterLink
+          v-if="!scannerOffen"
+          class="erfassung-alternative"
+          :to="{ path: '/produkt', query: { datum } }"
+          >Kein Barcode? <span>Von Hand erfassen</span></RouterLink
+        >
+      </section>
+      <p class="statuszeile" role="status" aria-live="polite">{{ meldung }}</p>
 
       <section class="tagesprotokoll" aria-labelledby="eintraege-titel">
         <div class="protokollkopf">
@@ -178,7 +255,7 @@ function loeschen(id) {
           >
         </div>
         <p v-if="!eintraege.length" class="leerzustand">
-          Für diesen Tag ist noch nichts erfasst. Scanne ein Produkt oder trage es von Hand ein.
+          Für diesen Tag ist noch nichts erfasst. Scanne dein erstes Produkt.
         </p>
         <ul v-else class="protokoll-liste">
           <li v-for="eintrag in eintraege" :key="eintrag.id">
@@ -210,7 +287,6 @@ function loeschen(id) {
           :ergebnis="{ status: 'ok', wert: tag.ziel, herleitung: tag.ziel.herleitung }"
         />
       </details>
-      <p v-if="meldung" class="statuszeile" role="status">{{ meldung }}</p>
     </template>
     <p v-if="tagebuch.zustand.hinweis || profil.zustand.hinweis" class="meldung" role="status">
       {{ tagebuch.zustand.hinweis || profil.zustand.hinweis }}

@@ -364,6 +364,53 @@ try {
   )
   pruefen('Es gibt keinen Gesamtrang', !('gesamtrang' in liste) && Array.isArray(liste))
 
+  // ---- Feste Schwellen je Geschlecht (E-133) ----
+  // Die Pruefpunkte oben pruefen nur einfache Tabellen (Arrays). Die echten
+  // Daten sind seit 26.09.2026 nach m und w getrennt; ohne diese Punkte
+  // wuerden die beiden Pruefungen zu gesetzten Schwellen leer bestehen.
+  const aufsteigend = (werte) =>
+    Array.isArray(werte) &&
+    werte.length === 5 &&
+    werte.every((wert, i) => wert > 0 && (i === 0 || wert > werte[i - 1]))
+  pruefen(
+    'Jede Katalogübung hat Schwellen für m und w, positiv und aufsteigend',
+    uebungen.every(
+      (eintrag) =>
+        aufsteigend(rangdaten.uebungen[eintrag.id]?.m) &&
+        aufsteigend(rangdaten.uebungen[eintrag.id]?.w)
+    )
+  )
+  pruefen(
+    'Schwellen hängen am Geschlecht',
+    schwellenFuer('beinpresse', rangdaten, 'm')?.[0] === rangdaten.uebungen.beinpresse.m[0] &&
+      schwellenFuer('beinpresse', rangdaten, 'w')?.[0] === rangdaten.uebungen.beinpresse.w[0]
+  )
+  pruefen(
+    'Ohne Geschlecht keine Skala bei getrennten Tabellen',
+    schwellenFuer('beinpresse', rangdaten, '') === null
+  )
+  const w40 = rangFuerSatz(
+    { uebungId: 'latziehen', gewichtKg: 40, wiederholungen: 8 },
+    rangdaten,
+    'w'
+  )
+  const m40 = rangFuerSatz(
+    { uebungId: 'latziehen', gewichtKg: 40, wiederholungen: 8 },
+    rangdaten,
+    'm'
+  )
+  pruefen(
+    'Dieselbe Last ergibt je Tabelle eine eigene Stufe (Latzug 40 kg)',
+    w40.wert.stufe?.name === 'Silber' &&
+      m40.wert.stufe === null &&
+      m40.wert.naechsteStufe === 'Bronze'
+  )
+  pruefen(
+    'Rangliste reicht das Geschlecht durch',
+    ranglisteBerechnen([{ saetze: [satz('latziehen', 40, 8)] }], katalogProbe, rangdaten, 'w')[0]
+      ?.wert.stufe?.name === 'Silber'
+  )
+
   zeilen.push(`ABSCHLUSS: ${zeilen.length} Prüfpunkte bestanden.`)
 } catch (fehler) {
   zeilen.push(`ABBRUCH: ${fehler.message}`)

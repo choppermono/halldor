@@ -1450,72 +1450,117 @@ textarea {
   list-style: none;
   border-bottom: 1px solid var(--line);
 }
-.rang-vermerk {
-  margin: var(--s-3) 0 var(--s-4);
-  padding-left: var(--s-3);
-  border-left: 1px solid var(--sig-text);
-  color: var(--bone-dim);
-}
-.rangzeile {
-  padding-block: var(--s-3);
-  border-top: 1px solid var(--line);
-  animation: lineIn var(--base) var(--ease) both;
-}
-.rangzeile-kopf {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--s-3);
-}
-.ansicht .rangzeile-kopf h2 {
-  min-width: 0;
-  margin: 0;
-  font: 400 1.75rem/1.05 var(--display);
-}
-.rang-last {
-  display: flex;
+/* Rangzeichen: Stufe über Geometrie, Akzent nur auf der erreichten Raute. */
+.rangzeichen {
   flex-shrink: 0;
-  align-items: baseline;
+  overflow: visible;
+}
+.rangzeichen polygon {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.rangzeichen polygon.erreicht {
+  stroke: var(--bone);
+  animation: trace var(--slow) var(--ease) both;
+  animation-delay: calc(var(--i) * var(--fast) / 2);
+}
+.rangzeichen polygon.aktuell {
+  stroke: var(--sig-text);
+  stroke-width: 2;
+}
+.rangzeichen .kern {
+  fill: var(--sig-text);
+  stroke: none;
+}
+.rangzeichen-leer polygon {
+  stroke: var(--line);
+}
+
+.stufenverteilung {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: var(--s-4) 0 var(--s-5);
+  padding: 0;
+  list-style: none;
+  border-block: 1px solid var(--line);
+}
+.stufenverteilung li {
+  display: grid;
+  justify-items: center;
   gap: var(--s-2);
-  margin: 0;
+  padding: var(--s-3) 0;
 }
-.rang-last strong {
-  font: 300 2.5rem/1 var(--display);
+.stufenverteilung li + li {
+  border-left: 1px solid var(--line);
 }
-.rang-last span {
+.stufenverteilung strong {
+  font: 300 2rem/1 var(--display);
+}
+.stufenverteilung span {
   color: var(--bone-mute);
-  font: 400 var(--t-label) / 1 var(--mono);
+  font: 400 0.625rem/1 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.stufe {
-  margin: var(--s-2) 0 var(--s-3);
-  color: var(--sig-text);
-  font: italic 400 1.75rem/1 var(--display);
+.stufenverteilung li.leer strong {
+  color: var(--bone-mute);
 }
-.rang-offen {
-  margin-top: var(--s-5);
-}
-.ansicht .rang-offen h2 {
+
+.rangliste {
   margin: 0;
-  font: 500 var(--t-label) / 1 var(--mono);
-}
-.rang-offen ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-1) var(--s-3);
-  margin: var(--s-3) 0 0;
   padding: 0;
   list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+.rangzeile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--s-3);
+  padding-block: var(--s-4);
+  border-top: 1px solid var(--line);
+  animation: lineIn var(--base) var(--ease) both;
+  animation-delay: calc(var(--i) * var(--fast) / 3);
+}
+.rangzeile-text {
+  min-width: 0;
+}
+.ansicht .rangzeile h2 {
+  margin: 0;
+  font: 400 1.625rem/1.05 var(--display);
+  overflow-wrap: anywhere;
+}
+.stufe {
+  margin: var(--s-1) 0 0;
+  color: var(--sig-text);
+  font: italic 400 1.5rem/1 var(--display);
+}
+.stufe.ohne {
   color: var(--bone-mute);
 }
-.rang-offen li + li::before {
-  content: '·';
-  margin-right: var(--s-3);
+.rang-last {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-1);
+  margin: 0;
 }
-.methodenhinweis {
-  margin-top: var(--s-5);
+.rang-last strong {
+  font: 300 2.75rem/1 var(--display);
+}
+.rang-last span {
   color: var(--bone-mute);
+  font: 400 0.625rem/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.rang-leiter,
+.rang-schwellen,
+.rang-abstand {
+  grid-column: 1 / -1;
 }
 .rang-leiter,
 .rang-schwellen {
@@ -1523,21 +1568,28 @@ textarea {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--s-1);
 }
+.rang-leiter {
+  margin-top: var(--s-3);
+}
 .rang-leiter span {
+  position: relative;
   height: 4px;
   background: var(--line);
+  overflow: hidden;
 }
-.rang-leiter span.erreicht {
+.rang-leiter i {
+  position: absolute;
+  inset: 0;
   background: var(--bone);
-}
-.rang-leiter span.aktuell {
-  background: var(--sig-text);
+  transform-origin: left;
 }
 .rang-schwellen {
   margin-top: var(--s-2);
   color: var(--bone-mute);
-  font-size: 0.625rem;
-  letter-spacing: 0;
+  font: 400 0.625rem/1 var(--mono);
+}
+.rang-schwellen .erreicht {
+  color: var(--bone);
 }
 .rang-schwellen abbr {
   text-decoration: none;
@@ -1545,7 +1597,52 @@ textarea {
 .rang-abstand {
   margin: var(--s-3) 0 0;
   color: var(--bone-dim);
-  font-size: 0.625rem;
+  font: 400 var(--t-label) / 1.4 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.rang-offen {
+  margin-top: var(--s-5);
+}
+.ansicht .rang-offen h2 {
+  margin: 0 0 var(--s-2);
+  font: 500 var(--t-label) / 1 var(--mono);
+}
+.rang-offen ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+.rang-offen li {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  border-top: 1px solid var(--line);
+  color: var(--bone-dim);
+}
+.rang-offen li .system-label {
+  flex-shrink: 0;
+  color: var(--bone-mute);
+}
+.methodenhinweis {
+  margin-top: var(--s-5);
+  color: var(--bone-mute);
+}
+@media (min-width: 64rem) {
+  .ansicht.rang {
+    max-width: 72rem;
+  }
+  .rang .einleitung {
+    max-width: 40rem;
+  }
+  .rangliste {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-5);
+  }
 }
 
 /* Heute folgt der linearen Messanzeige der Referenz. */
@@ -1638,9 +1735,218 @@ textarea {
 .skala > span {
   background: var(--bone);
 }
-.heute .erfassen {
+/* Kalorienring: Instrumentenskala um die noch offenen kcal. */
+.kalorienring {
+  position: relative;
+  width: min(100%, 21rem);
+  aspect-ratio: 1;
+  margin: var(--s-2) auto 0;
+}
+.ring-skala {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  margin-top: var(--s-4);
+  height: 100%;
+  overflow: visible;
+}
+.ring-grund {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.ring-skala line {
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ring-skala line.erreicht {
+  stroke: var(--bone);
+  stroke-width: 2;
+  animation: trace var(--base) var(--ease) both;
+  animation-delay: calc(var(--i) * var(--fast) / 16);
+}
+.ring-skala .ring-ziel {
+  stroke: var(--sig-text);
+  stroke-width: 2;
+}
+.ring-inhalt {
+  position: absolute;
+  inset: 18%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-2);
+  text-align: center;
+}
+.ring-zahl {
+  font: 300 clamp(3.5rem, 19vw, 5rem) / 0.9 var(--display);
+}
+.ring-bezug {
+  color: var(--bone-dim);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.08em;
+}
+.ring-hinweis {
+  text-align: center;
+}
+
+.makrospalten {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin: var(--s-5) 0 0;
+}
+.makrospalten > div {
+  min-width: 0;
+}
+.makrospalten dt {
+  overflow: hidden;
+  color: var(--bone-mute);
+  font: 400 0.625rem/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.makrospalten dd {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-1);
+  margin: var(--s-2) 0 var(--s-2);
+}
+.makrospalten dd strong {
+  font: 300 1.75rem/1 var(--display);
+}
+.makrospalten dd span {
+  color: var(--bone-mute);
+  font: 400 0.625rem/1 var(--mono);
+  white-space: nowrap;
+}
+
+/* Scanner-Bühne: der Hauptweg zum Erfassen, direkt auf Heute. */
+.erfassung {
+  margin-top: var(--s-5);
+}
+.ansicht .scan-buehne {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 13rem;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--s-3);
+  border: 1px solid var(--line);
+  background: var(--ash);
+  color: var(--bone);
+  overflow: hidden;
+}
+.scan-buehne::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: var(--s-3);
+  left: var(--s-3);
+  height: 1px;
+  background: var(--sig-text);
+  opacity: 0.45;
+  transform-origin: left;
+  animation: split var(--slow) var(--ease) both;
+}
+.scan-ecken i {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 0 solid var(--bone-dim);
+  transition: transform var(--fast) var(--ease);
+}
+.scan-ecken i:nth-child(1) {
+  top: var(--s-3);
+  left: var(--s-3);
+  border-width: 2px 0 0 2px;
+}
+.scan-ecken i:nth-child(2) {
+  top: var(--s-3);
+  right: var(--s-3);
+  border-width: 2px 2px 0 0;
+}
+.scan-ecken i:nth-child(3) {
+  right: var(--s-3);
+  bottom: var(--s-3);
+  border-width: 0 2px 2px 0;
+}
+.scan-ecken i:nth-child(4) {
+  bottom: var(--s-3);
+  left: var(--s-3);
+  border-width: 0 0 2px 2px;
+}
+.scan-buehne:hover .scan-ecken i:nth-child(1) {
+  transform: translate(var(--s-1), var(--s-1));
+}
+.scan-buehne:hover .scan-ecken i:nth-child(2) {
+  transform: translate(calc(-1 * var(--s-1)), var(--s-1));
+}
+.scan-buehne:hover .scan-ecken i:nth-child(3) {
+  transform: translate(calc(-1 * var(--s-1)), calc(-1 * var(--s-1)));
+}
+.scan-buehne:hover .scan-ecken i:nth-child(4) {
+  transform: translate(var(--s-1), calc(-1 * var(--s-1)));
+}
+.scan-start {
+  position: relative;
+  display: inline-flex;
+  min-height: 56px;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-4);
+  background: var(--sig-fill);
+  color: var(--farbe-auf-akzent);
+  font: 500 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.scan-start svg {
+  width: 22px;
+  height: 22px;
+}
+.scan-hinweis {
+  position: relative;
+  color: var(--bone-mute);
+  font-size: var(--t-klein);
+}
+.erfassung-alternative {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  color: var(--bone-mute);
+  text-decoration: none;
+}
+.erfassung-alternative span {
+  color: var(--bone);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.erfassung-eingebettet {
+  padding: var(--s-3);
+  border: 1px solid var(--line-strong);
+  background: var(--ash);
+  animation: lineIn var(--base) var(--ease) both;
+}
+.erfassung-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-2);
+}
+.erfassung-eingebettet .kamera-scanner {
+  margin-bottom: var(--s-3);
+}
+.heute .statuszeile:empty {
+  display: none;
 }
 .tagesprotokoll {
   margin-top: var(--s-5);

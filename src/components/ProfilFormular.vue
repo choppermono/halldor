@@ -150,8 +150,11 @@ function speichern() {
       </div>
 
       <fieldset v-if="aktuellerSchritt === 'formel'" class="onboarding-frage">
-        <legend>Welche Formelvariante passt?</legend>
-        <p>Die Auswahl setzt nur den Konstantenwert in Mifflin-St Jeor.</p>
+        <legend>Männlich oder weiblich?</legend>
+        <p>
+          Bestimmt die Konstante in der Kalorienformel (Mifflin-St Jeor) und die Rangskala, an der
+          deine Lasten gemessen werden.
+        </p>
         <div class="auswahlkarten">
           <label
             v-for="option in [
@@ -308,7 +311,7 @@ function speichern() {
       <fieldset class="formulargruppe">
         <legend>Körperdaten</legend>
         <div class="profil-auswahl">
-          <span>Formelvariante</span>
+          <span>Formel und Rangskala</span>
           <div class="auswahlkarten kompakt">
             <label
               v-for="option in [

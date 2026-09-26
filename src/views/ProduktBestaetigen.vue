@@ -1,5 +1,13 @@
 <script setup>
-import { computed, defineAsyncComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
+import {
+  computed,
+  defineAsyncComponent,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RouterLink from '../components/SeitenLink.vue'
 import { produktLaden } from '../lib/openfoodfacts.js'
@@ -16,7 +24,11 @@ const props = defineProps({
   scanner: { type: Boolean, default: false },
   scannerPruefzustand: { type: String, default: '' },
   scannerPruefcode: { type: String, default: '' },
+  // Auf Heute eingebettet: kein eigener Seitenkopf, nach dem Erfassen bleibt
+  // man auf derselben Seite statt zu navigieren.
+  eingebettet: { type: Boolean, default: false },
 })
+const melden = defineEmits(['erfasst', 'schliessen'])
 const route = useRoute()
 const router = useRouter()
 const { eintragHinzufuegen } = useTagebuch()
@@ -133,7 +145,7 @@ function weiter() {
   meldung.value = pruefung.status === 'ok' ? '' : pruefung.meldung
   if (pruefung.status === 'ok') {
     schritt.value = 'menge'
-    window.scrollTo({ top: 0 })
+    if (!props.eingebettet) window.scrollTo({ top: 0 })
     titelFokussieren()
   }
 }
@@ -143,31 +155,57 @@ function bestaetigen() {
     meldung.value = ergebnis.meldung
     return
   }
+  if (props.eingebettet) {
+    melden('erfasst', { name: normalisiert.value.name, mengeG: mengeG.value })
+    return
+  }
   router.push({ path: '/', query: { datum: datum.value } })
 }
+// Eingebettet ersetzt das Panel den Knopf, der gerade den Fokus hatte.
+// Ohne neuen Fokus fiele er auf den Seitenanfang zurück.
+onMounted(() => {
+  if (props.eingebettet) titelFokussieren()
+})
 onUnmounted(() => {
   ++anfrageNummer
 })
 </script>
 <template>
-  <section class="ansicht produkt" :class="{ scanner: props.scanner }">
-    <RouterLink
-      v-if="!props.scanner || schritt === 'menge'"
-      class="zurueck"
-      :to="{ path: '/', query: { datum } }"
-      ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
-    >
-    <p v-if="!props.scanner || schritt === 'menge'" class="system-label seitenrubrik">
-      {{ props.scanner ? 'Scanner' : 'Ernährung' }} / {{ datumAnzeige }}
-    </p>
-    <h1
+  <section
+    :class="[
+      props.eingebettet ? 'erfassung-eingebettet' : 'ansicht',
+      'produkt',
+      { scanner: props.scanner },
+    ]"
+  >
+    <div v-if="props.eingebettet" class="erfassung-kopf">
+      <span class="system-label">{{ schritt === 'menge' ? 'Menge bestätigen' : 'Scanner' }}</span>
+      <button type="button" class="leiser-knopf" @click="melden('schliessen')">Schliessen</button>
+    </div>
+    <template v-else>
+      <RouterLink
+        v-if="!props.scanner || schritt === 'menge'"
+        class="zurueck"
+        :to="{ path: '/', query: { datum } }"
+        ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
+      >
+      <p v-if="!props.scanner || schritt === 'menge'" class="system-label seitenrubrik">
+        {{ props.scanner ? 'Scanner' : 'Ernährung' }} / {{ datumAnzeige }}
+      </p>
+    </template>
+    <component
+      :is="props.eingebettet ? 'h2' : 'h1'"
       ref="titel"
       tabindex="-1"
-      :class="{ 'nur-vorlesbar': props.scanner && schritt === 'produkt' }"
+      :class="{ 'nur-vorlesbar': props.eingebettet || (props.scanner && schritt === 'produkt') }"
     >
       {{ schritt === 'produkt' ? (props.scanner ? 'Scan.' : 'Produkt.') : 'Menge.' }}
-    </h1>
-    <ol v-if="!props.scanner || schritt === 'menge'" class="schrittanzeige" aria-label="Erfassung">
+    </component>
+    <ol
+      v-if="!props.eingebettet && (!props.scanner || schritt === 'menge')"
+      class="schrittanzeige"
+      aria-label="Erfassung"
+    >
       <li :aria-current="schritt === 'produkt' ? 'step' : undefined"><span>01</span> Produkt</li>
       <li :aria-current="schritt === 'menge' ? 'step' : undefined"><span>02</span> Menge</li>
     </ol>
@@ -180,12 +218,6 @@ onUnmounted(() => {
         :pruefcode="props.scannerPruefcode"
         @erkannt="scannerErkannt"
       />
-      <RouterLink
-        v-if="!props.scanner"
-        class="knopf primaer scan-einstieg"
-        :to="{ path: '/scan', query: { datum } }"
-        ><SystemSymbol name="barcode" />Barcode scannen</RouterLink
-      >
       <form class="barcode-formular" @submit.prevent="eingabeSuchen">
         <label
           >Barcode eintippen<input
@@ -288,14 +320,16 @@ onUnmounted(() => {
         <div v-for="feld in NAEHRWERTE.slice(0, 4)" :key="feld.key">
           <dt>{{ feld.label }}</dt>
           <dd>
-            {{
-              normalisiert.pro100g[feld.key] === null || !Number.isFinite(mengeG)
-                ? 'unbekannt'
-                : feld.key === 'kcal'
+            <template v-if="normalisiert.pro100g[feld.key] === null">unbekannt</template>
+            <template v-else-if="!Number.isFinite(mengeG)">– {{ feld.einheit }}</template>
+            <template v-else
+              >{{
+                feld.key === 'kcal'
                   ? kalorien((normalisiert.pro100g[feld.key] * mengeG) / 100)
                   : zahl((normalisiert.pro100g[feld.key] * mengeG) / 100)
-            }}
-            {{ feld.einheit }}
+              }}
+              {{ feld.einheit }}</template
+            >
           </dd>
         </div>
       </dl>
