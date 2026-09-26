@@ -2,200 +2,75 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useTraining } from '../composables/useTraining.js'
-import { ranglisteBerechnen } from '../lib/rang.js'
+import { rangdaten, ranglisteBerechnen } from '../lib/rang.js'
 
 defineOptions({ name: 'RangAnsicht' })
 
 const training = useTraining()
 training.trainingLaden()
 const raenge = computed(() => ranglisteBerechnen(training.zustand.einheiten, training.uebungen))
+const rangNachUebung = computed(() => new Map(raenge.value.map((rang) => [rang.uebungId, rang])))
+const zeilen = computed(() =>
+  training.uebungen.map((uebung) => ({ uebung, rang: rangNachUebung.value.get(uebung.id) ?? null }))
+)
 
-function zahl(wert, stellen = 1) {
-  return Number(wert).toLocaleString('de-CH', {
-    minimumFractionDigits: stellen,
-    maximumFractionDigits: stellen,
-  })
-}
-function zeit(iso) {
-  return new Intl.DateTimeFormat('de-CH', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(iso))
+function zahl(wert) {
+  return Number(wert).toLocaleString('de-CH', { maximumFractionDigits: 2 })
 }
 </script>
 
 <template>
   <section class="ansicht rang" aria-labelledby="rang-titel">
-    <p class="system-label seitenrubrik">Rang / Kraftstand</p>
+    <p class="system-label">Eigener Fortschritt</p>
     <h1 id="rang-titel">Rang.</h1>
     <p class="einleitung">
-      Jede Übung steht für sich. Die Stufe richtet sich nach der Last, die du in einem sauberen Satz
-      bewegt hast — ein Mass für deinen eigenen Fortschritt, kein Vergleich mit anderen.
+      Jede Übung steht für sich. Gezählt wird die beste Last in einem Satz, der das
+      Wiederholungsfenster erreicht hat.
     </p>
 
-    <div v-if="!raenge.length" class="leerzustand">
-      <p>
-        Noch keine Sätze gespeichert, die die Untergrenze des Wiederholungsfensters erreicht haben.
-      </p>
+    <div v-if="!raenge.length" class="rang-leer">
+      <p>Noch keine gültige Last gespeichert. Die offenen Stufen der Übungen sind unten sichtbar.</p>
       <RouterLink class="knopf primaer" to="/training">Training erfassen</RouterLink>
     </div>
 
-    <ol v-else class="rangliste staffel">
-      <li v-for="rang in raenge" :key="rang.uebungId" class="rangkarte">
+    <ol class="rangliste">
+      <li v-for="zeile in zeilen" :key="zeile.uebung.id" class="rangkarte">
         <header class="rangkopf">
-          <div>
-            <p class="system-label">Übung / eigene Skala</p>
-            <h2>{{ rang.uebungName }}</h2>
-          </div>
-          <p class="stufe">{{ rang.wert.stufe?.name ?? 'Ohne Stufe' }}</p>
+          <h2>{{ zeile.uebung.name }}</h2>
+          <p class="stufe">{{ zeile.rang?.wert.stufe?.name ?? 'Offen' }}</p>
         </header>
-
-        <dl class="rangwerte">
-          <div>
-            <dt>Beste Last</dt>
-            <dd>{{ zahl(rang.wert.lastKg) }} kg</dd>
-          </div>
-          <div>
-            <dt>Nächste Stufe</dt>
-            <dd v-if="rang.wert.naechsteStufe">
-              {{ rang.wert.naechsteStufe }} · {{ zahl(rang.wert.abstandKg) }} kg Abstand
-            </dd>
-            <dd v-else-if="rang.wert.stufe">Skala vollständig</dd>
-            <dd v-else-if="rang.wert.grund === 'stufen_fehlen'">noch offen</dd>
-            <dd v-else>nicht berechenbar</dd>
-          </div>
-        </dl>
-
-        <p v-if="rang.wert.grund === 'stufen_fehlen'" class="klein">
-          Für diese Übung sind die Stufen noch nicht festgelegt. Die beste Last wird trotzdem
-          festgehalten.
+        <p class="beste-last">
+          <span>Beste Last</span>
+          <strong v-if="zeile.rang">{{ zahl(zeile.rang.wert.lastKg) }} kg × {{ zeile.rang.satz.wiederholungen }}</strong>
+          <strong v-else>Noch keine Last</strong>
         </p>
 
-        <details class="rang-herleitung">
-          <summary>Herleitung aufklappen</summary>
-          <dl>
-            <div>
-              <dt>Verwendeter Satz</dt>
-              <dd>
-                {{ zahl(rang.satz.gewichtKg) }} kg × {{ rang.satz.wiederholungen }} ·
-                {{ zeit(rang.satz.zeit) }}
-              </dd>
-            </div>
-            <div>
-              <dt>Gezählt, weil</dt>
-              <dd>mindestens {{ rang.mindestWiederholungen }} Wiederholungen</dd>
-            </div>
-            <div v-if="rang.herleitung.epleyKg">
-              <dt>Geschätztes Maximum · Epley</dt>
-              <dd>
-                {{ zahl(rang.satz.gewichtKg) }} × (1 + {{ rang.satz.wiederholungen }} / 30) =
-                {{ zahl(rang.herleitung.epleyKg) }} kg
-              </dd>
-            </div>
-            <div v-if="rang.herleitung.brzyckiKg">
-              <dt>Brzycki · Vergleich</dt>
-              <dd>
-                {{ zahl(rang.satz.gewichtKg) }} × 36 / (37 − {{ rang.satz.wiederholungen }}) =
-                {{ zahl(rang.herleitung.brzyckiKg) }} kg
-              </dd>
-            </div>
-          </dl>
-        </details>
+        <div class="rang-leiter" aria-hidden="true">
+          <span
+            v-for="(stufe, index) in rangdaten.stufen"
+            :key="stufe"
+            :class="{ erreicht: zeile.rang?.wert.stufe && index < zeile.rang.wert.stufe.index, aktuell: index === zeile.rang?.wert.stufe?.index }"
+          ></span>
+        </div>
+        <div class="rang-schwellen" aria-label="Stufenschwellen">
+          <span v-for="(stufe, index) in rangdaten.stufen" :key="stufe">
+            <abbr :title="stufe">{{ stufe[0] }}</abbr>
+            {{ zeile.rang?.herleitung.schwellen?.[index] ? zahl(zeile.rang.herleitung.schwellen[index]) : '–' }}
+          </span>
+        </div>
+        <p v-if="zeile.rang?.wert.naechsteStufe" class="rang-abstand">
+          {{ zeile.rang.wert.naechsteStufe }} ab
+          {{ zahl(zeile.rang.wert.lastKg + zeile.rang.wert.abstandKg) }} kg · noch
+          {{ zahl(zeile.rang.wert.abstandKg) }} kg
+        </p>
+        <p v-else-if="zeile.rang?.wert.stufe" class="rang-abstand">Höchste Stufe erreicht</p>
+        <p v-else class="rang-abstand">Stufen noch nicht festgelegt</p>
       </li>
     </ol>
 
     <p class="klein methodenhinweis">
-      Es gibt bewusst keinen Gesamtrang. Gezählt wird die höchste Last in einem Satz, der die
-      Untergrenze des Wiederholungsfensters erreicht hat. Das geschätzte Maximum steht nur zur
-      Einordnung in der Herleitung.
+      Es gibt bewusst keinen Gesamtrang. Die Skala misst den eigenen Fortschritt nach absoluter
+      Last, nicht den Vergleich mit anderen Menschen.
     </p>
   </section>
 </template>
-
-<style scoped>
-.rang {
-  font-family: var(--body);
-}
-.normierung {
-  margin-bottom: var(--s-5);
-  padding: var(--s-3);
-  border-left: var(--markierungs-breite) solid var(--sig-text);
-  background: var(--panel);
-}
-.normierung p {
-  margin-block: 0 var(--s-2);
-}
-.rangliste {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.rangkarte {
-  padding-block: var(--s-4);
-  border-top: var(--linien-breite) solid var(--line-strong);
-}
-.rangkopf {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--s-3);
-  flex-wrap: wrap;
-}
-.rangkopf h2,
-.stufe,
-.rangwerte dd {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: var(--t-zahl-m);
-  line-height: var(--t-zahl-m-zh);
-}
-.rangkopf h2,
-.stufe {
-  margin: 0;
-}
-.stufe {
-  color: var(--sig-text);
-}
-.rangwerte,
-.rang-herleitung dl {
-  display: grid;
-  gap: var(--s-3);
-  margin-block: var(--s-4);
-}
-.rangwerte {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--formular-spalte)), 1fr));
-}
-.rangwerte div,
-.rang-herleitung dl div {
-  min-width: 0;
-  border-bottom: var(--linien-breite) solid var(--line);
-  padding-bottom: var(--s-2);
-}
-.rangwerte dt,
-.rang-herleitung dt {
-  color: var(--bone-dim);
-}
-.rangwerte dd,
-.rang-herleitung dd {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-.rangwerte dd,
-.rang-herleitung dd {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-.rang-herleitung summary {
-  min-height: var(--treffer-min);
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-family: var(--body);
-}
-.methodenhinweis {
-  margin-top: var(--s-5);
-  padding-top: var(--s-4);
-  border-top: var(--linien-breite) solid var(--line-strong);
-}
-</style>

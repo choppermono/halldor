@@ -28,8 +28,8 @@ onMounted(() => {
       await nextTick()
       if (verworfen || !spur.value) return
       const timing = {
-        duration: tokens.dauer('--dauer-bogen'),
-        easing: tokens.wert('--kurve-bogen'),
+        duration: tokens.dauer('--slow'),
+        easing: tokens.wert('--ease'),
         fill: 'both',
       }
       try {

@@ -165,7 +165,7 @@ onBeforeUnmount(() => groessenBeobachter?.disconnect())
 }
 .code-dekor > span {
   display: inline-block;
-  animation: typeIn var(--fast) steps(1, end) backwards;
+  animation: typeIn var(--fast) var(--ease) backwards;
   animation-delay: calc(var(--fast) * var(--zeichen-index));
 }
 .schreibmarke {
@@ -175,7 +175,7 @@ onBeforeUnmount(() => groessenBeobachter?.disconnect())
   margin-left: var(--s-1);
   vertical-align: bottom;
   background: var(--sig-text);
-  animation: blink var(--base) steps(1, end) infinite;
+  animation: blink var(--base) var(--ease) infinite;
 }
 .treffer-dekor {
   position: absolute;

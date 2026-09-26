@@ -202,7 +202,7 @@ function satzHinzufuegen(einheitId, uebungId, gewichtKg, wiederholungen) {
   return ergebnis.status === 'ok' ? { ...ergebnis, satz } : ergebnis
 }
 
-function satzLoeschen(einheitId, satzId) {
+function satzEntfernen(einheitId, satzId) {
   const bestand = dokumentLaden()
   if (!speicherLesbar(bestand.status))
     return { status: bestand.status, meldung: speicherhinweis(bestand.status) }
@@ -254,7 +254,7 @@ export function useTraining() {
     programmWaehlen,
     einheitStarten,
     satzHinzufuegen,
-    satzLoeschen,
+    satzEntfernen,
     einheitAbschliessen,
   }
 }

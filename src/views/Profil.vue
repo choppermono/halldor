@@ -40,7 +40,7 @@ profilLaden()
 }
 h2 {
   margin: 0 0 var(--a-3);
-  font: 500 var(--t-zahl-l) / var(--t-seitentitel-zh) var(--schrift-display);
+  font: 400 var(--t-zahl-l) / var(--t-seitentitel-zh) var(--display);
 }
 .kino-beschreibung,
 .profil-ausblick > p:last-child {

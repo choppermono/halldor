@@ -1,6 +1,6 @@
 :root {
   scroll-padding-bottom: calc(var(--navigation-hoehe, var(--navigation-reserve)) + var(--a-4));
-  font-family: var(--schrift-ui);
+  font-family: var(--body);
   color: var(--farbe-text);
   background: var(--farbe-grund);
   font-synthesis: none;
@@ -75,7 +75,9 @@ body::before {
   border-bottom: var(--linien-breite) solid var(--farbe-linie);
 }
 .wortmarke {
-  font: var(--betonung-gewicht) var(--t-titel) / var(--t-titel-zh) var(--schrift-display);
+  font: var(--betonung-gewicht) var(--t-label) / var(--t-label-zh) var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
   letter-spacing: var(--marken-laufweite);
 }
 .wortmarke span {
@@ -84,7 +86,7 @@ body::before {
 .system-label {
   margin: 0;
   color: var(--farbe-text-leise);
-  font: var(--label-gewicht) var(--t-label) / var(--t-label-zh) var(--schrift-zahl);
+  font: var(--label-gewicht) var(--t-label) / var(--t-label-zh) var(--mono);
   letter-spacing: var(--label-laufweite);
   text-transform: uppercase;
 }
@@ -122,13 +124,13 @@ body::before {
 }
 h1 {
   margin: var(--a-3) 0 var(--a-8);
-  font: var(--display-gewicht) var(--titel-display) / var(--titel-zh) var(--schrift-display);
+  font: var(--display-gewicht) var(--titel-display) / var(--titel-zh) var(--display);
   letter-spacing: var(--titel-laufweite);
   font-size: min(var(--titel-display), var(--titel-containergrenze));
 }
 .ansicht h2 {
   margin: var(--a-3) 0 var(--a-4);
-  font: var(--label-gewicht) var(--t-titel) / var(--t-titel-zh) var(--schrift-ui);
+  font: var(--label-gewicht) var(--t-titel) / var(--t-titel-zh) var(--body);
 }
 .einleitung,
 .klein {
@@ -145,21 +147,17 @@ h1 {
 .messwerte dd,
 .ziel-zahl,
 .protokoll-daten dd {
-  font-family: var(--schrift-zahl);
+  font-family: var(--mono);
 }
 .ansicht :is(button, input, select),
 .knopf {
   border: var(--linien-breite) solid var(--farbe-linie-stark);
-  border-radius: var(--r-s);
   background: var(--farbe-flaeche);
   color: var(--farbe-text);
   font: inherit;
   min-width: 0;
   min-height: var(--feld-hoehe);
   padding: var(--feld-polster);
-  transition:
-    border-color var(--dauer-schnell) var(--kurve-kontakt),
-    background-color var(--dauer-schnell) var(--kurve-kontakt);
 }
 .ansicht button,
 .knopf {
@@ -192,7 +190,7 @@ h1 {
   background: var(--farbe-flaeche);
 }
 .ansicht input:not([type='checkbox'], [type='radio']) {
-  font-family: var(--schrift-zahl);
+  font-family: var(--mono);
 }
 .ansicht input::placeholder {
   color: var(--farbe-text-leise);
@@ -266,7 +264,7 @@ h1 {
   font-weight: var(--label-gewicht);
 }
 .register-index {
-  font: var(--label-gewicht) var(--t-label) / var(--t-label-zh) var(--schrift-zahl);
+  font: var(--label-gewicht) var(--t-label) / var(--t-label-zh) var(--mono);
   color: var(--farbe-text-leise);
   margin-right: var(--a-2);
 }
@@ -318,7 +316,7 @@ h1 {
 }
 .meldung::before {
   content: '!';
-  font-family: var(--schrift-zahl);
+  font-family: var(--mono);
   font-weight: var(--betonung-gewicht);
   color: var(--farbe-fehler);
   margin-right: var(--a-2);
@@ -346,7 +344,7 @@ h1 {
   flex-wrap: wrap;
 }
 .ziel-zahl {
-  font: var(--label-gewicht) var(--t-zahl-l) / var(--t-zahl-m-zh) var(--schrift-zahl);
+  font: 300 var(--t-zahl-l) / var(--t-zahl-m-zh) var(--display);
   margin-block: var(--a-6);
 }
 .ziel-zahl span {
@@ -445,7 +443,7 @@ summary {
   align-items: center;
   gap: var(--a-2);
   list-style: none;
-  font: var(--text-gewicht) var(--t-label) / var(--t-label-zh) var(--schrift-zahl);
+  font: var(--text-gewicht) var(--t-label) / var(--t-label-zh) var(--mono);
   border-bottom: var(--linien-breite) solid var(--farbe-linie-stark);
 }
 .datum-register summary::-webkit-details-marker {
@@ -530,7 +528,7 @@ summary {
 }
 .tageszahl {
   margin: var(--a-4) 0 0;
-  font: var(--text-gewicht) var(--zahl-instrument) / var(--t-zahl-xl-zh) var(--schrift-zahl);
+  font: 300 var(--zahl-instrument) / var(--t-zahl-xl-zh) var(--display);
   letter-spacing: var(--zahl-laufweite);
 }
 .tageszahl:has(.glyphen-endwert[data-lang]) {
@@ -539,7 +537,7 @@ summary {
 .tageszahl .einheit {
   display: block;
   margin-top: var(--a-4);
-  font: var(--text-gewicht) var(--t-label) / var(--t-label-zh) var(--schrift-zahl);
+  font: var(--text-gewicht) var(--t-label) / var(--t-label-zh) var(--mono);
   letter-spacing: var(--label-laufweite);
   color: var(--farbe-text-leise);
 }
@@ -548,12 +546,12 @@ summary {
   margin: 0;
 }
 .zielbezug dd {
-  font-family: var(--schrift-zahl);
+  font-family: var(--mono);
 }
 .differenz {
   text-align: right;
   margin: var(--a-2) 0;
-  font: var(--text-gewicht) var(--t-klein) / var(--t-klein-zh) var(--schrift-zahl);
+  font: var(--text-gewicht) var(--t-klein) / var(--t-klein-zh) var(--mono);
   color: var(--farbe-text-leise);
 }
 .makro-protokoll {
@@ -796,7 +794,7 @@ summary {
   border-color: var(--farbe-text);
 }
 .schrittanzeige span {
-  font-family: var(--schrift-zahl);
+  font-family: var(--mono);
   margin-right: var(--a-2);
 }
 .produkt-treffer {
@@ -806,7 +804,7 @@ summary {
 }
 .ansicht .produkt-treffer h2,
 .ansicht .produktname {
-  font: var(--display-gewicht) var(--t-zahl-l) / var(--t-zahl-m-zh) var(--schrift-display);
+  font: 400 var(--t-zahl-l) / var(--t-zahl-m-zh) var(--display);
 }
 .ansicht .mengenfeld input {
   font-size: var(--t-zahl-l);
@@ -951,7 +949,7 @@ summary {
 /* Nur Kompositoreigenschaften; Staffeln niemals Aktionen oder Daten. */
 .staffel > * {
   --staffel-index: 0;
-  animation: register-eintritt var(--dauer-staffel) var(--kurve-eintritt) backwards;
+  animation: hudIn var(--base) var(--ease) backwards;
   animation-delay: calc(var(--staffel-index) * var(--staffel-abstand));
 }
 .staffel > :nth-child(2) {
@@ -993,14 +991,14 @@ summary {
   pointer-events: none;
 }
 ::view-transition-group(*) {
-  animation-duration: var(--dauer-seite);
-  animation-timing-function: var(--kurve-eintritt);
+  animation-duration: var(--base);
+  animation-timing-function: var(--ease);
 }
 ::view-transition-old(seite) {
-  animation: seite-raus var(--dauer-austritt) var(--kurve-austritt) both;
+  animation: split var(--fast) var(--ease) both reverse;
 }
 ::view-transition-new(seite) {
-  animation: seite-rein var(--dauer-seite) var(--kurve-eintritt) both;
+  animation: lineIn var(--base) var(--ease) both;
 }
 @keyframes seite-rein {
   from {
@@ -1051,5 +1049,849 @@ summary {
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
+  }
+}
+
+/* P-C: gemeinsame Gestaltungs- und Bedienlogik */
+html,
+body,
+#app {
+  max-width: 100%;
+  background: var(--void);
+}
+body {
+  color: var(--bone);
+  font-family: var(--body);
+  font-variant-numeric: tabular-nums;
+  overflow-x: hidden;
+}
+button,
+input,
+select,
+textarea {
+  font-family: var(--body);
+}
+.app-kopf {
+  min-height: 56px;
+  padding: 0 var(--gutter);
+  border-color: var(--line);
+}
+.seiteninhalt {
+  width: min(100%, var(--wrap));
+  padding: var(--s-4) var(--gutter)
+    calc(var(--navigation-hoehe, var(--navigation-reserve)) + var(--s-4));
+}
+.ansicht:not(.heute, .training) {
+  max-width: var(--inhalt-schmal);
+}
+.ansicht .primaer,
+.sprunglink {
+  min-height: 56px;
+  border-color: var(--sig-fill);
+  background: var(--sig-fill);
+  color: var(--farbe-auf-akzent);
+  font-family: var(--mono);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.system-label,
+.plan-meta,
+.letztes-mal,
+.trainingsstatus,
+.ablauf-plan,
+.ablauf-saetze,
+.rang-schwellen,
+.rang-abstand,
+.beste-last span,
+.onboarding-stand,
+.anpassung-kopf,
+.weitere {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.navigation-marke {
+  display: none;
+}
+
+/* Zahlenbedienung: in Ruhe kein Feld, erst nach Antippen der Zahl. */
+.zahlenschritt {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 64px;
+  gap: var(--s-3);
+  align-items: center;
+  width: 100%;
+  margin-top: var(--s-2);
+}
+.ansicht .zahlenschritt > button,
+.ansicht .zahlenschritt > input {
+  min-width: 0;
+  height: 64px;
+  min-height: 64px;
+  margin: 0;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--bone);
+}
+.ansicht .zahlenschritt > button:first-child,
+.ansicht .zahlenschritt > button:last-child {
+  padding: 0;
+  font: 500 2rem/1 var(--mono);
+}
+.ansicht .zahlenschritt .zahlenwert,
+.ansicht .zahlenschritt > input {
+  width: 100%;
+  border-inline: 0;
+  border-top: 0;
+  border-bottom-color: var(--line-strong);
+  font: 300 clamp(2rem, 11vw, 2.75rem) / 1 var(--display);
+  text-align: center;
+}
+.zahlenwert small {
+  margin-left: var(--s-2);
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Training: Start, geführter Satzfluss und ruhiger Abschluss. */
+.training {
+  max-width: var(--inhalt-schmal);
+  margin-inline: auto;
+}
+.trainingsstart h2,
+.uebungsfokus h2,
+.satz-anpassung h2,
+.einheit-abschluss h2 {
+  margin: var(--s-2) 0 0;
+  font-family: var(--display);
+  font-weight: 300;
+  line-height: 0.95;
+}
+.trainingsstart h2 {
+  font-size: clamp(3.5rem, 15vw, 4.5rem);
+}
+.plan-meta {
+  margin: var(--s-3) 0 0;
+  color: var(--bone-dim);
+  font-size: var(--t-label);
+}
+.rhythmus {
+  display: flex;
+  gap: var(--s-2);
+  margin-block: var(--s-4);
+}
+.rhythmus span {
+  flex: 1;
+  height: 3px;
+  background: var(--line);
+}
+.rhythmus span:first-child {
+  background: var(--sig-text);
+}
+.planliste,
+.training-ablauf ol,
+.als-naechstes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+.planliste li,
+.als-naechstes li {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.planliste li > span:last-child,
+.als-naechstes li > span:last-child {
+  flex-shrink: 0;
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+}
+.trainings-hauptknopf {
+  width: min(100%, 32rem);
+  min-height: 64px !important;
+  margin-top: var(--s-4);
+}
+.trainingsstart ~ .trainings-hauptknopf {
+  position: sticky;
+  bottom: calc(var(--navigation-hoehe, var(--nav-h)) + var(--s-3));
+  z-index: var(--z-inhalt);
+}
+.trainingsstatus {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin: calc(-1 * var(--s-2)) 0 var(--s-3);
+  color: var(--bone-mute);
+  font-size: var(--t-label);
+}
+.uebungsfortschritt {
+  position: relative;
+  height: 2px;
+  margin-inline: calc(-1 * var(--gutter));
+  background: var(--line);
+  overflow: hidden;
+}
+.uebungsfortschritt span {
+  position: absolute;
+  inset: 0;
+  background: var(--bone);
+  transform-origin: left;
+  transition: transform var(--base) var(--ease);
+}
+.training-arbeitsflaeche {
+  margin-top: var(--s-4);
+}
+.training-ablauf > .system-label {
+  margin-bottom: var(--s-2);
+}
+.training-ablauf li {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: var(--s-3);
+  padding-inline: var(--s-2);
+  border-top: 1px solid var(--line);
+  color: var(--bone-mute);
+}
+.training-ablauf li.aktiv {
+  background: var(--ash);
+  color: var(--bone);
+}
+.satz-haken {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transform-origin: center;
+  animation: trace var(--base) var(--ease) both;
+}
+.ablauf-marker {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  background: transparent;
+}
+.aktiv .ablauf-marker {
+  background: var(--sig-text);
+}
+.ablauf-name {
+  flex: 1;
+  min-width: 0;
+}
+.ablauf-plan,
+.ablauf-saetze {
+  flex-shrink: 0;
+  color: var(--bone-mute);
+  font-size: 0.625rem;
+  letter-spacing: 0;
+}
+.ablauf-saetze {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.ansicht .ablauf-saetze button {
+  min-height: 44px;
+  padding: 0 var(--s-1);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.ablauf-saetze button + button::before {
+  content: '·';
+  margin-right: var(--s-2);
+}
+.uebungsfokus,
+.satz-anpassung,
+.einheit-abschluss {
+  margin-top: var(--s-4);
+  padding: var(--s-4) var(--s-3);
+  border: 1px solid var(--line-strong);
+  background: var(--ash);
+  animation: lineIn var(--base) var(--ease) both;
+}
+.uebungsfokus::after,
+.satz-anpassung::after {
+  content: '';
+  display: block;
+  height: 1px;
+  margin-top: var(--s-4);
+  background: var(--line);
+  transform-origin: center;
+  animation: split var(--base) var(--ease) both;
+}
+.uebungsfokus h2,
+.satz-anpassung h2 {
+  font-size: clamp(2.5rem, 12vw, 4.5rem);
+  overflow-wrap: anywhere;
+}
+.letztes-mal {
+  color: var(--bone-mute);
+  font-size: 0.625rem;
+  line-height: 1.7;
+}
+.fokus-saetze {
+  margin-top: var(--s-4);
+  border-bottom: 1px solid var(--line);
+}
+.ansicht .erfasster-satz,
+.naechster-satz {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+  width: 100%;
+  min-height: 56px;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  color: var(--bone);
+  text-align: left;
+}
+.erfasster-satz strong,
+.naechster-satz strong {
+  font: 400 clamp(1.625rem, 8vw, 2.75rem) / 1 var(--display);
+}
+.erfasster-satz.gerade-erfasst {
+  animation: glitchFlash var(--fast) var(--ease) both;
+}
+.ansicht .anpassen-link,
+.ansicht .leiser-knopf,
+.ansicht .satz-loeschen {
+  min-height: 44px;
+  padding-inline: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--bone-dim);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.als-naechstes {
+  margin-top: var(--s-5);
+}
+.als-naechstes > .system-label {
+  margin-bottom: var(--s-2);
+}
+.weitere {
+  color: var(--bone-mute);
+  font-size: 0.625rem;
+}
+.anpassung-hinweis {
+  color: var(--bone-dim);
+}
+.anpassung-block {
+  padding-block: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.anpassung-kopf {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  color: var(--bone-mute);
+  font-size: 0.625rem;
+}
+.satz-anpassung > .leiser-knopf,
+.satz-anpassung > .satz-loeschen {
+  display: flex;
+  margin: var(--s-3) auto 0;
+}
+.einheit-abschluss h2 {
+  font-size: clamp(3rem, 13vw, 4.5rem);
+}
+
+/* Rang: eine Skala je Übung, keine erfundenen Werte. */
+.rang h1 {
+  margin: var(--s-1) 0 var(--s-3);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 14vw, 4.5rem);
+}
+.rang-leer {
+  margin-block: var(--s-4);
+}
+.rangliste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+.rangkarte {
+  padding-block: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+.rangkopf {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.rangkopf h2,
+.stufe {
+  margin: 0;
+  font: 400 clamp(1.75rem, 8vw, 2.5rem) / 1 var(--display);
+}
+.stufe {
+  color: var(--sig-text);
+  font-style: italic;
+}
+.beste-last {
+  margin: var(--s-2) 0 var(--s-3);
+}
+.beste-last span {
+  display: block;
+  color: var(--bone-dim);
+  font-size: var(--t-label);
+}
+.beste-last strong {
+  display: block;
+  margin-top: var(--s-1);
+  font: 400 2rem/1 var(--display);
+}
+.rang-leiter,
+.rang-schwellen {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-1);
+}
+.rang-leiter span {
+  height: 4px;
+  background: var(--line);
+}
+.rang-leiter span.erreicht {
+  background: var(--bone);
+}
+.rang-leiter span.aktuell {
+  background: var(--sig-text);
+}
+.rang-schwellen {
+  margin-top: var(--s-2);
+  color: var(--bone-mute);
+  font-size: 0.625rem;
+  letter-spacing: 0;
+}
+.rang-schwellen abbr {
+  text-decoration: none;
+}
+.rang-abstand {
+  margin: var(--s-3) 0 0;
+  color: var(--bone-dim);
+  font-size: 0.625rem;
+}
+
+/* Heute folgt der linearen Messanzeige der Referenz. */
+.heute {
+  max-width: var(--inhalt-schmal);
+  margin-inline: auto;
+}
+.heute-kopf {
+  align-items: center;
+  margin-bottom: var(--s-5);
+}
+.heute-kopf h1.system-label {
+  margin: 0;
+  font: 500 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.2em;
+}
+.bilanz-zahl {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin: 0;
+  font: 300 clamp(5rem, 29vw, 7.75rem) / 0.8 var(--display);
+}
+.bilanz-zahl > span:last-child {
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.bilanz-skala {
+  position: relative;
+  height: 3px;
+  margin-top: var(--s-5);
+  background: var(--line);
+}
+.bilanz-skala span {
+  position: absolute;
+  inset: 0;
+  background: var(--bone);
+  transform-origin: left;
+}
+.bilanz-skala i {
+  position: absolute;
+  top: -6px;
+  width: 1px;
+  height: 15px;
+  background: var(--sig-text);
+}
+.bilanz-werte {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: var(--s-4) 0;
+  border-block: 1px solid var(--line);
+}
+.bilanz-werte div {
+  min-width: 0;
+  padding: var(--s-3) 0;
+}
+.bilanz-werte div + div {
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--line);
+}
+.bilanz-werte dt {
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.bilanz-werte dd {
+  margin: var(--s-2) 0 0;
+  font: 300 clamp(1.75rem, 10vw, 2.5rem) / 1 var(--display);
+}
+.makro-protokoll {
+  padding: 0;
+}
+.makrozeile {
+  margin-block: var(--s-4);
+}
+.makro-name {
+  color: var(--bone);
+  font: 400 1.75rem/1 var(--display);
+}
+.makrokopf strong {
+  font: 400 var(--t-label) / 1 var(--mono);
+}
+.skala {
+  height: 3px;
+  background: var(--line);
+}
+.skala > span {
+  background: var(--bone);
+}
+.zuletzt-zeile {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-block: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+
+/* Onboarding und Profil: Auswahlflächen und ein klarer Schritt. */
+.onboarding-stand {
+  color: var(--bone-mute);
+  font-size: var(--t-label);
+}
+.onboarding-stand > div {
+  height: 2px;
+  margin-top: var(--s-2);
+  background: var(--line);
+  overflow: hidden;
+}
+.onboarding-stand > div span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--bone);
+  transform-origin: left;
+  transition: transform var(--base) var(--ease);
+}
+.onboarding-frage {
+  min-width: 0;
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  border: 0;
+  animation: lineIn var(--base) var(--ease) both;
+}
+.onboarding-frage legend,
+.onboarding-ergebnis h2 {
+  padding: 0;
+  font: 300 clamp(2.75rem, 12vw, 4rem) / 0.95 var(--display);
+}
+.onboarding-frage > p {
+  color: var(--bone-dim);
+}
+.auswahlkarten {
+  display: grid;
+  gap: var(--s-2);
+  margin-block: var(--s-3) var(--s-4);
+}
+.auswahlkarten.kompakt {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+}
+.auswahlkarten label {
+  position: relative;
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  padding: var(--s-3);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+}
+.auswahlkarten label.gewaehlt {
+  border-color: var(--bone);
+  box-shadow: inset 3px 0 var(--sig-text);
+  background: var(--ash);
+}
+.auswahlkarten label.gesperrt {
+  color: var(--bone-mute);
+  cursor: not-allowed;
+}
+.auswahlkarten input {
+  position: absolute;
+  width: 1px !important;
+  height: 1px !important;
+  min-height: 1px !important;
+  opacity: 0;
+}
+.auswahlkarten label:has(input:focus-visible) {
+  outline: 2px solid var(--bone);
+  outline-offset: 3px;
+}
+.onboarding-aktionen {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+.onboarding-aktionen .primaer {
+  min-width: min(100%, 14rem);
+}
+.profil-auswahl > span,
+.formulargruppe > label,
+.mengenfeld > span {
+  display: block;
+  margin-bottom: var(--s-2);
+}
+.hinweis-karte {
+  border-block: 1px solid var(--line);
+}
+.ziel-herleitung h2 {
+  font-family: var(--display);
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+/* Scanner: offenes Raster statt Formular-Karte. */
+.scanner {
+  max-width: var(--inhalt-schmal);
+}
+.kamera-scanner {
+  margin: 0 0 var(--s-5);
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.scanner-kopf {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--s-3);
+}
+.scanner-zustand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--bone-mute);
+}
+.scanner-zustand i {
+  width: 7px;
+  height: 7px;
+  background: var(--sig-text);
+}
+.scanner-kopf::after {
+  content: '';
+  order: 1;
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.scanner-kopf > .system-label {
+  order: 2;
+}
+.scanner-buehne {
+  min-height: 19rem;
+  border-color: var(--line);
+}
+.scanner .barcode-formular {
+  margin-top: var(--s-4);
+}
+.scanner .produkt-treffer {
+  border-color: var(--line);
+}
+
+@keyframes hudIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--s-2));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lineIn {
+  from {
+    opacity: 0;
+    transform: translateX(var(--s-3));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes split {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+@keyframes glitchFlash {
+  0% {
+    opacity: 0.3;
+    transform: translateX(calc(-1 * var(--s-2)));
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(var(--s-1));
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes trace {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes typeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--s-1));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 63.999rem) {
+  .training-ablauf li.aktiv,
+  .training-ablauf li.zukuenftig {
+    display: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .app-kopf,
+  .seiteninhalt {
+    width: auto;
+    max-width: none;
+    margin-left: 220px;
+  }
+  .app-kopf .wortmarke {
+    visibility: hidden;
+  }
+  .seiteninhalt {
+    padding: var(--s-5) var(--s-5) var(--s-6);
+  }
+  .navigationsleiste {
+    inset: 0 auto 0 0;
+    width: 220px;
+    padding: var(--s-5) 0;
+    border-top: 0;
+    border-right: 1px solid var(--line);
+    background: var(--void);
+  }
+  .navigation-marke {
+    display: block;
+    padding: 0 var(--s-4) var(--s-5);
+    color: var(--bone);
+    font: 500 var(--t-label) / 1 var(--mono);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .navigationsziele {
+    display: flex;
+    max-width: none;
+    flex-direction: column;
+    gap: var(--s-1);
+  }
+  .navigationslink {
+    min-height: 48px;
+    padding: 0 var(--s-4);
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--s-3);
+    border-left: 2px solid transparent;
+    font-family: var(--body);
+    font-size: var(--t-klein);
+  }
+  .navigationslink.router-link-exact-active {
+    border-left-color: var(--sig-text);
+  }
+  .navigationslink.router-link-exact-active::before {
+    display: none;
+  }
+  .training:has(.training-arbeitsflaeche) {
+    max-width: none;
+    margin: 0;
+  }
+  .uebungsfortschritt {
+    margin-inline: 0;
+  }
+  .training-arbeitsflaeche {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: var(--s-5);
+  }
+  .uebungsfokus,
+  .satz-anpassung,
+  .einheit-abschluss {
+    max-width: 44rem;
+    margin-top: 0;
+    padding: var(--s-4) 0;
+    border-inline: 0;
+    background: transparent;
+  }
+  .uebungsfokus h2,
+  .satz-anpassung h2 {
+    font-size: clamp(4.5rem, 7vw, 6rem);
+  }
+  .training-ablauf li {
+    padding-inline: var(--s-3);
+  }
+  .trainingsstart ~ .trainings-hauptknopf {
+    position: static;
+  }
+  .heute,
+  .rang,
+  .profil,
+  .produkt,
+  .onboarding-formular {
+    max-width: var(--inhalt-schmal);
   }
 }

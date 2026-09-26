@@ -8,9 +8,9 @@ let timer
 let beenden
 onMounted(() => {
   const tokens = bewegungsTokens()
-  const dauer = tokens.dauer('--dauer-glyphen')
-  const takt = tokens.dauer('--glyphen-takt')
-  const schritte = Number(tokens.wert('--kurve-technisch').match(/steps\((\d+)/)[1])
+  const dauer = tokens.dauer('--base')
+  const takt = Math.max(16, tokens.dauer('--fast') / 3)
+  const schritte = 8
   const alphabet = tokens.wert('--glyphen-zeichen').replace(/^['"]|['"]$/g, '')
   beenden = watch(
     () => props.wert,

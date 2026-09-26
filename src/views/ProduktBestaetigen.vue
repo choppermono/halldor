@@ -9,6 +9,7 @@ import { kalorien, lokalesDatum, zahl } from '../lib/darstellung.js'
 import { useTagebuch } from '../composables/useTagebuch.js'
 import GlyphenText from '../components/GlyphenText.vue'
 import SystemSymbol from '../components/SystemSymbol.vue'
+import Zahlenschritt from '../components/Zahlenschritt.vue'
 defineOptions({ name: 'ProduktBestaetigenAnsicht' })
 const KameraScanner = defineAsyncComponent(() => import('../components/KameraScanner.vue'))
 const props = defineProps({
@@ -140,16 +141,16 @@ onUnmounted(() => {
 </script>
 <template>
   <section class="ansicht produkt" :class="{ scanner: props.scanner }">
-    <RouterLink class="zurueck" :to="{ path: '/', query: { datum } }"
+    <RouterLink v-if="!props.scanner || schritt === 'menge'" class="zurueck" :to="{ path: '/', query: { datum } }"
       ><SystemSymbol name="links" />Tagesprotokoll</RouterLink
     >
-    <p class="system-label seitenrubrik">
+    <p v-if="!props.scanner || schritt === 'menge'" class="system-label seitenrubrik">
       {{ props.scanner ? 'Scanner' : 'Ernährung' }} / {{ datum }}
     </p>
-    <h1 ref="titel" tabindex="-1">
+    <h1 ref="titel" tabindex="-1" :class="{ 'nur-vorlesbar': props.scanner && schritt === 'produkt' }">
       {{ schritt === 'produkt' ? (props.scanner ? 'Scan.' : 'Produkt.') : 'Menge.' }}
     </h1>
-    <ol class="schrittanzeige" aria-label="Erfassung">
+    <ol v-if="!props.scanner || schritt === 'menge'" class="schrittanzeige" aria-label="Erfassung">
       <li :aria-current="schritt === 'produkt' ? 'step' : undefined"><span>01</span> Produkt</li>
       <li :aria-current="schritt === 'menge' ? 'step' : undefined"><span>02</span> Menge</li>
     </ol>
@@ -243,16 +244,17 @@ onUnmounted(() => {
       <p class="system-label">Portion / {{ datum }}</p>
       <h2 class="produktname">{{ produkt.name }}</h2>
       <p v-if="produkt.marke" class="klein">{{ produkt.marke }}</p>
-      <label class="mengenfeld"
-        >Menge in Gramm<input
-          v-model.number="mengeG"
-          type="number"
+      <div class="mengenfeld">
+        <span>Menge in Gramm</span>
+        <Zahlenschritt
+          v-model="mengeG"
+          name="Menge"
+          einheit="g"
+          :schritt="1"
           :min="PRODUKT_GRENZEN.mengeMin"
           :max="PRODUKT_GRENZEN.mengeMax"
-          step="any"
-          inputmode="decimal"
-          required
-      /></label>
+        />
+      </div>
       <p class="klein">
         Eine vorbelegte Menge stammt aus der Portionsangabe des Produkts. Prüfe die tatsächlich
         erfasste Grammmenge.

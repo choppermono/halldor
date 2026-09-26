@@ -26,20 +26,33 @@ const ziele = [
   },
 ]
 let groessenBeobachter
+let desktopAbfrage
+
+function hoeheMelden() {
+  melden(
+    'hoehe',
+    desktopAbfrage.matches ? '0px' : `${leiste.value.getBoundingClientRect().height}px`
+  )
+}
 
 onMounted(() => {
   // Die reale Höhe enthält auch umgebrochene Texte und die Safe-Area.
-  groessenBeobachter = new ResizeObserver(() => {
-    melden('hoehe', `${leiste.value.getBoundingClientRect().height}px`)
-  })
+  desktopAbfrage = matchMedia('(min-width: 64rem)')
+  groessenBeobachter = new ResizeObserver(hoeheMelden)
   groessenBeobachter.observe(leiste.value, { box: 'border-box' })
+  desktopAbfrage.addEventListener('change', hoeheMelden)
+  hoeheMelden()
 })
 
-onBeforeUnmount(() => groessenBeobachter?.disconnect())
+onBeforeUnmount(() => {
+  groessenBeobachter?.disconnect()
+  desktopAbfrage?.removeEventListener('change', hoeheMelden)
+})
 </script>
 
 <template>
   <nav ref="leiste" class="navigationsleiste" aria-label="Hauptnavigation">
+    <span class="navigation-marke">Trackify</span>
     <div class="navigationsziele">
       <RouterLink v-for="ziel in ziele" :key="ziel.pfad" :to="ziel.pfad" class="navigationslink">
         <svg class="navigationssymbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
