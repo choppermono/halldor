@@ -12,6 +12,7 @@ import DatumFeld from '../components/DatumFeld.vue'
 import SystemSymbol from '../components/SystemSymbol.vue'
 import ZielHerleitung from '../components/ZielHerleitung.vue'
 import SchubladeBlatt from '../components/SchubladeBlatt.vue'
+import KinoAuflage from '../components/KinoAuflage.vue'
 
 // Kamera und zxing werden erst geladen, wenn jemand scannt.
 const VollbildScanner = defineAsyncComponent(() => import('../components/VollbildScanner.vue'))
@@ -197,6 +198,7 @@ function loeschen(id) {
     <div v-else class="heute-raster">
       <div class="heute-instrument">
         <section class="kalorienring" :class="{ ueber: ueberZiel }" aria-label="Kalorienbilanz">
+          <KinoAuflage name="EnergieOrbit" :anteil="anteil" :ueber="ueberZiel" />
           <svg class="ring-skala" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
             <circle class="ring-grund" cx="120" cy="120" r="96" />
             <!-- Die Drehung sitzt an der Gruppe, damit die CSS-Animation am Strich

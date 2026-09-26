@@ -5,6 +5,8 @@ import Zahlenschritt from '../components/Zahlenschritt.vue'
 import { useProfil } from '../composables/useProfil.js'
 import { naechsteProgrammEinheit, useTraining } from '../composables/useTraining.js'
 import { einheitFortschritt, progressionBerechnen, schrittFuer } from '../lib/training.js'
+import { rangdaten, ranglisteBerechnen } from '../lib/rang.js'
+import RangAufstieg from '../components/RangAufstieg.vue'
 
 defineOptions({ name: 'TrainingAnsicht' })
 
@@ -135,10 +137,24 @@ function starten() {
       : ergebnis.meldung
   if (ergebnis.status === 'ok') fokusZurueckgeben()
 }
+// Die Stufe einer Uebung ueber alle gespeicherten Saetze, gleiche Rechnung
+// wie auf der Rangseite.
+function stufeVon(uebungId) {
+  return (
+    ranglisteBerechnen(
+      training.zustand.einheiten,
+      training.uebungen,
+      rangdaten,
+      profil.zustand.profil?.geschlecht ?? ''
+    ).find((rang) => rang.uebungId === uebungId)?.wert.stufe ?? null
+  )
+}
+const aufstieg = ref(null)
 function erfassen(gewichtKg, wiederholungen) {
   const aktiv = aktiveVorgabe.value
   if (!aktiv) return
   const satzNummer = aktuellerSatz.value
+  const stufeVorher = stufeVon(aktiv.uebungId)
   const ergebnis = training.satzHinzufuegen(
     training.offeneEinheit.value?.id,
     aktiv.uebungId,
@@ -152,6 +168,21 @@ function erfassen(gewichtKg, wiederholungen) {
   zuletztBestaetigt.value = ergebnis.satz.id
   meldung.value = `${aktiv.uebung.name}, Satz ${satzNummer} mit ${satzText(ergebnis.satz, true)} erfasst.`
   anpassung.value = null
+  const stufeNachher = stufeVon(aktiv.uebungId)
+  if (stufeNachher && stufeNachher.index > (stufeVorher?.index ?? -1)) {
+    aufstieg.value = {
+      uebung: aktiv.uebung.name,
+      stufe: stufeNachher,
+      lastKg: ergebnis.satz.gewichtKg,
+      wiederholungen: ergebnis.satz.wiederholungen,
+    }
+    meldung.value += ` Rang-Aufstieg: ${stufeNachher.name}.`
+    return
+  }
+  fokusZurueckgeben()
+}
+function aufstiegSchliessen() {
+  aufstieg.value = null
   fokusZurueckgeben()
 }
 function vorgabeBestaetigen() {
@@ -471,6 +502,7 @@ function abschliessen() {
     <div class="nur-vorlesbar" role="status" aria-live="polite" aria-atomic="true">
       {{ meldung }}
     </div>
+    <RangAufstieg v-if="aufstieg" v-bind="aufstieg" @weiter="aufstiegSchliessen" />
     <p v-if="training.zustand.hinweis || profil.zustand.hinweis" class="meldung" role="status">
       {{ training.zustand.hinweis || profil.zustand.hinweis }}
     </p>

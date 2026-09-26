@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import RangZeichen from '../components/RangZeichen.vue'
 import SchubladeBlatt from '../components/SchubladeBlatt.vue'
+import KinoAuflage from '../components/KinoAuflage.vue'
 import { useProfil } from '../composables/useProfil.js'
 import { useTraining } from '../composables/useTraining.js'
 import { rangdaten, ranglisteBerechnen, schwellenFuer } from '../lib/rang.js'
@@ -133,13 +134,18 @@ function zahl(wert) {
     </ol>
 
     <SchubladeBlatt
-      :titel="detail?.uebung.name ?? 'Übung'"
+      :titel="`Rang · ${detail?.uebung.bereich === 'unterkoerper' ? 'Unterkörper' : 'Oberkörper'}`"
       :offen="!!detail"
       @schliessen="gewaehlt = null"
     >
       <article v-if="detail" class="rang-detail">
+        <!-- Die Bühne zeigt das flache Zeichen; mit Anzeigeebene legt sich der
+             3D-Kristall darüber und übernimmt, sobald er sein erstes Bild hat. -->
+        <div class="kristall-buehne">
+          <RangZeichen :stufe="detail.rang?.wert.stufe?.index ?? -1" :groesse="120" />
+          <KinoAuflage name="RangKristall" :stufe="detail.rang?.wert.stufe?.index ?? -1" />
+        </div>
         <div class="rang-detail-kopf">
-          <RangZeichen :stufe="detail.rang?.wert.stufe?.index ?? -1" :groesse="88" />
           <div>
             <h2>{{ detail.uebung.name }}</h2>
             <p class="stufe" :class="{ ohne: !detail.rang?.wert.stufe }">

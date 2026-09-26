@@ -32,6 +32,22 @@ verfügbaren Sitzungsmarker bleibt der Start ruhig.
 | K4    | Spur und Zeiger über dem fertigen SVG           | `--dauer-bogen: 760ms`, `--kurve-bogen` fährt zum Messwert. WAAPI verändert nur die SVG-Spur und den Zeiger. Fehler oder fehlendes WAAPI geben sofort den statischen Bogen frei. |
 | K7    | Ein globales Sternenfeld                        | 520 Punkte, Deckkraft 0.2, lineare langsame Drift, Pixelratio höchstens 1.5. Keine Datenaussage, Textur oder Nachbearbeitung.                                                    |
 
+### 3D seit 26.09.2026 (E-139)
+
+Alle Three.js-Szenen laufen über `buehne.js` (`useDreiBuehne`): Laden erst bei
+`webglAktiv`, Anhalten bei verstecktem Tab, vollständige Freigabe beim
+Aushängen oder Kontextverlust. Farben kommen aus den Tokens.
+
+| Szene            | Einhängepunkt                         | Was sie zeigt                                                                                                       |
+| ---------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `AppSternenfeld` | `KinoHintergrund` (App)               | 1400 Sterne, jeder vierte kobaltblau, zwei schwache Nebel, Parallaxe zum Zeiger, Warp-Schub bei jedem Routenwechsel |
+| `EnergieOrbit`   | `KinoAuflage` im Kalorienring (Heute) | 2600 Partikel auf der Ringlinie; der Winkel entscheidet, was leuchtet, der Kopf markiert den Stand                  |
+| `RangKristall`   | Rang-Detail und `RangAufstieg`        | Oktaeder-Schalen je Stufe; beginnt frontal wie das 2D-Zeichen, dreht sich in den Raum, ziehbar; Diamant mit Kern    |
+
+Das flache Zeichen bleibt darunter stehen und tritt erst zurück, wenn der
+Kristall sein erstes Bild gezeichnet hat (`.bereit`). Scheitert WebGL, sieht
+man das 2D-Zeichen.
+
 K3 und K5 sind Kern-CSS. Die statische Körnung liegt als gekacheltes
 feTurbulence-SVG über der App. Eine einzige Lichtquelle oben links begründet
 Aufhellung und Vignette; beide Schichten nehmen keine Zeigerereignisse an.

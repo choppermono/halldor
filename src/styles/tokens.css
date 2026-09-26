@@ -159,9 +159,9 @@
   /* ---------- K7: Sternenfeld ----------
      Wenige matte Punkte geben Tiefe, ohne eine Zahl oder Aktion zu bewerten.
      Die Deckkraft begrenzt den Kontrast auch direkt hinter kleinen Labels. */
-  --sterne-anzahl: 520;
-  --sterne-groesse: 0.04;
-  --sterne-deckkraft: 0.2;
+  --sterne-anzahl: 1400;
+  --sterne-groesse: 0.09;
+  --sterne-deckkraft: 0.75;
   /* Raum und Kamera in Three.js-Einheiten; keine zentrale Figur oder Lichtquelle. */
   --sterne-breite: 20;
   --sterne-hoehe: 14;

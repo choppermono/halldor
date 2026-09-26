@@ -1559,7 +1559,8 @@ textarea {
   background: var(--ash);
   color: var(--bone);
   text-align: left;
-  animation: lineIn var(--base) var(--ease) both;
+  /* backwards statt both: nach dem Eintritt gehört transform wieder :active. */
+  animation: lineIn var(--base) var(--ease) backwards;
   animation-delay: calc(var(--i) * var(--fast) / 4);
   transition: border-color var(--fast) var(--ease);
 }
@@ -1630,7 +1631,105 @@ textarea {
 .rang-detail-kopf {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--s-4);
+  text-align: center;
+}
+/* Bühne für Rangzeichen und 3D-Kristall. Das flache Zeichen tritt zurück,
+   sobald der Kristall sein erstes Bild gezeichnet hat. */
+.kristall-buehne {
+  position: relative;
+  display: grid;
+  height: min(34svh, 16rem);
+  place-items: center;
+  margin: 0 calc(-1 * var(--gutter)) var(--s-2);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--sig-fill) 22%, transparent),
+    transparent
+  );
+}
+.kristall-buehne > .rangzeichen {
+  transition: opacity var(--base) var(--ease);
+}
+.kristall-buehne:has(.rang-kristall.bereit) > .rangzeichen {
+  opacity: 0;
+}
+.kristall-buehne.gross {
+  width: 100%;
+  height: min(42svh, 22rem);
+  margin: 0;
+}
+
+/* Rang-Aufstieg: Vollbild, ein Moment, dann zurück zum Training. */
+.rang-aufstieg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 38%,
+      color-mix(in srgb, var(--sig-fill) 30%, transparent),
+      transparent 60%
+    ),
+    var(--void);
+  color: var(--bone);
+}
+.rang-aufstieg::backdrop {
+  background: var(--void);
+}
+.aufstieg-inhalt {
+  display: grid;
+  min-height: 100%;
+  align-content: center;
+  justify-items: center;
+  gap: var(--s-2);
+  padding: var(--s-5) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + var(--s-5));
+  text-align: center;
+}
+.aufstieg-inhalt > .system-label {
+  color: var(--sig-text);
+  letter-spacing: 0.32em;
+  animation: typeIn var(--base) var(--ease) both;
+}
+.rang-aufstieg .aufstieg-inhalt h2 {
+  margin: 0;
+  color: var(--bone);
+  font: italic 300 clamp(4rem, 22vw, 7rem) / 0.9 var(--display);
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 1.6) both;
+}
+.aufstieg-uebung {
+  margin: 0;
+  color: var(--bone);
+  font: 400 1.75rem/1.1 var(--display);
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 1.9) both;
+}
+.aufstieg-last {
+  margin: 0;
+  color: var(--bone-dim);
+  font: 500 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.1) both;
+}
+.aufstieg-inhalt .primaer {
+  width: min(100%, 20rem);
+  margin-top: var(--s-5);
+  border: 0;
+  background: var(--sig-fill);
+  box-shadow: var(--sig-glow);
+  color: var(--farbe-auf-akzent);
+  font: 600 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  min-height: 56px;
+  text-transform: uppercase;
+  cursor: pointer;
+  animation: hudIn var(--slow) var(--ease) calc(var(--slow) * 2.4) both;
 }
 .ansicht .rang-detail h2 {
   margin: 0;
@@ -1974,6 +2073,78 @@ textarea {
   background: var(--bone);
   transform-origin: left;
   transition: transform var(--base) var(--ease);
+  animation: fuellen calc(var(--slow) * 1.6) var(--ease) both;
+}
+.makroleiste:nth-child(2) .makro-spur span {
+  animation-delay: calc(var(--fast) * 1);
+}
+.makroleiste:nth-child(3) .makro-spur span {
+  animation-delay: calc(var(--fast) * 2);
+}
+@keyframes fuellen {
+  from {
+    transform: scaleX(0);
+  }
+}
+/* Heute baut sich auf: Ring, dann Leisten, dann die Aktion von unten. */
+.heute-instrument > *,
+.heute-seitenfuss {
+  animation: hudIn var(--slow) var(--ease) both;
+}
+.heute-instrument > :nth-child(2) {
+  animation-delay: calc(var(--fast) * 1);
+}
+.heute-instrument > :nth-child(3) {
+  animation-delay: calc(var(--fast) * 2);
+}
+.heute-seitenfuss {
+  animation-delay: calc(var(--fast) * 3);
+}
+.erfassungsleiste {
+  animation: hochfahren var(--slow) var(--ease) calc(var(--fast) * 2) both;
+}
+@keyframes hochfahren {
+  from {
+    opacity: 0;
+    transform: translateY(var(--s-5));
+  }
+}
+/* Ein einziger Lichtschimmer über den Scan-Knopf, dann Ruhe. */
+.ansicht .scan-knopf {
+  position: relative;
+  overflow: hidden;
+}
+.scan-knopf::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in srgb, var(--bone) 38%, transparent) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  animation: glanz calc(var(--slow) * 2) var(--ease) calc(var(--slow) * 1.4) both;
+  pointer-events: none;
+}
+@keyframes glanz {
+  to {
+    transform: translateX(120%);
+  }
+}
+.ansicht .vitrinen-kachel .rangzeichen {
+  transition: transform var(--base) var(--ease);
+}
+.ansicht .vitrinen-kachel:hover .rangzeichen,
+.ansicht .vitrinen-kachel:focus-visible .rangzeichen {
+  transform: rotate(90deg) scale(1.08);
+}
+.ansicht .vitrinen-kachel:active {
+  transform: scale(0.97);
+}
+.ansicht .vitrinen-kachel:hover {
+  border-color: color-mix(in srgb, var(--sig-text) 55%, transparent);
 }
 
 /* Protokoll als eine Zeile, die sich als Schublade öffnet. */
@@ -2290,7 +2461,21 @@ textarea {
   color: var(--bone);
 }
 .schublade[open] {
-  animation: hudIn var(--base) var(--ease) both;
+  animation: schubladeHoch var(--base) var(--ease) both;
+}
+.schublade[open]::backdrop {
+  animation: einblenden var(--base) var(--ease) both;
+}
+@keyframes schubladeHoch {
+  from {
+    opacity: 0.4;
+    transform: translateY(30%);
+  }
+}
+@keyframes einblenden {
+  from {
+    opacity: 0;
+  }
 }
 .schublade::backdrop {
   background: color-mix(in srgb, var(--void) 80%, transparent);
@@ -2315,6 +2500,7 @@ textarea {
 }
 .schublade-inhalt {
   max-height: 92svh;
+  overflow-x: hidden;
   overflow-y: auto;
   scrollbar-color: var(--line-strong) transparent;
   scrollbar-width: thin;
@@ -2333,6 +2519,16 @@ textarea {
   margin-bottom: var(--s-3);
   border-bottom: 1px solid var(--line);
   background: var(--ash);
+}
+.schublade-kopf > .system-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.schublade-kopf > button {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .schublade .erfassung-eingebettet {
   padding: 0;
