@@ -7,7 +7,7 @@ import {
   zielBerechnen,
   zielPruefen,
 } from '../lib/ernaehrung.js'
-import { lokalesDatum } from '../lib/darstellung.js'
+import { kalorien, lokalesDatum } from '../lib/darstellung.js'
 import { useProfil } from '../composables/useProfil.js'
 import ZielHerleitung from './ZielHerleitung.vue'
 import DatumFeld from './DatumFeld.vue'
@@ -66,6 +66,26 @@ const entwurf = computed(() => ({
   ].sort((a, b) => a.datum.localeCompare(b.datum)),
 }))
 const vorschau = computed(() => zielBerechnen({ ...entwurf.value, hinweisBestaetigt: true }, heute))
+const zielTexte = { halten: 'Halten', aufbauen: 'Aufbauen', abnehmen: 'Abnehmen' }
+const zusammenfassungKoerper = computed(
+  () =>
+    [
+      { m: 'Männlich', w: 'Weiblich' }[eingabe.geschlecht],
+      alter.value.status === 'ok' ? `${alter.value.wert} J` : null,
+      eingabe.groesseCm !== '' ? `${eingabe.groesseCm} cm` : null,
+      eingabe.gewichtKg !== '' ? `${eingabe.gewichtKg} kg` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ') || 'Noch leer'
+)
+const zusammenfassungZiel = computed(() => {
+  const aktivitaet = aktivitaetTexte[REGELN.aktivitaeten.indexOf(Number(eingabe.aktivitaet))]
+  const ziel =
+    eingabe.ziel === 'halten'
+      ? zielTexte.halten
+      : `${zielTexte[eingabe.ziel]} ${eingabe.aenderungsrateProzent} %`
+  return [aktivitaet, ziel].filter(Boolean).join(' · ')
+})
 const vollstaendig = computed(
   () =>
     eingabe.geschlecht &&
@@ -308,99 +328,123 @@ function speichern() {
     </template>
 
     <template v-else>
-      <fieldset class="formulargruppe">
-        <legend>Körperdaten</legend>
-        <div class="profil-auswahl">
-          <span>Formel und Rangskala</span>
+      <!-- Drei zugeklappte Abschnitte mit ihrer Zusammenfassung statt eines
+           langen Formulars: man sieht alles auf einen Blick und öffnet nur,
+           was man ändern will. -->
+      <details class="profil-abschnitt">
+        <summary>
+          <span class="system-label">Körperdaten</span>
+          <span class="profil-zusammenfassung">{{ zusammenfassungKoerper }}</span>
+        </summary>
+        <fieldset class="formulargruppe">
+          <legend class="nur-vorlesbar">Körperdaten</legend>
+          <div class="profil-auswahl">
+            <span>Formel und Rangskala</span>
+            <div class="auswahlkarten kompakt">
+              <label
+                v-for="option in [
+                  { wert: 'm', text: 'Männlich' },
+                  { wert: 'w', text: 'Weiblich' },
+                ]"
+                :key="option.wert"
+                :class="{ gewaehlt: eingabe.geschlecht === option.wert }"
+              >
+                <input
+                  v-model="eingabe.geschlecht"
+                  type="radio"
+                  name="profil-geschlecht"
+                  :value="option.wert"
+                />
+                <span>{{ option.text }}</span>
+              </label>
+            </div>
+          </div>
+          <label
+            >Geburtsdatum<DatumFeld
+              v-model="eingabe.geburtsdatum"
+              min="1900-01-01"
+              :max="heute"
+              required
+          /></label>
+          <label
+            >Körpergrösse<Zahlenschritt
+              v-model="eingabe.groesseCm"
+              name="Körpergrösse"
+              einheit="cm"
+              :schritt="0.1"
+              :min="grenzen.cmMin"
+              :max="grenzen.cmMax"
+          /></label>
+          <label
+            >Gewicht heute<Zahlenschritt
+              v-model="eingabe.gewichtKg"
+              name="Gewicht"
+              einheit="kg"
+              :schritt="0.1"
+              :min="grenzen.kgMin"
+              :max="grenzen.kgMax"
+          /></label>
+        </fieldset>
+      </details>
+
+      <details class="profil-abschnitt">
+        <summary>
+          <span class="system-label">Aktivität und Ziel</span>
+          <span class="profil-zusammenfassung">{{ zusammenfassungZiel }}</span>
+        </summary>
+        <fieldset class="formulargruppe">
+          <legend class="nur-vorlesbar">Aktivität und Ziel</legend>
+          <div class="auswahlkarten">
+            <label
+              v-for="(wert, index) in REGELN.aktivitaeten"
+              :key="wert"
+              :class="{ gewaehlt: eingabe.aktivitaet === wert }"
+            >
+              <input
+                v-model.number="eingabe.aktivitaet"
+                type="radio"
+                name="profil-aktivitaet"
+                :value="wert"
+              />
+              <span>{{ aktivitaetTexte[index] }}</span>
+            </label>
+          </div>
           <div class="auswahlkarten kompakt">
             <label
               v-for="option in [
-                { wert: 'm', text: 'Männlich' },
-                { wert: 'w', text: 'Weiblich' },
+                { wert: 'halten', text: 'Halten' },
+                { wert: 'aufbauen', text: 'Aufbauen' },
+                { wert: 'abnehmen', text: 'Abnehmen' },
               ]"
               :key="option.wert"
-              :class="{ gewaehlt: eingabe.geschlecht === option.wert }"
+              :class="{ gewaehlt: eingabe.ziel === option.wert }"
             >
-              <input
-                v-model="eingabe.geschlecht"
-                type="radio"
-                name="profil-geschlecht"
-                :value="option.wert"
-              />
+              <input v-model="eingabe.ziel" type="radio" name="profil-ziel" :value="option.wert" />
               <span>{{ option.text }}</span>
             </label>
           </div>
-        </div>
-        <label
-          >Geburtsdatum<DatumFeld
-            v-model="eingabe.geburtsdatum"
-            min="1900-01-01"
-            :max="heute"
-            required
-        /></label>
-        <label
-          >Körpergrösse<Zahlenschritt
-            v-model="eingabe.groesseCm"
-            name="Körpergrösse"
-            einheit="cm"
-            :schritt="0.1"
-            :min="grenzen.cmMin"
-            :max="grenzen.cmMax"
-        /></label>
-        <label
-          >Gewicht heute<Zahlenschritt
-            v-model="eingabe.gewichtKg"
-            name="Gewicht"
-            einheit="kg"
-            :schritt="0.1"
-            :min="grenzen.kgMin"
-            :max="grenzen.kgMax"
-        /></label>
-      </fieldset>
+          <label v-if="eingabe.ziel !== 'halten'"
+            >Änderungsrate<Zahlenschritt
+              v-model="eingabe.aenderungsrateProzent"
+              name="Änderungsrate"
+              einheit="%"
+              :schritt="0.1"
+              :min="REGELN.rateMin"
+              :max="REGELN.rateMax"
+          /></label>
+        </fieldset>
+      </details>
 
-      <fieldset class="formulargruppe">
-        <legend>Aktivität und Ziel</legend>
-        <div class="auswahlkarten">
-          <label
-            v-for="(wert, index) in REGELN.aktivitaeten"
-            :key="wert"
-            :class="{ gewaehlt: eingabe.aktivitaet === wert }"
-          >
-            <input
-              v-model.number="eingabe.aktivitaet"
-              type="radio"
-              name="profil-aktivitaet"
-              :value="wert"
-            />
-            <span>{{ aktivitaetTexte[index] }}</span>
-          </label>
-        </div>
-        <div class="auswahlkarten kompakt">
-          <label
-            v-for="option in [
-              { wert: 'halten', text: 'Halten' },
-              { wert: 'aufbauen', text: 'Aufbauen' },
-              { wert: 'abnehmen', text: 'Abnehmen' },
-            ]"
-            :key="option.wert"
-            :class="{ gewaehlt: eingabe.ziel === option.wert }"
-          >
-            <input v-model="eingabe.ziel" type="radio" name="profil-ziel" :value="option.wert" />
-            <span>{{ option.text }}</span>
-          </label>
-        </div>
-        <label v-if="eingabe.ziel !== 'halten'"
-          >Änderungsrate<Zahlenschritt
-            v-model="eingabe.aenderungsrateProzent"
-            name="Änderungsrate"
-            einheit="%"
-            :schritt="0.1"
-            :min="REGELN.rateMin"
-            :max="REGELN.rateMax"
-        /></label>
-      </fieldset>
-      <ZielHerleitung v-if="vollstaendig" :ergebnis="vorschau" />
-      <p v-else class="klein">Nach Eingabe der Körperdaten erscheint hier die Zielberechnung.</p>
+      <details class="profil-abschnitt">
+        <summary>
+          <span class="system-label">Tagesziel und Rechenweg</span>
+          <span class="profil-zusammenfassung">{{
+            vorschau.status === 'ok' ? `${kalorien(vorschau.wert.kcal)} kcal` : '–'
+          }}</span>
+        </summary>
+        <ZielHerleitung v-if="vollstaendig" :ergebnis="vorschau" />
+        <p v-else class="klein">Nach Eingabe der Körperdaten erscheint hier die Zielberechnung.</p>
+      </details>
       <label class="bestaetigung hinweis-karte">
         <input v-model="eingabe.hinweisBestaetigt" type="checkbox" required />
         <span

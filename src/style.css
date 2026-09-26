@@ -1480,34 +1480,174 @@ textarea {
   stroke: var(--line);
 }
 
+.rang-kopf {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.ansicht.rang h1 {
+  margin: var(--s-1) 0 0;
+  font-size: clamp(2.75rem, 12vw, 4rem);
+}
 .stufenverteilung {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin: var(--s-4) 0 var(--s-5);
+  display: flex;
+  margin: 0;
   padding: 0;
   list-style: none;
-  border-block: 1px solid var(--line);
 }
 .stufenverteilung li {
   display: grid;
   justify-items: center;
-  gap: var(--s-2);
-  padding: var(--s-3) 0;
-}
-.stufenverteilung li + li {
-  border-left: 1px solid var(--line);
+  gap: var(--s-1);
+  min-width: 2.25rem;
 }
 .stufenverteilung strong {
-  font: 300 2rem/1 var(--display);
+  font: 500 var(--t-label) / 1 var(--mono);
 }
 .stufenverteilung span {
   color: var(--bone-mute);
   font: 400 0.625rem/1 var(--mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 .stufenverteilung li.leer strong {
   color: var(--bone-mute);
+}
+.bereichswahl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: var(--s-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+.ansicht .bereichswahl button {
+  min-height: 44px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--bone-mute);
+  font: 500 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.ansicht .bereichswahl button[aria-pressed='true'] {
+  border-bottom-color: var(--sig-text);
+  color: var(--bone);
+}
+.vitrine {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ansicht .vitrinen-kachel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  align-content: start;
+  align-items: center;
+  justify-items: start;
+  gap: var(--s-1) var(--s-2);
+  padding: var(--s-2);
+  border: 1px solid var(--line);
+  background: var(--ash);
+  color: var(--bone);
+  text-align: left;
+  animation: lineIn var(--base) var(--ease) both;
+  animation-delay: calc(var(--i) * var(--fast) / 4);
+  transition: border-color var(--fast) var(--ease);
+}
+.ansicht .vitrinen-kachel:hover {
+  border-color: var(--line-strong);
+}
+.kachel-stufe,
+.kachel-name {
+  grid-column: 1 / -1;
+}
+.kachel-name {
+  hyphens: auto;
+  overflow-wrap: normal;
+}
+.trainingsstatus {
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+@media (max-width: 63.999rem) {
+  .uebungsfokus,
+  .satz-anpassung,
+  .einheit-abschluss {
+    margin-top: var(--s-3);
+    padding: var(--s-3);
+  }
+  .uebungsfokus .als-naechstes {
+    margin-top: var(--s-4);
+  }
+  .uebungsfokus .fokus-saetze {
+    margin-top: var(--s-3);
+  }
+}
+.kachel-last {
+  white-space: nowrap;
+}
+.kachel-last strong {
+  font: 300 1.625rem/1 var(--display);
+}
+.kachel-last small {
+  margin-left: 2px;
+  color: var(--bone-mute);
+  font: 400 0.625rem/1 var(--mono);
+  text-transform: uppercase;
+}
+.kachel-stufe {
+  color: var(--bone-mute);
+  font: 400 0.625rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.kachel-stufe.erreicht {
+  color: var(--sig-text);
+}
+.kachel-name {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--bone-dim);
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.vitrinen-kachel.ohne .kachel-last strong {
+  color: var(--bone-mute);
+}
+.rang-detail-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.ansicht .rang-detail h2 {
+  margin: 0;
+  font: 400 2rem/1.05 var(--display);
+}
+.rang-detail-last {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: var(--s-4) 0 0;
+}
+.rang-detail-last strong {
+  font: 300 3.5rem/1 var(--display);
+}
+.rang-detail-last span {
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.rang-detail .rang-leiter {
+  margin-top: var(--s-4);
 }
 
 .rangliste {
@@ -1947,6 +2087,212 @@ textarea {
 }
 .heute .statuszeile:empty {
   display: none;
+}
+
+/* Heute auf einem Bildschirm: der Ring richtet sich nach der Höhe, damit
+   Ring, Makros und Scanner zusammen ohne Scrollen sichtbar sind. */
+.heute .heute-kopf {
+  margin-bottom: var(--s-2);
+}
+.heute .kalorienring {
+  width: min(100%, 20rem, 31svh);
+  margin-top: 0;
+}
+.heute .makrospalten {
+  margin-top: var(--s-4);
+}
+.heute .erfassung {
+  margin-top: var(--s-4);
+}
+.heute .scan-buehne {
+  min-height: 8.5rem;
+  padding-block: var(--s-4);
+}
+.heute .statuszeile {
+  margin: var(--s-2) 0 0;
+  text-align: center;
+}
+.erfassung-zeile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+}
+.ansicht .erfassung-zeile > * {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: var(--s-2);
+  border: 0;
+  background: transparent;
+  color: var(--bone-dim);
+  font: 400 var(--t-klein) / 1 var(--body);
+  text-decoration: none;
+}
+.ansicht .erfassung-zeile .erfassung-alternative {
+  justify-content: flex-start;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ansicht .protokoll-oeffner {
+  justify-content: flex-end;
+  padding: 0;
+  border-left: 1px solid var(--line);
+}
+.protokoll-oeffner strong {
+  color: var(--bone);
+  font: 500 var(--t-label) / 1 var(--mono);
+}
+.protokoll-oeffner svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Schublade: öffnet sich über der Seite statt sie zu verlängern. */
+.schublade {
+  position: fixed;
+  inset: auto 0 0;
+  width: 100%;
+  max-width: none;
+  max-height: 92svh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--line-strong);
+  background: var(--ash);
+  color: var(--bone);
+}
+.schublade[open] {
+  animation: hudIn var(--base) var(--ease) both;
+}
+.schublade::backdrop {
+  background: color-mix(in srgb, var(--void) 80%, transparent);
+}
+.schublade-inhalt {
+  max-height: 92svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--gutter) calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+}
+.schublade-kopf {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line);
+  background: var(--ash);
+}
+.schublade .erfassung-eingebettet {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.profil-abschnitt {
+  border-top: 1px solid var(--line);
+}
+.profil-abschnitt:last-of-type {
+  border-bottom: 1px solid var(--line);
+}
+.profil-abschnitt > summary {
+  display: grid;
+  min-height: 64px;
+  align-content: center;
+  gap: var(--s-1);
+  padding-right: var(--s-5);
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+}
+.profil-abschnitt > summary::-webkit-details-marker {
+  display: none;
+}
+.profil-abschnitt > summary::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  color: var(--bone-dim);
+  font: 400 1.5rem/1 var(--mono);
+  transform: translateY(-50%);
+}
+.profil-abschnitt[open] > summary::after {
+  content: '−';
+}
+.profil-zusammenfassung {
+  color: var(--bone);
+}
+.profil-abschnitt > :not(summary) {
+  animation: lineIn var(--base) var(--ease) both;
+}
+.profil-abschnitt .formulargruppe {
+  margin: 0 0 var(--s-4);
+  padding: 0;
+  border: 0;
+}
+.profil-formular:not(.onboarding-formular) > .hinweis-karte {
+  margin-top: var(--s-4);
+}
+.plan-rest > summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--bone-mute);
+  font: 400 var(--t-label) / 1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.plan-rest .planliste {
+  border-bottom: 1px solid var(--line);
+}
+.aufklapp {
+  margin-top: var(--s-3);
+  border-block: 1px solid var(--line);
+}
+.aufklapp > summary {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  cursor: pointer;
+}
+
+@media (min-width: 64rem) {
+  .schublade {
+    inset: 0;
+    width: min(40rem, 90vw);
+    max-height: 85vh;
+    margin: auto;
+    border: 1px solid var(--line-strong);
+  }
+  .schublade-inhalt {
+    max-height: 85vh;
+  }
+  .ansicht.heute {
+    max-width: 68rem;
+  }
+  .heute-raster {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--s-6);
+  }
+  .heute .kalorienring {
+    width: min(100%, 24rem);
+  }
+  .heute .erfassung {
+    margin-top: 0;
+  }
+  .heute .scan-buehne {
+    min-height: 16rem;
+  }
+  .vitrine {
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
 }
 .tagesprotokoll {
   margin-top: var(--s-5);

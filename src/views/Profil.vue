@@ -9,9 +9,8 @@ profilLaden()
 
 <template>
   <section class="ansicht profil" aria-labelledby="profil-titel">
-    <p class="system-label seitenrubrik">Dein Dossier / Profil</p>
+    <p class="system-label seitenrubrik">Dein Dossier</p>
     <h1 id="profil-titel">Profil.</h1>
-    <p class="profil-einleitung">Körperdaten und Rechenweg.</p>
     <ProfilFormular />
   </section>
 </template>

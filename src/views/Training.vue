@@ -219,11 +219,22 @@ function abschliessen() {
         <span></span><span></span><span></span>
       </div>
       <ol class="planliste">
-        <li v-for="vorgabe in planUebungen" :key="vorgabe.uebungId">
+        <li v-for="vorgabe in planUebungen.slice(0, 4)" :key="vorgabe.uebungId">
           <span>{{ vorgabe.uebung.name }}</span
           ><span>{{ planText(vorgabe) }}</span>
         </li>
       </ol>
+      <!-- Der ganze Plan ist da, aber erst auf Wunsch: der Startknopf soll ohne
+           Scrollen erreichbar sein. -->
+      <details v-if="planUebungen.length > 4" class="plan-rest">
+        <summary>+ {{ planUebungen.length - 4 }} weitere Übungen</summary>
+        <ol class="planliste">
+          <li v-for="vorgabe in planUebungen.slice(4)" :key="vorgabe.uebungId">
+            <span>{{ vorgabe.uebung.name }}</span
+            ><span>{{ planText(vorgabe) }}</span>
+          </li>
+        </ol>
+      </details>
       <button ref="hauptknopf" class="primaer trainings-hauptknopf" @click="starten">
         Einheit starten
       </button>
@@ -232,10 +243,11 @@ function abschliessen() {
     <template v-else>
       <header class="trainingsstatus">
         <span
-          >{{ planEinheit?.name }} · Übung {{ Math.min(aktiveNummer + 1, planUebungen.length) }} /
-          {{ planUebungen.length }}</span
+          >{{ planEinheit?.name }} · Übung {{ Math.min(aktiveNummer + 1, planUebungen.length) }}/{{
+            planUebungen.length
+          }}</span
         >
-        <span>Satz {{ fortschritt.erfasst }} / {{ fortschritt.gesamt }}</span>
+        <span>Satz {{ fortschritt.erfasst }}/{{ fortschritt.gesamt }}</span>
       </header>
       <div
         class="uebungsfortschritt"

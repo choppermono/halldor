@@ -11,6 +11,7 @@ import GlyphenText from '../components/GlyphenText.vue'
 import DatumFeld from '../components/DatumFeld.vue'
 import SystemSymbol from '../components/SystemSymbol.vue'
 import ZielHerleitung from '../components/ZielHerleitung.vue'
+import SchubladeBlatt from '../components/SchubladeBlatt.vue'
 
 // Die Erfassung mit Kamera und zxing wird erst geladen, wenn jemand scannt.
 const ProduktBestaetigen = defineAsyncComponent(() => import('./ProduktBestaetigen.vue'))
@@ -74,6 +75,7 @@ const makros = computed(() =>
 )
 
 const meldung = ref('')
+const protokollOffen = ref(false)
 const scannerOffen = ref(false)
 const scannerNummer = ref(0)
 const scanKnopf = ref(null)
@@ -165,95 +167,90 @@ function loeschen(id) {
       <RouterLink class="knopf primaer" to="/onboarding">Profil einrichten</RouterLink>
     </template>
 
-    <template v-else>
-      <section class="kalorienring" :class="{ ueber: ueberZiel }" aria-label="Kalorienbilanz">
-        <svg class="ring-skala" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
-          <circle class="ring-grund" cx="120" cy="120" r="96" />
-          <!-- Die Drehung sitzt an der Gruppe, damit die CSS-Animation am Strich
+    <div v-else class="heute-raster">
+      <div class="heute-instrument">
+        <section class="kalorienring" :class="{ ueber: ueberZiel }" aria-label="Kalorienbilanz">
+          <svg class="ring-skala" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+            <circle class="ring-grund" cx="120" cy="120" r="96" />
+            <!-- Die Drehung sitzt an der Gruppe, damit die CSS-Animation am Strich
                sie nicht überschreibt. -->
-          <g
-            v-for="strich in striche"
-            :key="strich.index"
-            :transform="`rotate(${strich.winkel} 120 120)`"
-          >
-            <line
-              x1="120"
-              :y1="strich.lang ? 6 : 10"
-              x2="120"
-              y2="20"
-              :class="{ erreicht: strich.erreicht }"
-              :style="{ '--i': strich.index }"
-            />
-          </g>
-          <line class="ring-ziel" x1="120" y1="0" x2="120" y2="24" />
-        </svg>
-        <div class="ring-inhalt">
-          <span class="system-label">{{ ueberZiel ? 'Über dem Ziel' : 'Noch offen' }}</span>
-          <strong class="ring-zahl"
-            ><GlyphenText :wert="differenz === null ? '–' : kalorien(Math.abs(differenz))"
-          /></strong>
-          <span class="ring-bezug"
-            >{{ kalorien(bilanz.kcal.bekannt) }} / {{ ziel ? kalorien(ziel.kcal) : '–' }} kcal</span
-          >
-        </div>
-      </section>
-      <p v-if="!bilanz.kcal.vollstaendig" class="klein ring-hinweis">
-        Bekannte Teilsumme. Bei {{ bilanz.kcal.unbekannt }} Eintrag/Einträgen ist die Energie
-        unbekannt.
-      </p>
-      <p v-if="!ziel" class="meldung" role="status">
-        {{ vorschau.meldung }} <RouterLink to="/profil">Ziel im Profil prüfen.</RouterLink>
-      </p>
-
-      <dl class="makrospalten">
-        <div v-for="makro in makros" :key="makro.key">
-          <dt>{{ makro.name }}</dt>
-          <dd>
-            <strong>{{ zahl(makro.ist.bekannt) }}</strong
-            ><span>/ {{ makro.soll === null ? '–' : zahl(makro.soll) }} g</span>
-          </dd>
-          <div class="skala" aria-hidden="true">
-            <span :style="{ transform: `scaleX(${makro.anteil})` }"></span>
+            <g
+              v-for="strich in striche"
+              :key="strich.index"
+              :transform="`rotate(${strich.winkel} 120 120)`"
+            >
+              <line
+                x1="120"
+                :y1="strich.lang ? 6 : 10"
+                x2="120"
+                y2="20"
+                :class="{ erreicht: strich.erreicht }"
+                :style="{ '--i': strich.index }"
+              />
+            </g>
+            <line class="ring-ziel" x1="120" y1="0" x2="120" y2="24" />
+          </svg>
+          <div class="ring-inhalt">
+            <span class="system-label">{{ ueberZiel ? 'Über dem Ziel' : 'Noch offen' }}</span>
+            <strong class="ring-zahl"
+              ><GlyphenText :wert="differenz === null ? '–' : kalorien(Math.abs(differenz))"
+            /></strong>
+            <span class="ring-bezug"
+              >{{ kalorien(bilanz.kcal.bekannt) }} /
+              {{ ziel ? kalorien(ziel.kcal) : '–' }} kcal</span
+            >
           </div>
-        </div>
-      </dl>
+        </section>
+        <p v-if="!bilanz.kcal.vollstaendig" class="klein ring-hinweis">
+          Bekannte Teilsumme. Bei {{ bilanz.kcal.unbekannt }} Eintrag/Einträgen ist die Energie
+          unbekannt.
+        </p>
+        <p v-if="!ziel" class="meldung" role="status">
+          {{ vorschau.meldung }} <RouterLink to="/profil">Ziel im Profil prüfen.</RouterLink>
+        </p>
+
+        <dl class="makrospalten">
+          <div v-for="makro in makros" :key="makro.key">
+            <dt>{{ makro.name }}</dt>
+            <dd>
+              <strong>{{ zahl(makro.ist.bekannt) }}</strong
+              ><span>/ {{ makro.soll === null ? '–' : zahl(makro.soll) }} g</span>
+            </dd>
+            <div class="skala" aria-hidden="true">
+              <span :style="{ transform: `scaleX(${makro.anteil})` }"></span>
+            </div>
+          </div>
+        </dl>
+      </div>
 
       <section class="erfassung" aria-label="Produkt erfassen">
-        <button
-          v-if="!scannerOffen"
-          ref="scanKnopf"
-          type="button"
-          class="scan-buehne"
-          @click="scannerOeffnen"
-        >
+        <button ref="scanKnopf" type="button" class="scan-buehne" @click="scannerOeffnen">
           <span class="scan-ecken" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           <span class="scan-start"><SystemSymbol name="barcode" />Barcode scannen</span>
           <span class="scan-hinweis">Die Kamera startet erst nach dem Antippen</span>
         </button>
-        <ProduktBestaetigen
-          v-else
-          :key="scannerNummer"
-          scanner
-          eingebettet
-          @erfasst="erfasst"
-          @schliessen="scannerSchliessen"
-        />
-        <RouterLink
-          v-if="!scannerOffen"
-          class="erfassung-alternative"
-          :to="{ path: '/produkt', query: { datum } }"
-          >Kein Barcode? <span>Von Hand erfassen</span></RouterLink
-        >
-      </section>
-      <p class="statuszeile" role="status" aria-live="polite">{{ meldung }}</p>
-
-      <section class="tagesprotokoll" aria-labelledby="eintraege-titel">
-        <div class="protokollkopf">
-          <h2 id="eintraege-titel" class="system-label">Protokoll</h2>
-          <span class="system-label"
-            >{{ eintraege.length }} {{ eintraege.length === 1 ? 'Eintrag' : 'Einträge' }}</span
+        <p class="statuszeile" role="status" aria-live="polite">{{ meldung }}</p>
+        <div class="erfassung-zeile">
+          <RouterLink class="erfassung-alternative" :to="{ path: '/produkt', query: { datum } }"
+            >Von Hand erfassen</RouterLink
           >
+          <button type="button" class="protokoll-oeffner" @click="protokollOffen = true">
+            <span>Protokoll</span>
+            <strong>{{ eintraege.length }}</strong>
+            <SystemSymbol name="rechts" />
+          </button>
         </div>
+      </section>
+
+      <SchubladeBlatt titel="Scanner" :offen="scannerOffen" @schliessen="scannerSchliessen">
+        <ProduktBestaetigen :key="scannerNummer" scanner eingebettet @erfasst="erfasst" />
+      </SchubladeBlatt>
+
+      <SchubladeBlatt
+        :titel="`Protokoll · ${datumBeschriftung}`"
+        :offen="protokollOffen"
+        @schliessen="protokollOffen = false"
+      >
         <p v-if="!eintraege.length" class="leerzustand">
           Für diesen Tag ist noch nichts erfasst. Scanne dein erstes Produkt.
         </p>
@@ -279,15 +276,14 @@ function loeschen(id) {
             </button>
           </li>
         </ul>
-      </section>
-
-      <details v-if="tag?.ziel?.herleitung" class="tagesherleitung">
-        <summary>Rechenweg dieses Tages</summary>
-        <ZielHerleitung
-          :ergebnis="{ status: 'ok', wert: tag.ziel, herleitung: tag.ziel.herleitung }"
-        />
-      </details>
-    </template>
+        <details v-if="tag?.ziel?.herleitung" class="aufklapp tagesherleitung">
+          <summary>Rechenweg dieses Tages</summary>
+          <ZielHerleitung
+            :ergebnis="{ status: 'ok', wert: tag.ziel, herleitung: tag.ziel.herleitung }"
+          />
+        </details>
+      </SchubladeBlatt>
+    </div>
     <p v-if="tagebuch.zustand.hinweis || profil.zustand.hinweis" class="meldung" role="status">
       {{ tagebuch.zustand.hinweis || profil.zustand.hinweis }}
     </p>

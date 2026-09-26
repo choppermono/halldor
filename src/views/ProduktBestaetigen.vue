@@ -28,7 +28,7 @@ const props = defineProps({
   // man auf derselben Seite statt zu navigieren.
   eingebettet: { type: Boolean, default: false },
 })
-const melden = defineEmits(['erfasst', 'schliessen'])
+const melden = defineEmits(['erfasst'])
 const route = useRoute()
 const router = useRouter()
 const { eintragHinzufuegen } = useTagebuch()
@@ -178,11 +178,7 @@ onUnmounted(() => {
       { scanner: props.scanner },
     ]"
   >
-    <div v-if="props.eingebettet" class="erfassung-kopf">
-      <span class="system-label">{{ schritt === 'menge' ? 'Menge bestätigen' : 'Scanner' }}</span>
-      <button type="button" class="leiser-knopf" @click="melden('schliessen')">Schliessen</button>
-    </div>
-    <template v-else>
+    <template v-if="!props.eingebettet">
       <RouterLink
         v-if="!props.scanner || schritt === 'menge'"
         class="zurueck"
@@ -279,7 +275,7 @@ onUnmounted(() => {
             :maxlength="PRODUKT_GRENZEN.nameMax"
         /></label>
         <div class="formularraster">
-          <label v-for="feld in NAEHRWERTE" :key="feld.key"
+          <label v-for="feld in NAEHRWERTE.filter((f) => !f.optional)" :key="feld.key"
             >{{ feld.label }} ({{ feld.einheit }})<input
               v-model.number="produkt.pro100g[feld.key]"
               type="number"
@@ -290,6 +286,23 @@ onUnmounted(() => {
               placeholder="unbekannt"
           /></label>
         </div>
+        <!-- Zucker, gesättigte Fette und Salz rechnet die App nicht; sie
+             stehen zum Nachtragen bereit, aber nicht im Weg. -->
+        <details class="aufklapp">
+          <summary>Weitere Nährwerte</summary>
+          <div class="formularraster">
+            <label v-for="feld in NAEHRWERTE.filter((f) => f.optional)" :key="feld.key"
+              >{{ feld.label }} ({{ feld.einheit }})<input
+                v-model.number="produkt.pro100g[feld.key]"
+                type="number"
+                min="0"
+                :max="feld.max"
+                step="any"
+                inputmode="decimal"
+                placeholder="unbekannt"
+            /></label>
+          </div>
+        </details>
         <p v-if="quelle" class="klein">
           Produktdaten von Open Food Facts. Angaben vor dem Erfassen prüfen.
         </p>
